@@ -8,3 +8,5 @@ dependencies:
   - flask
   - flask-sqlalchemy
   - flask-cors
+  - pyyaml
+  - pymysql
