@@ -1,7 +1,10 @@
-from flask import Blueprint, Flask
+from typing import List, Optional
+from flask import Blueprint, Flask, request, jsonify
 from flask_cors import CORS
 from Extensions import db
 import yaml
+from Response import Response
+from Repository import Repository
 
 
 
@@ -26,12 +29,66 @@ from MedicalRecord import MedicalRecord
 bp = Blueprint('DataManager', __name__, url_prefix="/api/data")
 
 
+repository: Repository = Repository()
+
 
 
 
 @bp.route("/")
 def welcome() -> str:
     return "Welcome"
+
+
+@bp.route("/add", methods=["POST"])
+def addRecord():
+    data: dict = request.get_json()
+
+    schema: List[str] = ["name"]  # TODO: take from MedicalRecord
+
+    if not validateRequestSchema(data, schema):
+        return Response(error=True, message="bad request body"), 400
+
+    response: Response[bool]
+
+    try:
+        repository.addRecord(data)
+        response = Response()
+    except Exception as err:
+        response = Response(error=True, message=str(err))
+        app.log_exception(err)
+
+    return jsonify(response.toDict()), 200
+
+
+@bp.route("/read/<int:id>", methods=["GET"])
+def readRecord(id: int):
+    response: Response[MedicalRecord]
+
+    record: Optional[MedicalRecord] = repository.getRecordById(id)
+
+    if record is not None:
+        response = Response(value=record.toDict())
+    else:
+        response = Response(error=True, message="no such record")
+
+    return jsonify(response.toDict()), 200
+
+
+
+
+
+
+
+def validateRequestSchema(request: dict, schema: List[str]) -> bool:
+    for field in schema:
+        if field not in request:
+            return False
+        
+    for key in request:
+        if key not in schema:
+            return False
+        
+    return True
 
 
 
