@@ -109,7 +109,9 @@ def updateRecord():
     return jsonify(response.toDict()), 200
     
     
-
+@bp.route("/read/all", methods=["GET"])
+def getAllRecords():
+    return jsonify(repository.getAllRecords())
 
 
 

@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 from MedicalRecord import MedicalRecord
 
 
@@ -33,5 +33,7 @@ class Repository:
         
         self.records[record.id] = record
 
+    def getAllRecords(self) -> List[MedicalRecord]:
+        return [record.toDict() for record in self.records.values()]
 
 
