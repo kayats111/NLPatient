@@ -13,8 +13,13 @@ class Repository:
         self.records[self.ids] = MedicalRecord(self.ids, recordDict["name"])
         self.ids += 1
 
-    def getRecordById(self, id: int) -> Optional[MedicalRecord]:
-        return self.records[id]
+    def getRecordById(self, id: int) -> MedicalRecord:
+        record: MedicalRecord = self.records[id]
+
+        if record is None:
+            raise Exception("no such record")
+        
+        return record
     
     def deleteRecord(self, id: int) -> Optional[MedicalRecord]:
         return self.records.pop(id, None)

@@ -64,12 +64,11 @@ def addRecord():
 def readRecord(id: int):
     response: Response[MedicalRecord]
 
-    record: Optional[MedicalRecord] = repository.getRecordById(id)
-
-    if record is not None:
+    try:
+        record: MedicalRecord = repository.getRecordById(id)
         response = Response(value=record.toDict())
-    else:
-        response = Response(error=True, message="no such record")
+    except Exception as err:
+        response = Response(error=True, message=str(err))
 
     return jsonify(response.toDict()), 200
 
