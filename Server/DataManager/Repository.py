@@ -21,8 +21,11 @@ class Repository:
         
         return record
     
-    def deleteRecord(self, id: int) -> Optional[MedicalRecord]:
-        return self.records.pop(id, None)
+    def deleteRecord(self, id: int) -> None:
+        record: MedicalRecord = self.records.pop(id, None)
+
+        if record is None:
+            raise Exception("no such record")
     
     def updateRecord(self, record: MedicalRecord) -> None:
         if record.id not in self.records:

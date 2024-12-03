@@ -77,12 +77,11 @@ def readRecord(id: int):
 def deleteRecord(id: int):
     response: Response[MedicalRecord]
 
-    record: Optional[MedicalRecord] = repository.deleteRecord(id)
-
-    if record is not None:
-        response = Response(value=record.toDict())
-    else:
-        response = Response(error=True, message="no such records")
+    try:
+        repository.deleteRecord(id)
+        response = Response()
+    except Exception as err:
+        response = Response(error=True, message=str(err))
 
     return jsonify(response.toDict()), 200
 
