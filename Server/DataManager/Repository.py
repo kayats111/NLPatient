@@ -15,6 +15,9 @@ class Repository:
 
     def getRecordById(self, id: int) -> Optional[MedicalRecord]:
         return self.records[id]
+    
+    def deleteRecord(self, id: int) -> Optional[MedicalRecord]:
+        return self.records.pop(id, None)
 
 
 
