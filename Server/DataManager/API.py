@@ -24,7 +24,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 CORS(app)
 
-from MedicalRecord import MedicalRecord
+from MedicalRecord import MedicalRecord, ATTRIBUTES, BASE_ATTRIBUTES
 
 bp = Blueprint('DataManager', __name__, url_prefix="/api/data")
 
@@ -43,7 +43,7 @@ def welcome() -> str:
 def addRecord():
     data: dict = request.get_json()
 
-    schema: List[str] = ["name"]  # TODO: take from MedicalRecord
+    schema: List[str] = BASE_ATTRIBUTES
 
     if not validateRequestSchema(data, schema):
         return Response(error=True, message="bad request body"), 400
@@ -88,7 +88,29 @@ def deleteRecord(id: int):
     return jsonify(response.toDict()), 200
 
 
+@bp.route("/update", methods=["PATCH"])
+def updateRecord():
+    data: dict = request.get_json()
 
+    schema: List[str] = ATTRIBUTES
+
+    if not validateRequestSchema(data, schema):
+        return Response(error=True, message="bad request body"), 400
+
+    response: Response[bool]
+
+    record: MedicalRecord = MedicalRecord(id=data["id"], name=data["name"])
+
+    try:
+        repository.updateRecord(record)
+        response = Response()
+    except Exception as err:
+        response = Response(error=True, message=str(err))
+        app.log_exception(err)
+
+    return jsonify(response.toDict()), 200
+    
+    
 
 
 
