@@ -3,9 +3,9 @@ from Extensions import db
 
 class MedicalRecord(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
-    name: str = db.Column(db.String(20), unique=False, nullable=False)
+    name: int = db.Column(db.String(20), unique=False, nullable=False)
 
-    def __init__(self, name: str, id: int = -1):
+    def __init__(self, name: int, id: int = -1):
         super().__init__()
         self.id = id
         self.name = name
