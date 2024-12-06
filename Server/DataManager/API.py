@@ -1,10 +1,10 @@
-from typing import List, Optional
+from typing import List
 from flask import Blueprint, Flask, request, jsonify
 from flask_cors import CORS
 from Extensions import db
 import yaml
 from Response import Response
-from Repository import Repository
+from MedicalRecordService import MedicalRecordService
 
 
 
@@ -28,8 +28,8 @@ from MedicalRecord import MedicalRecord, ATTRIBUTES, BASE_ATTRIBUTES
 
 bp = Blueprint('DataManager', __name__, url_prefix="/api/data")
 
+service: MedicalRecordService = MedicalRecordService()
 
-repository: Repository = Repository()
 
 
 
@@ -51,7 +51,7 @@ def addRecord():
     response: Response[bool]
 
     try:
-        repository.addRecord(data)
+        service.addRecord(data)
         response = Response()
     except Exception as err:
         response = Response(error=True, message=str(err))
@@ -65,7 +65,7 @@ def readRecord(id: int):
     response: Response[MedicalRecord]
 
     try:
-        record: MedicalRecord = repository.getRecordById(id)
+        record: MedicalRecord = service.getRecordById(id)
         response = Response(value=record.toDict())
     except Exception as err:
         response = Response(error=True, message=str(err))
@@ -78,7 +78,7 @@ def deleteRecord(id: int):
     response: Response[MedicalRecord]
 
     try:
-        repository.deleteRecord(id)
+        service.deleteRecord(id)
         response = Response()
     except Exception as err:
         response = Response(error=True, message=str(err))
@@ -97,10 +97,8 @@ def updateRecord():
 
     response: Response[bool]
 
-    record: MedicalRecord = MedicalRecord(id=data["id"], name=data["name"])
-
     try:
-        repository.updateRecord(record)
+        service.updateRecord(data)
         response = Response()
     except Exception as err:
         response = Response(error=True, message=str(err))
@@ -111,7 +109,9 @@ def updateRecord():
     
 @bp.route("/read/all", methods=["GET"])
 def getAllRecords():
-    return jsonify(repository.getAllRecords())
+    dicts: List[dict] = [record.toDict() for record in service.getAllRecords()]
+
+    return jsonify(dicts), 200
 
 
 

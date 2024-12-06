@@ -9,8 +9,9 @@ class Repository:
         self.ids: int = 1
         self.records: Dict[int, MedicalRecord] = defaultdict(lambda: None)
     
-    def addRecord(self, recordDict: dict) -> None:
-        self.records[self.ids] = MedicalRecord(self.ids, recordDict["name"])
+    def addRecord(self, record: MedicalRecord) -> None:
+        record.id = self.ids
+        self.records[self.ids] = record
         self.ids += 1
 
     def getRecordById(self, id: int) -> MedicalRecord:
@@ -34,6 +35,6 @@ class Repository:
         self.records[record.id] = record
 
     def getAllRecords(self) -> List[MedicalRecord]:
-        return [record.toDict() for record in self.records.values()]
+        return self.records.values()
 
 
