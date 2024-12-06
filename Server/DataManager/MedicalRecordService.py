@@ -25,7 +25,5 @@ class MedicalRecordService:
 
     def getAllRecords(self) -> List[MedicalRecord]:
         return self.repository.getAllRecords()
-    
-    # adsad
 
 
