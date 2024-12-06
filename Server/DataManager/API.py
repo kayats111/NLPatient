@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Set
 from flask import Blueprint, Flask, request, jsonify
 from flask_cors import CORS
 from Extensions import db
@@ -43,7 +43,7 @@ def welcome() -> str:
 def addRecord():
     data: dict = request.get_json()
 
-    schema: List[str] = BASE_ATTRIBUTES
+    schema: Set[str] = BASE_ATTRIBUTES
 
     if not validateRequestSchema(data, schema):
         return Response(error=True, message="bad request body"), 400
@@ -90,7 +90,7 @@ def deleteRecord(id: int):
 def updateRecord():
     data: dict = request.get_json()
 
-    schema: List[str] = ATTRIBUTES
+    schema: Set[str] = ATTRIBUTES
 
     if not validateRequestSchema(data, schema):
         return Response(error=True, message="bad request body"), 400
@@ -107,18 +107,39 @@ def updateRecord():
     return jsonify(response.toDict()), 200
     
     
-@bp.route("/read/all", methods=["GET"])
+@bp.route("/read/all/record", methods=["GET"])
 def getAllRecords():
     dicts: List[dict] = [record.toDict() for record in service.getAllRecords()]
 
     return jsonify(dicts), 200
 
 
+# can divide to train
+@bp.route("/read/fields/record", methods=["GET"])
+def getWithFields():
+    data: dict = request.get_json()
+
+    schema: Set[str] = {"fields"}
+
+    if not validateRequestSchema(data, schema):
+        return Response(error=True, message="bad request body"), 400
+    
+    response: Response[List[dict]]
+
+    try:
+        records: List[dict] = service.getWithFields(data["fields"])
+        response = Response(value=records)
+    except Exception as err:
+        response = Response(error=True, message=str(err))
+        app.log_exception(err)
+
+    return jsonify(response.toDict())
 
 
 
 
-def validateRequestSchema(request: dict, schema: List[str]) -> bool:
+
+def validateRequestSchema(request: dict, schema: Set[str]) -> bool:
     for field in schema:
         if field not in request:
             return False

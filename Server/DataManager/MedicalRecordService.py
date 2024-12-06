@@ -1,6 +1,6 @@
-from typing import List
+from typing import List, Set
 from Repository import Repository
-from MedicalRecord import MedicalRecord
+from MedicalRecord import ATTRIBUTES, MedicalRecord
 
 
 class MedicalRecordService:
@@ -25,5 +25,20 @@ class MedicalRecordService:
 
     def getAllRecords(self) -> List[MedicalRecord]:
         return self.repository.getAllRecords()
+    
+    def getWithFields(self, fields: List[str]) -> List[dict]:
+        for field in fields:
+            if field not in ATTRIBUTES:
+                raise Exception(f"the field '{field}' in not a medical record field")
+            
+        fieldSet: Set[str] = set(fields)
+
+        records: List[MedicalRecord] = self.repository.getAllRecords()
+        dicts: List[dict] = [{field: value for field, value in record.toDict().items() if field in fieldSet}
+                             for record in records]
+
+        return dicts
+
+
 
 
