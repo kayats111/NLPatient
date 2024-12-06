@@ -1,4 +1,4 @@
-from typing import List
+from typing import Set
 from Extensions import db
 
 class MedicalRecord(db.Model):
@@ -16,8 +16,8 @@ class MedicalRecord(db.Model):
             "name": self.name
         }
     
-ATTRIBUTES: List[str] = ["id", "name"]
-BASE_ATTRIBUTES: List[str] = ["name"]
+ATTRIBUTES: Set[str] = {"id", "name"}
+BASE_ATTRIBUTES: Set[str] = {"name"}
     
 
 
