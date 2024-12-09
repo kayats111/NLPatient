@@ -43,7 +43,7 @@ def welcome() -> str:
 def addRecord():
     data: dict = request.get_json()
 
-    schema: Set[str] = BASE_ATTRIBUTES
+    schema: Set[str] = set(BASE_ATTRIBUTES)
 
     if not validateRequestSchema(data, schema):
         return Response(error=True, message="bad request body"), 400
@@ -90,7 +90,7 @@ def deleteRecord(id: int):
 def updateRecord():
     data: dict = request.get_json()
 
-    schema: Set[str] = ATTRIBUTES
+    schema: Set[str] = set(ATTRIBUTES)
 
     if not validateRequestSchema(data, schema):
         return Response(error=True, message="bad request body"), 400
@@ -107,7 +107,7 @@ def updateRecord():
     return jsonify(response.toDict()), 200
     
     
-@bp.route("/read/all/record", methods=["GET"])
+@bp.route("/read/records/all", methods=["GET"])
 def getAllRecords():
     dicts: List[dict] = [record.toDict() for record in service.getAllRecords()]
 
@@ -115,7 +115,7 @@ def getAllRecords():
 
 
 # can divide to train
-@bp.route("/read/fields/record", methods=["GET"])
+@bp.route("/read/records/fields", methods=["GET"])
 def getWithFields():
     data: dict = request.get_json()
 
@@ -136,6 +136,26 @@ def getWithFields():
     return jsonify(response.toDict())
 
 
+@bp.route("/read/vectors", methods=["GET"])
+def getVectors():
+    data: dict = request.get_json()
+
+    response: Response[List[List[int]]]
+
+    try:
+        vectors: List[List[int]]
+
+        if "fields" in data:
+            vectors = service.getVectors(fields=data["fields"])
+        else: 
+            vectors = service.getVectors()
+        
+        response = Response(value=vectors)
+    except Exception as err:
+        response = Response(error=True, message=str(err))
+        app.log_exception(err)
+
+    return jsonify(response.toDict())
 
 
 

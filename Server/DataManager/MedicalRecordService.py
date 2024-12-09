@@ -1,6 +1,6 @@
 from typing import List, Set
 from Repository import Repository
-from MedicalRecord import ATTRIBUTES, MedicalRecord
+from MedicalRecord import ATTRIBUTES, BASE_ATTRIBUTES, MedicalRecord
 
 
 class MedicalRecordService:
@@ -27,8 +27,10 @@ class MedicalRecordService:
         return self.repository.getAllRecords()
     
     def getWithFields(self, fields: List[str]) -> List[dict]:
+        att: Set[str] = set(ATTRIBUTES)
+
         for field in fields:
-            if field not in ATTRIBUTES:
+            if field not in att:
                 raise Exception(f"the field '{field}' in not a medical record field")
             
         fieldSet: Set[str] = set(fields)
@@ -38,6 +40,25 @@ class MedicalRecordService:
                              for record in records]
 
         return dicts
+    
+    def getVectors(self, fields: List[str] = BASE_ATTRIBUTES) -> List[List[int]]:
+        if fields is not BASE_ATTRIBUTES:
+            att: Set[str] = set(BASE_ATTRIBUTES)
+
+            for field in fields:
+                if field not in att:
+                    raise Exception(f"the field '{field}' in not a medical record field")
+
+        records: List[MedicalRecord] = self.repository.getAllRecords()
+
+        dicts: List[dict] = [record.toDict() for record in records]
+
+        vectors: List[List[int]] = [self.dictToVector(d=d, fields=fields) for d in dicts]
+
+        return vectors
+
+    def dictToVector(self, d: dict, fields: List[str]) -> List[int]:
+        return [d[field] for field in fields]
 
 
 
