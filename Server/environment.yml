@@ -10,3 +10,4 @@ dependencies:
   - flask-cors
   - pyyaml
   - pymysql
+  - cryptography
