@@ -19,7 +19,8 @@ class MedicalRecordService:
         self.repository.deleteRecord(id)
 
     def updateRecord(self, data: dict) -> None:
-        record: MedicalRecord = MedicalRecord(id=data["id"], name=data["name"])
+        record: MedicalRecord = MedicalRecord(name=data["name"])
+        record.id = data["id"]
 
         self.repository.updateRecord(record)
 
