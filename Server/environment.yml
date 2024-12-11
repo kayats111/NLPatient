@@ -1,0 +1,13 @@
+name: nlpatient
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python == 3.11
+  - flask
+  - flask-sqlalchemy
+  - flask-cors
+  - pyyaml
+  - pymysql
+  - cryptography
