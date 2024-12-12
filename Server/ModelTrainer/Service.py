@@ -1,4 +1,6 @@
 import os
+import pickle
+from torch import save
 from typing import List
 
 SAVED_FOLDER: str = "SavedModels"
@@ -38,6 +40,21 @@ class Service:
             raise Exception(f"the model {modelName} does not exist")
         
         os.remove(filePath)
+
+    # NOTE: not for API use, but after training the model (lambda?)
+    # TODO: check after model training
+    def addTrainedModel(self, model, modelName, isScikit=False, isPyTorch=False) -> None:
+        if isScikit:
+            with open(os.path.join(TRAINED_FOLDER, modelName + ".pkl"),'wb') as f:
+                pickle.dump(model, f)
+            return
+        
+        if isPyTorch:
+            save(model, os.path.join(TRAINED_FOLDER, modelName + ".pth"))
+            return
+    
+
+
 
 
 

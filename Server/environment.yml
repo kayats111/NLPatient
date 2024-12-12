@@ -11,3 +11,4 @@ dependencies:
   - pyyaml
   - pymysql
   - cryptography
+  - pytorch
