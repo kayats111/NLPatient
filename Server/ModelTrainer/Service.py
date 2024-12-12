@@ -18,7 +18,7 @@ class Service:
 
         # TODO: change to save in something destributed
         
-    def getModel(self, modelName: str):
+    def getModelFile(self, modelName: str):
         filePath = os.path.join(SAVED_FOLDER, modelName + ".py")
 
         if not os.path.isfile(filePath):
@@ -31,8 +31,21 @@ class Service:
 
         return models
     
+    def removeModelFile(self, modelName: str) -> None:
+        filePath = os.path.join(SAVED_FOLDER, modelName + ".py")
+
+        if not os.path.isfile(filePath):
+            raise Exception(f"the model {modelName} does not exist")
+        
+        os.remove(filePath)
 
 
+
+# service: Service = Service()
+# file = open("Service.py", "r")
+
+# # service.addModel(file)
+# service.removeModelFile("Service")
 
 
 
