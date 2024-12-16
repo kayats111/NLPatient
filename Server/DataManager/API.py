@@ -143,7 +143,7 @@ def getVectors():
     response: Response[dict]
 
     try:
-        vectors: List[List[int]]
+        vectors: List[List[float]]
 
         if "fields" in data:
             vectors = service.getVectors(fields=data["fields"])

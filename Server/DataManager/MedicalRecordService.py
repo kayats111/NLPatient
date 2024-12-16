@@ -42,7 +42,7 @@ class MedicalRecordService:
 
         return dicts
     
-    def getVectors(self, fields: List[str] = BASE_ATTRIBUTES) -> List[List[int]]:
+    def getVectors(self, fields: List[str] = BASE_ATTRIBUTES) -> List[List[float]]:
         if fields is not BASE_ATTRIBUTES:
             att: Set[str] = set(BASE_ATTRIBUTES)
 
@@ -54,7 +54,7 @@ class MedicalRecordService:
 
         dicts: List[dict] = [record.toDict() for record in records]
 
-        vectors: List[List[int]] = [self.dictToVector(d=d, fields=fields) for d in dicts]
+        vectors: List[List[float]] = [self.dictToVector(d=d, fields=fields) for d in dicts]
 
         return vectors
 
