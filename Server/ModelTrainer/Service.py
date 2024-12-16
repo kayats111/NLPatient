@@ -41,6 +41,19 @@ class Service:
         
         os.remove(filePath)
 
+    def runModel(self, modelName: str) -> dict:
+        exec()
+
+
+
+
+
+
+
+
+
+
+    
     # NOTE: not for API use, but after training the model (lambda?)
     # TODO: check after model training
     def addTrainedModel(self, model, modelName, isScikit=False, isPyTorch=False) -> None:
@@ -53,6 +66,9 @@ class Service:
             save(model, os.path.join(TRAINED_FOLDER, modelName + ".pth"))
             return
     
+    
+
+
 
 
 

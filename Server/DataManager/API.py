@@ -140,7 +140,7 @@ def getWithFields():
 def getVectors():
     data: dict = request.get_json()
 
-    response: Response[List[List[int]]]
+    response: Response[dict]
 
     try:
         vectors: List[List[int]]
@@ -150,7 +150,14 @@ def getVectors():
         else: 
             vectors = service.getVectors()
         
-        response = Response(value=vectors)
+        
+        toReturn: dict = {
+            "vectors": vectors,
+            "fields": data["fields"] if "fields" in data else BASE_ATTRIBUTES
+        }
+
+
+        response = Response(value=toReturn)
     except Exception as err:
         response = Response(error=True, message=str(err))
         app.log_exception(err)
