@@ -22,8 +22,8 @@ class MedicalRecord(db.Model):
             "name": self.name
         }
     
-ATTRIBUTES: List[str] = {"id", "name"}
-BASE_ATTRIBUTES: List[str] = {"name"}
+ATTRIBUTES: List[str] = ["id", "name"]
+BASE_ATTRIBUTES: List[str] = ["name"]
     
 
 
