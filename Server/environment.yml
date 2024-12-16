@@ -12,3 +12,5 @@ dependencies:
   - pymysql
   - cryptography
   - pytorch
+  - scikit-learn
+  - numpy
