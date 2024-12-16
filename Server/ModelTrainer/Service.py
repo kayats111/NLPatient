@@ -2,6 +2,12 @@ import os
 import pickle
 from torch import save
 from typing import List
+from Response import Response
+import numpy as np
+import requests
+import json
+
+
 
 SAVED_FOLDER: str = "SavedModels"
 TRAINED_FOLDER: str = "TrainedModels"
@@ -41,22 +47,61 @@ class Service:
         
         os.remove(filePath)
 
-    def runModel(self, modelName: str) -> dict:
-        exec()
+    def runModel(self, modelName: str, fields: List[str] = None) -> dict:
+        module = __import__(modelName)
 
+        if not hasattr(module, "run"):
+            raise Exception(f"{modelName} has no run function")
+        
+        run = getattr(module, "run")
+        
+        response: Response[dict]  # fetch
+        headers = {"Content-Type": "application/json"}
+        url = "http://localhost:3000/api/data/read/vectors"
+        body: dict = {}
 
-
-
-
-
-
-
-
-
+        if fields is not None:
+            body = {"fields": fields}
     
+        apiResponse = requests.get(url=url, json=body, headers=headers)
+        
+        if apiResponse.status_code != 200:
+            raise Exception("cannot fetch data")
+        
+        jj = apiResponse.json()
+        response = Response(value=jj["value"], error=jj["error"], message=jj["message"])
+
+        print(response)
+        print(type(response))
+
+        if response.error:
+            raise Exception(response.message)
+        
+        vectors = np.array(response.value["vectors"])
+        
+        if fields is None:
+            # all fields
+            fields = response.value["fields"]
+
+
+        result: dict = run(vectors, fields)
+
+        if "model" not in result or "isScikit" not in result or "isPyTorch" not in result:
+            raise Exception("the module did not returned the model or whether its Scikit or PyTorch")
+
+        self.addTrainedModel(model=result["model"], modelName=modelName,
+                             isScikit=result["isScikit"], isPyTorch=result["isPyTorch"])
+        
+        metaData:dict = self.addMetaData(modelName=modelName, result=result)
+
+        return metaData
+
+
+
+
     # NOTE: not for API use, but after training the model (lambda?)
     # TODO: check after model training
-    def addTrainedModel(self, model, modelName, isScikit=False, isPyTorch=False) -> None:
+    def addTrainedModel(self, model, modelName: str, isScikit: bool=False, isPyTorch: bool=False) -> None:
         if isScikit:
             with open(os.path.join(TRAINED_FOLDER, modelName + ".pkl"),'wb') as f:
                 pickle.dump(model, f)
@@ -65,25 +110,12 @@ class Service:
         if isPyTorch:
             save(model, os.path.join(TRAINED_FOLDER, modelName + ".pth"))
             return
+        
+    def addMetaData(self, modelName: str, result: dict) -> dict:
+        # TODO: save and return the meta-data
+        pass
     
     
-
-
-
-
-
-
-
-# service: Service = Service()
-# file = open("Service.py", "r")
-
-# # service.addModel(file)
-# service.removeModelFile("Service")
-
-
-
-
-
 
 
 
@@ -92,6 +124,14 @@ class Service:
 
 
 service: Service = Service()
+# file = open("Service.py", "r")
+
+# # service.addModel(file)
+# service.removeModelFile("Service")
+
+service.runModel("LearnTemplate")
+
+
 
 
 

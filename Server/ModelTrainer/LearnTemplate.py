@@ -15,6 +15,7 @@ def run(data: NDArray, fields: List[str]) -> dict:
     Returns:
         dict: A dict that includes any data to save.
         Must include the trained model in "model" entry.
+        Must include 'isScikit' and 'isPyTorch' flags.
 
     """
 
@@ -22,7 +23,10 @@ def run(data: NDArray, fields: List[str]) -> dict:
     testRes: float = test(data)
 
     return {
-        "model": None,  # DO NOT return None in your actual code 
+        "model": None,  # DO NOT return None in your actual code
+        "isScikit": True,
+        "isPyTorch": False,
+        # NOTE: from here its meta-data 
         "train result": trainRes,
         "test result": testRes,
         "additional inforamation": "you may add any additional information",
