@@ -23,7 +23,7 @@ def run(data: NDArray, fields: List[str]) -> dict:
     testRes: float = test(data)
 
     return {
-        "model": None,  # DO NOT return None in your actual code
+        "model": ["just an example, send a model instead"],
         "isScikit": True,
         "isPyTorch": False,
         # NOTE: from here its meta-data 

@@ -162,3 +162,5 @@ cython_debug/
 #.idea/
 
 DataManager/conf.yaml
+ModelTrainer/SavedModels
+ModelTrainer/TrainedModels
