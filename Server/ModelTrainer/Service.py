@@ -5,7 +5,8 @@ from typing import List
 from Response import Response
 import numpy as np
 import requests
-import json
+
+from MetaDataRepository import MetaDataRepository
 
 
 
@@ -17,6 +18,8 @@ class Service:
     def __init__(self):
         os.makedirs(SAVED_FOLDER, exist_ok=True)
         os.makedirs(TRAINED_FOLDER, exist_ok=True)
+
+        self.metaRepository: MetaDataRepository = MetaDataRepository()
 
     def addModel(self, modelFile) -> None:
         filePath = os.path.join(SAVED_FOLDER, modelFile.name)
@@ -96,9 +99,6 @@ class Service:
 
         return metaData
 
-
-
-
     # NOTE: not for API use, but after training the model (lambda?)
     # TODO: check after model training
     def addTrainedModel(self, model, modelName: str, isScikit: bool=False, isPyTorch: bool=False) -> None:
@@ -112,8 +112,12 @@ class Service:
             return
         
     def addMetaData(self, modelName: str, result: dict) -> dict:
-        # TODO: save and return the meta-data
-        pass
+        metaData: dict = result.copy()
+
+        metaData.pop("model")
+        metaData["model name"] = modelName
+
+        self.metaRepository.addMetaData(metaData)
     
     
 

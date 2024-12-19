@@ -30,7 +30,8 @@ def run(data: NDArray, fields: List[str]) -> dict:
         "train result": trainRes,
         "test result": testRes,
         "additional inforamation": "you may add any additional information",
-        "additional information 2": "you may add any additional information"
+        "additional information 2": "you may add any additional information",
+        "additional information 3": "you may add any additional information"
     }
 
 def train(data) -> float:
