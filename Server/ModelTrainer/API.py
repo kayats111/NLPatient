@@ -1,5 +1,5 @@
 from typing import Set
-from flask import Blueprint, Flask, request, jsonify
+from flask import Blueprint, Flask, request, jsonify, send_file
 from flask_cors import CORS
 from Response import Response
 from Service import Service
@@ -26,7 +26,7 @@ def welcome() -> str:
     return "Welcome"
 
 
-@bp.route("/add", methods=["POST"])
+@bp.route("/add_model", methods=["POST"])
 def addModel():
 
     print(request.files.keys())
@@ -47,6 +47,27 @@ def addModel():
 
     return jsonify(response.toDict())
 
+
+@bp.route("/get_model", methods=["GET"])
+def getModel():
+    data: dict = request.get_json()
+
+    schema: Set[str] = {"model name"}
+
+    if not validateRequestSchema(data, schema):
+        return Response(error=True, message="bad request body"), 400
+    
+    response: Response
+
+    try:
+        # f = service.getModelFile(data["model name"])
+        # return f
+        path = service.getModelPath(data["model name"])
+        return send_file(path, as_attachment=True)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+        return jsonify(response.toDict())
 
 
 

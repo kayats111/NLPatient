@@ -43,6 +43,11 @@ class Service:
             raise Exception(f"the model {modelName} does not exist")
         
         return open(filePath, "r")
+    
+    def getModelPath(self, modelName: str) -> str:
+        filePath = os.path.join(SAVED_FOLDER, modelName + ".py")
+
+        return filePath
         
     def getModelNames(self) -> List[str]:
         models: List[str] = [file.split(".")[0] for file in os.listdir(SAVED_FOLDER) if os.path.isfile(os.path.join(SAVED_FOLDER, file))]
