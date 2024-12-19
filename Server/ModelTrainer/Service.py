@@ -24,15 +24,15 @@ class Service:
 
     def addModel(self, modelFile) -> None:
         modelNames: List[str] = self.getModelNames()
-        tempName: str = modelFile.name.split(".")[0]
+        tempName: str = modelFile.filename.split(".")[0]
 
         if tempName in modelNames:
             raise Exception("a model with the same name already exists")
 
-        filePath = os.path.join(SAVED_FOLDER, modelFile.name)
+        filePath = os.path.join(SAVED_FOLDER, modelFile.filename)
 
         with open(filePath, "w") as f:
-            f.write(modelFile.read())
+            f.write(modelFile.read().decode("utf-8"))
 
         # TODO: change to save in something destributed
         

@@ -26,6 +26,28 @@ def welcome() -> str:
     return "Welcome"
 
 
+@bp.route("/add", methods=["POST"])
+def addModel():
+
+    print(request.files.keys())
+
+    if "model file" not in request.files:
+        return jsonify(Response(error=True, message="no model file").toDict()), 400
+
+    file = request.files["model file"]
+    
+    response: Response[bool]
+
+    try:
+        service.addModel(file)
+        response = Response(value=True)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+
+    return jsonify(response.toDict())
+
+
 
 
 
