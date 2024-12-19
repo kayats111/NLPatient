@@ -22,6 +22,12 @@ class Service:
         self.metaRepository: MetaDataRepository = MetaDataRepository()
 
     def addModel(self, modelFile) -> None:
+        modelNames: List[str] = self.getModelNames()
+        tempName: str = modelFile.name.split(".")[0]
+
+        if tempName in modelNames:
+            raise Exception("a model with the same name already exists")
+
         filePath = os.path.join(SAVED_FOLDER, modelFile.name)
 
         with open(filePath, "w") as f:
@@ -37,7 +43,7 @@ class Service:
         
         return open(filePath, "r")
         
-    def getModelsNames(self) -> List[str]:
+    def getModelNames(self) -> List[str]:
         models: List[str] = [file.split(".")[0] for file in os.listdir(SAVED_FOLDER) if os.path.isfile(os.path.join(SAVED_FOLDER, file))]
 
         return models
