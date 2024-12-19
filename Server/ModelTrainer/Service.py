@@ -12,6 +12,7 @@ from MetaDataRepository import MetaDataRepository
 
 SAVED_FOLDER: str = "SavedModels"
 TRAINED_FOLDER: str = "TrainedModels"
+TEMPLATE_PATH: str = "LearnTemplate.py"
 
 class Service:
 
@@ -80,9 +81,6 @@ class Service:
         jj = apiResponse.json()
         response = Response(value=jj["value"], error=jj["error"], message=jj["message"])
 
-        print(response)
-        print(type(response))
-
         if response.error:
             raise Exception(response.message)
         
@@ -127,21 +125,12 @@ class Service:
 
         self.metaRepository.addMetaData(metaData)
     
+    def getTemplate(self):
+        return open(TEMPLATE_PATH, "r")
     
 
 
 
-
-
-
-
-service: Service = Service()
-# file = open("Service.py", "r")
-
-# # service.addModel(file)
-# service.removeModelFile("Service")
-
-service.runModel("LearnTemplate")
 
 
 
