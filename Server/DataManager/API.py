@@ -15,6 +15,7 @@ user = conf["DB"]["user"]
 password = conf["DB"]["password"]
 host = conf["DB"]["host"]
 db_name = conf["DB"]["name"]
+port = conf["API"]["port"]
 
 app: Flask = Flask(__name__)
 
@@ -185,6 +186,6 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
-    app.run(debug=True, port=3000)
+    app.run(debug=True, port=port)
 
     
