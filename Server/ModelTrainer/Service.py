@@ -110,7 +110,9 @@ class Service:
         if isPyTorch:
             save(model, os.path.join(TRAINED_FOLDER, modelName + ".pth"))
             return
-        
+
+    # NOTE: not for API use, but after training the model (lambda?)
+    # TODO: check after model training    
     def addMetaData(self, modelName: str, result: dict) -> dict:
         metaData: dict = result.copy()
 
