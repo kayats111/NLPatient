@@ -112,7 +112,7 @@ class Service:
         self.addTrainedModel(model=result["model"], modelName=modelName,
                              isScikit=result["isScikit"], isPyTorch=result["isPyTorch"])
         
-        metaData: dict = self.addMetaData(modelName=modelName, result=result)
+        metaData: dict = self.addMetaData(modelName=modelName, result=result, fields=fields)
 
         return metaData
 
@@ -130,11 +130,12 @@ class Service:
 
     # NOTE: not for API use, but after training the model (lambda?)
     # TODO: check after model training    
-    def addMetaData(self, modelName: str, result: dict) -> dict:
+    def addMetaData(self, modelName: str, result: dict, fields: List[str]) -> dict:
         metaData: dict = result.copy()
 
         metaData.pop("model")
         metaData["model name"] = modelName
+        metaData["fields"] = fields
 
         self.metaRepository.addMetaData(metaData)
     
