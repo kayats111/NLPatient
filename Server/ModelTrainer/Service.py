@@ -104,7 +104,7 @@ class Service:
         self.addTrainedModel(model=result["model"], modelName=modelName,
                              isScikit=result["isScikit"], isPyTorch=result["isPyTorch"])
         
-        metaData:dict = self.addMetaData(modelName=modelName, result=result)
+        metaData: dict = self.addMetaData(modelName=modelName, result=result)
 
         return metaData
 

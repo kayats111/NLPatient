@@ -1,4 +1,4 @@
-from typing import Set
+from typing import List, Set
 from flask import Blueprint, Flask, request, jsonify, send_file
 from flask_cors import CORS
 from Response import Response
@@ -55,20 +55,68 @@ def getModel():
     schema: Set[str] = {"model name"}
 
     if not validateRequestSchema(data, schema):
-        return Response(error=True, message="bad request body"), 400
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
     
     response: Response
 
     try:
-        # f = service.getModelFile(data["model name"])
-        # return f
         path = service.getModelPath(data["model name"])
         return send_file(path, as_attachment=True)
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
         return jsonify(response.toDict())
+    
 
+@bp.route("/get_names", methods=["GET"])
+def getModelNames():
+    names: List[str] = service.getModelNames()
+    return jsonify(Response(value=names).toDict())
+
+
+@bp.route("/delete_model", methods=["DELETE"])
+def deleteModelFile():
+    data: dict = request.get_json()
+
+    schema: Set[str] = {"model name"}
+
+    if not validateRequestSchema(data, schema):
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
+    
+    response: Response[bool]
+
+    try:
+        service.removeModelFile(data["model name"])
+        response = Response(value=True)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+    
+    return jsonify(response.toDict())
+
+@bp.route("/run_model", methods=["GET"])
+def runModel():
+    data: dict = request.get_json()
+
+    if "model name" not in data:
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
+    
+    response: Response[dict]
+
+    try:
+        metaData: dict
+
+        if "fields" in data:
+            metaData = service.runModel(data["model name"], data["fields"])
+        else:
+            metaData = service.runModel(data["model name"])
+
+        response = Response(value=metaData)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+
+    return jsonify(response.toDict())
 
 
 

@@ -47,7 +47,7 @@ def addRecord():
     schema: Set[str] = set(BASE_ATTRIBUTES)
 
     if not validateRequestSchema(data, schema):
-        return Response(error=True, message="bad request body"), 400
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
 
     response: Response[bool]
 
@@ -94,7 +94,7 @@ def updateRecord():
     schema: Set[str] = set(ATTRIBUTES)
 
     if not validateRequestSchema(data, schema):
-        return Response(error=True, message="bad request body"), 400
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
 
     response: Response[bool]
 
@@ -123,7 +123,7 @@ def getWithFields():
     schema: Set[str] = {"fields"}
 
     if not validateRequestSchema(data, schema):
-        return Response(error=True, message="bad request body"), 400
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
     
     response: Response[List[dict]]
 
