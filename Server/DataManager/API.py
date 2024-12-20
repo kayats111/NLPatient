@@ -15,6 +15,7 @@ user = conf["DB"]["user"]
 password = conf["DB"]["password"]
 host = conf["DB"]["host"]
 db_name = conf["DB"]["name"]
+port = conf["API"]["port"]
 
 app: Flask = Flask(__name__)
 
@@ -46,7 +47,7 @@ def addRecord():
     schema: Set[str] = set(BASE_ATTRIBUTES)
 
     if not validateRequestSchema(data, schema):
-        return Response(error=True, message="bad request body"), 400
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
 
     response: Response[bool]
 
@@ -93,7 +94,7 @@ def updateRecord():
     schema: Set[str] = set(ATTRIBUTES)
 
     if not validateRequestSchema(data, schema):
-        return Response(error=True, message="bad request body"), 400
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
 
     response: Response[bool]
 
@@ -122,7 +123,7 @@ def getWithFields():
     schema: Set[str] = {"fields"}
 
     if not validateRequestSchema(data, schema):
-        return Response(error=True, message="bad request body"), 400
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
     
     response: Response[List[dict]]
 
@@ -140,17 +141,24 @@ def getWithFields():
 def getVectors():
     data: dict = request.get_json()
 
-    response: Response[List[List[int]]]
+    response: Response[dict]
 
     try:
-        vectors: List[List[int]]
+        vectors: List[List[float]]
 
         if "fields" in data:
             vectors = service.getVectors(fields=data["fields"])
         else: 
             vectors = service.getVectors()
         
-        response = Response(value=vectors)
+        
+        toReturn: dict = {
+            "vectors": vectors,
+            "fields": data["fields"] if "fields" in data else BASE_ATTRIBUTES
+        }
+
+
+        response = Response(value=toReturn)
     except Exception as err:
         response = Response(error=True, message=str(err))
         app.log_exception(err)
@@ -178,6 +186,6 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
-    app.run(debug=True, port=3000)
+    app.run(debug=True, port=port)
 
     

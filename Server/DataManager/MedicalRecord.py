@@ -3,7 +3,7 @@ from Extensions import db
 
 class MedicalRecord(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
-    name: int = db.Column(db.String(20), unique=False, nullable=False)
+    name: float = db.Column(db.Float, unique=False, nullable=False)
 
     def __init__(self, name: int):
         super().__init__()
@@ -22,8 +22,8 @@ class MedicalRecord(db.Model):
             "name": self.name
         }
     
-ATTRIBUTES: List[str] = {"id", "name"}
-BASE_ATTRIBUTES: List[str] = {"name"}
+ATTRIBUTES: List[str] = ["id", "name"]
+BASE_ATTRIBUTES: List[str] = ["name"]
     
 
 

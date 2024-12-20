@@ -11,3 +11,8 @@ dependencies:
   - pyyaml
   - pymysql
   - cryptography
+  - pytorch
+  - scikit-learn
+  - numpy
+  - requests
+  - pymongo
