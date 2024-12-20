@@ -5,6 +5,7 @@ from typing import List
 from Response import Response
 import numpy as np
 import requests
+from importlib import import_module
 
 from MetaDataRepository import MetaDataRepository
 
@@ -63,7 +64,14 @@ class Service:
         os.remove(filePath)
 
     def runModel(self, modelName: str, fields: List[str] = None) -> dict:
-        module = __import__(modelName)
+        filePath = os.path.join(SAVED_FOLDER, modelName + ".py")
+
+        if not os.path.isfile(filePath):
+            raise Exception(f"the model {modelName} does not exist")
+
+        moduleName: str = SAVED_FOLDER + "." + modelName
+
+        module = import_module(moduleName)
 
         if not hasattr(module, "run"):
             raise Exception(f"{modelName} has no run function")
