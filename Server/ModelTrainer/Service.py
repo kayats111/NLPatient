@@ -138,8 +138,8 @@ class Service:
 
         self.metaRepository.addMetaData(metaData)
     
-    def getTemplate(self):
-        return open(TEMPLATE_PATH, "r")
+    def getTemplatePath(self):
+        return TEMPLATE_PATH
     
 
 

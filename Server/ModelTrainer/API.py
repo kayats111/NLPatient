@@ -94,6 +94,7 @@ def deleteModelFile():
     
     return jsonify(response.toDict())
 
+
 @bp.route("/run_model", methods=["GET"])
 def runModel():
     data: dict = request.get_json()
@@ -118,6 +119,18 @@ def runModel():
 
     return jsonify(response.toDict())
 
+
+@bp.route("/template", methods=["GET"])
+def getTemplate():
+    response: Response
+
+    try:
+        path = service.getTemplatePath()
+        return send_file(path, as_attachment=True)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+        return jsonify(response.toDict())
 
 
 
