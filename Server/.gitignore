@@ -165,5 +165,7 @@ DataManager/conf.yaml
 ModelTrainer/SavedModels
 ModelTrainer/TrainedModels
 ModelTrainer/conf.yaml
+Classifiers/conf.yaml
+Classifiers/TrainedModels
 
 
