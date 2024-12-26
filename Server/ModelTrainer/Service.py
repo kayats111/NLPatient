@@ -137,6 +137,8 @@ class Service:
         metaData["model name"] = modelName
         metaData["fields"] = fields
 
+        return metaData
+
         self.metaRepository.addMetaData(metaData)
     
     def getTemplatePath(self):

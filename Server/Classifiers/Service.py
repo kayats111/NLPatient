@@ -20,8 +20,7 @@ class Service:
     
     def isClassifierExists(self, name: str) -> bool:
         return self.getMetaData(name) is not None
-
-    
+   
     def getClassifierPath(self, name: str) -> str:
         if not self.isClassifierExists(name):
             raise Exception(f"the classifier {name} does not exists")
@@ -43,8 +42,6 @@ class Service:
         
         os.remove(filePath)
         self.repository.removeMetaData(name)
-        
-
         
     def getMetaData(self, name: str) -> dict:
         return self.repository.getMetaData(name)
