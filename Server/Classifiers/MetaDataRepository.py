@@ -16,13 +16,16 @@ class MetaDataRepository:
 
         self.metaCollection = db.MetaData
 
-    def getMetaData(self, classifierName: str):
+    def getMetaData(self, classifierName: str) -> dict:
         return self.metaCollection.find_one({"model name" : classifierName})
     
     def getClassifiersNames(self) -> List[str]:
         clsDicts = self.metaCollection.find({}, {"_id": 0, "model name": 1})
 
         return [cls["model name"] for cls in clsDicts]
+    
+    def removeMetaData(self, classifierName: str) -> None:
+        self.metaCollection.delete_one({"model name": classifierName})
 
 
 
