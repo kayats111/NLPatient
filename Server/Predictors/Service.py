@@ -15,23 +15,23 @@ class Service:
 
         self.repository: MetaDataRepository = MetaDataRepository()
 
-    def getClassifierNames(self) -> List[str]:
-        return self.repository.getClassifiersNames()
+    def getPredictorNames(self) -> List[str]:
+        return self.repository.getPredictorNames()
     
-    def isClassifierExists(self, name: str) -> bool:
+    def isPredictorExists(self, name: str) -> bool:
         return self.getMetaData(name) is not None
    
-    def getClassifierPath(self, name: str) -> str:
-        if not self.isClassifierExists(name):
-            raise Exception(f"the classifier {name} does not exists")
+    def getPredictorPath(self, name: str) -> str:
+        if not self.isPredictorExists(name):
+            raise Exception(f"the predictor {name} does not exists")
 
         filePath = os.path.join(TRAINED_FOLDER, name + ".py")
 
         return filePath
     
-    def deleteClassifier(self, name: str) -> None:
-        if not self.isClassifierExists(name):
-            raise Exception(f"the classifier {name} does not exists")
+    def deletePredictor(self, name: str) -> None:
+        if not self.isPredictorExists(name):
+            raise Exception(f"the predictor {name} does not exists")
         
         metaData: dict = self.getMetaData(name)
 
@@ -45,6 +45,8 @@ class Service:
         
     def getMetaData(self, name: str) -> dict:
         return self.repository.getMetaData(name)
+    
+    
 
 
 
