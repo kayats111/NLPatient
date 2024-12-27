@@ -8,15 +8,13 @@ import numpy as np
 
 
 
-TRAINED_FOLDER: str = "TrainedModels"
+TRAINED_FOLDER: str = "../ModelTrainer/TrainedModels"
 SAVED_FOLDER: str = "../ModelTrainer/SavedModels"
 
 
 class Service:
 
     def __init__(self):
-        os.makedirs(TRAINED_FOLDER, exist_ok=True)
-
         self.repository: MetaDataRepository = MetaDataRepository()
 
     def getPredictorNames(self) -> List[str]:
