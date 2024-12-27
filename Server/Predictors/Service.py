@@ -1,6 +1,6 @@
 import os
 from typing import List
-
+import pickle
 from MetaDataRepository import MetaDataRepository
 
 
@@ -46,6 +46,43 @@ class Service:
     def getMetaData(self, name: str) -> dict:
         return self.repository.getMetaData(name)
     
+    def predict(self, predictorName: str, sample: List[float]) -> List[float]:
+        metaData: dict = self.getMetaData(predictorName)
+
+        if metaData is None:
+            raise Exception(f"no predictor named {predictorName}")
+        
+        if len(sample) != len(metaData["fields"]):
+            raise Exception("the given sample does not match the predictor's requirements")
+        
+        prediction: List[str] = []
+
+        if metaData["isScikit"]:
+            prediction = self.predictScikit(predictorName=predictorName, sample=sample)
+        elif metaData["isPyTorch"]:
+            prediction = self.predictPyTorch(predictorName=predictorName, sample=sample)
+
+        return prediction
+        
+    def predictScikit(self, predictorName: str, sample: List[float]) -> List[float]:
+        predictor = self.loadScikit(predictorName=predictorName)
+
+        res = list(predictor.predict(sample)[0])
+
+        return res
+
+    def predictPyTorch(self, predictorName: str, sample: List[float]) -> List[float]:
+        # TODO
+        pass
+
+    def loadScikit(self, predictorName: str):
+        filePath = os.path.join(TRAINED_FOLDER, predictorName + ".pkl")
+        predictor = None
+
+        with open(filePath, "rb") as f:
+            predictor = pickle.load(f)
+
+        return predictor
     
 
 
