@@ -32,6 +32,26 @@ def getPredictorNames() -> List[str]:
     return jsonify(Response(value=service.getPredictorNames()).toDict())
 
 
+@bp.route("/get_predictor", methods=["GET"])
+def getModel():
+    data: dict = request.get_json()
+
+    schema: Set[str] = {"model name"}
+
+    if not validateRequestSchema(data, schema):
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
+    
+    response: Response
+
+    try:
+        path = service.getPredictorPath(data["model name"])
+        return send_file(path, as_attachment=True)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+        return jsonify(response.toDict())
+
+
 
 
 
