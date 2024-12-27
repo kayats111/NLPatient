@@ -125,7 +125,7 @@ class Service:
             return
         
         if isPyTorch:
-            save(model, os.path.join(TRAINED_FOLDER, modelName + ".pth"))
+            save(model.state_dict(), os.path.join(TRAINED_FOLDER, modelName + ".pth"))
             return
 
     # NOTE: not for API use, but after training the model (lambda?)

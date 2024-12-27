@@ -2,10 +2,14 @@ import os
 from typing import List
 import pickle
 from MetaDataRepository import MetaDataRepository
+from importlib import import_module
+import torch
+import numpy as np
 
 
 
 TRAINED_FOLDER: str = "TrainedModels"
+SAVED_FOLDER: str = "../ModelTrainer/SavedModels"
 
 
 class Service:
@@ -72,8 +76,12 @@ class Service:
         return res
 
     def predictPyTorch(self, predictorName: str, sample: List[float]) -> List[float]:
-        # TODO
-        pass
+        predictor = self.loadPyTorch(predictorName=predictorName)
+
+        output = predictor(np.array(sample))
+        predictedLabel = torch.argmax(output, dim=1).item()
+
+        return predictedLabel
 
     def loadScikit(self, predictorName: str):
         filePath = os.path.join(TRAINED_FOLDER, predictorName + ".pkl")
@@ -84,6 +92,28 @@ class Service:
 
         return predictor
     
+    def loadPyTorch(self, predictorName: str):
+        filePath = os.path.join(SAVED_FOLDER, predictorName + ".py")
+
+        if not os.path.isfile(filePath):
+            raise Exception(f"the model {predictorName} does not exist")
+
+        moduleName: str = SAVED_FOLDER + "." + predictorName
+
+        module = import_module(moduleName)
+
+        if not hasattr(module, "createModel"):
+            raise Exception(f"{predictorName} has no createModel function")
+        
+        createModel = getattr(module, "createModel")
+
+        path = filePath = os.path.join(TRAINED_FOLDER, predictorName + ".pth")
+
+        predictor = createModel()
+        predictor.load_state_dict(torch.load(path))
+        predictor.eval()
+
+        return predictor
 
 
 

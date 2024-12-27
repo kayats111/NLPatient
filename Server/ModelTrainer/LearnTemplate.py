@@ -36,6 +36,22 @@ def run(data: NDArray, fields: List[str]) -> dict:
     }
 
 
+def createModel():
+    """
+    This function is mandatory only for PyTorch models.
+    The function should return an empty model using the constructor,
+    for example: return SimpleModel()
+
+    Args:
+        None
+
+    Returns:
+        An empty PyTorch model
+    """
+
+    return None
+
+
 def train(data) -> float:
     """
     This is an example of how you can train your model.
