@@ -1,5 +1,0 @@
-DB:
-  url: mongodb://localhost:27017
-
-API:
- port: 3002
