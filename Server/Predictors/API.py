@@ -27,6 +27,11 @@ def welcome() -> str:
     return "Welcome"
 
 
+@bp.route("/names", methods=["GET"])
+def getPredictorNames() -> List[str]:
+    return jsonify(Response(value=service.getPredictorNames()).toDict())
+
+
 
 
 
