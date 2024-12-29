@@ -73,6 +73,27 @@ def getMetaData():
     return jsonify(response.toDict())
 
 
+@bp.route("/predict", methods=["GET"])
+def predict():
+    data: dict = request.get_json()
+
+    schema: Set[str] = {"model name", "sample"}
+
+    if not validateRequestSchema(data, schema):
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
+    
+    response: Response[List[float]]
+
+    try:
+        prediction: list[float] = service.predict(predictorName=data["model name"], sample=data["sample"])
+        response = Response(value=prediction)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+    
+    return jsonify(response.toDict())
+
+
 
 
 
