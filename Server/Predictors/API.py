@@ -50,6 +50,29 @@ def getPredictor():
         response = Response(error=True, message=str(e))
         app.log_exception(e)
         return jsonify(response.toDict())
+    
+
+@bp.route("/meta_data", methods=["GET"])
+def getMetaData():
+    data: dict = request.get_json()
+
+    schema: Set[str] = {"model name"}
+
+    if not validateRequestSchema(data, schema):
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
+    
+    response: Response[dict]
+
+    metaData: dict = service.getMetaData(name=data["model name"])
+
+    if metaData is None:
+        response = Response(error=True, message=f"{data["model name"]} does not exists")
+    else:
+        response = Response(value=metaData)
+
+    return jsonify(response.toDict())
+
+
 
 
 
