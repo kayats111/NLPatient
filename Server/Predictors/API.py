@@ -66,7 +66,7 @@ def getMetaData():
     metaData: dict = service.getMetaData(name=data["model name"])
 
     if metaData is None:
-        response = Response(error=True, message=f"{data["model name"]} does not exists")
+        response = Response(error=True, message=f"the predictor {data['model name']} does not exists")
     else:
         response = Response(value=metaData)
 
