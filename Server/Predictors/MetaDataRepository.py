@@ -17,7 +17,7 @@ class MetaDataRepository:
         self.metaCollection = db.MetaData
 
     def getMetaData(self, predictorName: str) -> dict:
-        return self.metaCollection.find_one({"model name" : predictorName})
+        return self.metaCollection.find_one({"model name" : predictorName}, {"_id": 0})
     
     def getPredictorNames(self) -> List[str]:
         predDicts = self.metaCollection.find({}, {"_id": 0, "model name": 1})

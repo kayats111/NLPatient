@@ -59,7 +59,8 @@ def getMetaData():
     schema: Set[str] = {"model name"}
 
     if not validateRequestSchema(data, schema):
-        return jsonify(Response(error=True, message="bad request body").toDict()), 400
+        return jsonify((Response(error=True, message="bad request body")).toDict()), 400
+    
     
     response: Response[dict]
 
