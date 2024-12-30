@@ -3,7 +3,10 @@ from Extensions import db
 
 class MedicalRecord(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
-    name: float = db.Column(db.Float, unique=False, nullable=False)
+    field1: float = db.Column(db.Float, unique=False, nullable=False)
+    field2: float = db.Column(db.Float, unique=False, nullable=False)
+    field3: float = db.Column(db.Float, unique=False, nullable=False)
+    field4: float = db.Column(db.Float, unique=False, nullable=False)
 
     def __init__(self, name: int):
         super().__init__()
@@ -19,11 +22,14 @@ class MedicalRecord(db.Model):
     def toDict(self) -> dict:
         return {
             "id": self.id,
-            "name": self.name
+            "field": self.field1,
+            "field": self.field1,
+            "field": self.field3,
+            "field": self.field4
         }
     
-ATTRIBUTES: List[str] = ["id", "name"]
-BASE_ATTRIBUTES: List[str] = ["name"]
+ATTRIBUTES: List[str] = ["id", "field1", "field2", "field3", "field4"]
+BASE_ATTRIBUTES: List[str] = ["field1", "field2", "field3", "field4"]
     
 
 
