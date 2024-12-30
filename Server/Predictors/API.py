@@ -52,6 +52,28 @@ def getPredictor():
         return jsonify(response.toDict())
     
 
+@bp.route("/delete", methods=["DELETE"])
+def deletePredictor():
+    data: dict = request.get_json()
+
+    schema: Set[str] = {"model name"}
+
+    if not validateRequestSchema(data, schema):
+        return jsonify((Response(error=True, message="bad request body")).toDict()), 400
+    
+    response: Response[bool]
+
+    try:
+        service.deletePredictor(name=data["model name"])
+        response = Response(value=True)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+
+    return jsonify(response.toDict())
+
+
+
 @bp.route("/meta_data", methods=["GET"])
 def getMetaData():
     data: dict = request.get_json()
