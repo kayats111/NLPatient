@@ -139,6 +139,9 @@ class Service:
 
         self.metaRepository.addMetaData(metaData)
 
+        if "_id" in metaData:
+            metaData.pop("_id")
+
         return metaData
 
         
