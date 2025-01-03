@@ -2,6 +2,8 @@ import logo from './logo.svg';
 import './App.css';
 import Login from './Login';  // Adjust the path as needed
 import ResearcherMain from './ResearcherMain'; // The main page after login
+import SignUpPage from './SignUpPage'; // The main page after login
+
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -11,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/main" element={<ResearcherMain />} />
+        <Route path="/signup" element={<SignUpPage/>} />
       </Routes>
     </Router>
   );

@@ -5,7 +5,7 @@ function ResearcherMain() {
   const handleButtonClick = (action) => {
     console.log(`${action} button clicked`);
     // You can replace the console log with actual functionality
-    // for each button based on your app's requirements
+    // for each button based on the app's requirements
   };
 
   return (
