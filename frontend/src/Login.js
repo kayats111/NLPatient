@@ -11,7 +11,7 @@ function Login(){
     const navigate = useNavigate(); // Use the hook for navigation
 
     const handleSubmit = (event) => {
-        navigate('/main'); // TODO DELETE THIS
+        navigate('/choicepage'); // TODO DELETE THIS
         event.preventDefault();
         console.log('Email:', email);
         console.log('Password:', password);
@@ -22,7 +22,7 @@ function Login(){
         }
         else{
             setError("");
-            navigate('/main');
+            // navigate('/main');
         }
 
         // Add login logic here

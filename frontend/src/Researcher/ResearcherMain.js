@@ -1,9 +1,13 @@
 import React from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 function ResearcherMain() {
-
+  const navigate = useNavigate(); // Use the hook for navigation
   const handleButtonClick = (action) => {
     console.log(`${action} button clicked`);
+    if(action ==="Train Model"){
+      navigate("/train-page")
+    }
     // You can replace the console log with actual functionality
     // for each button based on the app's requirements
   };
