@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
-from typing import List
+from typing import List, Tuple
+
 
 def run(data: NDArray, fields: List[str]) -> dict:
     """
@@ -34,6 +35,23 @@ def run(data: NDArray, fields: List[str]) -> dict:
         "additional information 3": "you may add any additional information"
     }
 
+
+def createModel():
+    """
+    This function is mandatory only for PyTorch models.
+    The function should return an empty model using the constructor,
+    for example: return SimpleModel()
+
+    Args:
+        None
+
+    Returns:
+        An empty PyTorch model
+    """
+
+    return None
+
+
 def train(data) -> float:
     """
     This is an example of how you can train your model.
@@ -44,6 +62,7 @@ def train(data) -> float:
     """
     return 18.5697
 
+
 def test(data) -> float:
     """
     This is an example of how you can test your model.
@@ -53,6 +72,7 @@ def test(data) -> float:
 
     """
     return 71.5842
+
 
 """
 Write any function or script you wish, just make sure
