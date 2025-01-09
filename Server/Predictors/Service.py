@@ -59,8 +59,12 @@ class Service:
         if metaData is None:
             raise Exception(f"no predictor named {predictorName}")
         
-        if len(sample) != len(metaData["fields"]):
-            raise Exception("the given sample does not match the predictor's requirements")
+        if "label" in metaData["fields"]:
+            if len(sample) != len(metaData["fields"]) - 1:
+                raise Exception("the given sample does not match the predictor's requirements")
+        else:
+            if len(sample) != len(metaData["fields"]):
+                raise Exception("the given sample does not match the predictor's requirements")
         
         prediction: List[str] = []
 
@@ -74,7 +78,7 @@ class Service:
     def predictScikit(self, predictorName: str, sample: List[float]) -> List[float]:
         predictor = self.loadScikit(predictorName=predictorName)
 
-        res = list(predictor.predict(sample)[0])
+        res = list(predictor.predict(np.array([sample])))
 
         return res
 
