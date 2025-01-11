@@ -125,7 +125,7 @@ class Service:
             return
         
         if isPyTorch:
-            save(model, os.path.join(TRAINED_FOLDER, modelName + ".pth"))
+            save(model.state_dict(), os.path.join(TRAINED_FOLDER, modelName + ".pth"))
             return
 
     # NOTE: not for API use, but after training the model (lambda?)
@@ -138,6 +138,13 @@ class Service:
         metaData["fields"] = fields
 
         self.metaRepository.addMetaData(metaData)
+
+        if "_id" in metaData:
+            metaData.pop("_id")
+
+        return metaData
+
+        
     
     def getTemplatePath(self):
         return TEMPLATE_PATH

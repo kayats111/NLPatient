@@ -9,7 +9,11 @@ class MedicalRecordService:
         self.repository: Repository = Repository()
 
     def addRecord(self, recordDict: dict) -> None:
-        record: MedicalRecord = MedicalRecord(name=recordDict["name"])
+        record: MedicalRecord = MedicalRecord(field1=recordDict["field1"],
+                                              field2=recordDict["field2"],
+                                              field3=recordDict["field3"],
+                                              field4=recordDict["field4"],
+                                              label=recordDict["label"])
         self.repository.addRecord(record)
 
     def getRecordById(self, id: int) -> MedicalRecord:
@@ -19,7 +23,11 @@ class MedicalRecordService:
         self.repository.deleteRecord(id)
 
     def updateRecord(self, data: dict) -> None:
-        record: MedicalRecord = MedicalRecord(name=data["name"])
+        record: MedicalRecord = MedicalRecord(field1=data["field1"],
+                                              field2=data["field2"],
+                                              field3=data["field3"],
+                                              field4=data["field4"],
+                                              label=data["label"])
         record.id = data["id"]
 
         self.repository.updateRecord(record)
