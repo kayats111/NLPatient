@@ -49,13 +49,13 @@ class MedicalRecordService:
             for field in fields:
                 if field not in att:
                     raise Exception(f"the field '{field}' in not a medical record field")
-                
+
         if labels is not LABELS:
             lbl: Set[str] = set(LABELS)
 
             for label in labels:
                 if label not in lbl:
-                    raise Exception(f"the label '{field}' in not a medical record label")
+                    raise Exception(f"the label '{label}' in not a medical record label")
 
         records: List[MedicalRecord] = self.repository.getAllRecords()
 

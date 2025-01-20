@@ -146,7 +146,7 @@ def getVectors():
     try:
         vectors: List[List[float]]
 
-        if "fiedls" in data and "labels" in data:
+        if ("fields" in data) and ("labels" in data):
             vectors, labels = service.getVectors(fields=data["fields"], labels=data["labels"])
         elif "fields" in data:
             vectors, labels = service.getVectors(fields=data["fields"])
