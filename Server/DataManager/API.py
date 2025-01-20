@@ -25,7 +25,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 CORS(app)
 
-from MedicalRecord import LABELS, MedicalRecord, ATTRIBUTES, BASE_ATTRIBUTES
+from MedicalRecord import LABELS, TRAIN_ATTRIBUTES, MedicalRecord, ATTRIBUTES, BASE_ATTRIBUTES
 
 bp = Blueprint('DataManager', __name__, url_prefix="/api/data")
 
@@ -158,7 +158,7 @@ def getVectors():
         
         toReturn: dict = {
             "vectors": vectors,
-            "fields": data["fields"] if "fields" in data else BASE_ATTRIBUTES,
+            "fields": data["fields"] if "fields" in data else TRAIN_ATTRIBUTES,
             "labels": data["labels"] if "labels" in data else LABELS
         }
 

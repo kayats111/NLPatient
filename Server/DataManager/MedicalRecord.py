@@ -6,7 +6,7 @@ class MedicalRecord(db.Model):
     
     # FIELDS
     codingNum: float = db.Column(db.Float, unique=False, nullable=False)
-    yearOfEvent: float = db.Column(db.float, unique=False, nullable=False)
+    yearOfEvent: float = db.Column(db.Float, unique=False, nullable=False)
     age: float = db.Column(db.Float, unique=False, nullable=False)
     gender: float = db.Column(db.Float, unique=False, nullable=False)
     sector: float = db.Column(db.Float, unique=False, nullable=False)
@@ -43,7 +43,7 @@ class MedicalRecord(db.Model):
     drugUseHistory: float = db.Column(db.Float, unique=False, nullable=False)
     traditionalTreat: float = db.Column(db.Float, unique=False, nullable=False)
     violence: float = db.Column(db.Float, unique=False, nullable=False)
-    irritabilityanamneza: float = db.Column(db.Float, unique=False, nullable=False)
+    irritabilityAnamneza: float = db.Column(db.Float, unique=False, nullable=False)
     suicidal: float = db.Column(db.Float, unique=False, nullable=False)
     # backdiagnos: float = db.Column(db.Float, unique=False, nullable=False)
     organicworkup: float = db.Column(db.Float, unique=False, nullable=False)
@@ -65,8 +65,8 @@ class MedicalRecord(db.Model):
                  posLengthGroup: float, psLengthG2: float, vocalHallucinations: float, visualHallucinations: float,
                  dellusions: float, disorgenizeBahaviour: float, thoughtProcess: float, speechSym: float, negSigns: float,
                  sleepDisorder: float, catatonia: float, maniformSym: float, depressizeSym: float, drugUseCurrent: float,
-                 traditionalTreat: float, violence: float, irritabilityanamneza: float, suicidal: float, organicworkup: float,
-                 conhospi: float, any: float, affective: float, bipolar: float, schizophreniaSpectr: float):
+                 drugUseHistory: float, traditionalTreat: float, violence: float, irritabilityAnamneza: float, suicidal: float,
+                 organicworkup: float, conhospi: float, any: float, affective: float, bipolar: float, schizophreniaSpectr: float):
         
         super().__init__()
 
@@ -105,9 +105,10 @@ class MedicalRecord(db.Model):
         self.maniformSym = maniformSym
         self.depressizeSym = depressizeSym
         self.drugUseCurrent = drugUseCurrent
+        self.drugUseHistory = drugUseHistory
         self.traditionalTreat = traditionalTreat
         self.violence = violence
-        self.irritabilityanamneza = irritabilityanamneza
+        self.irritabilityAnamneza = irritabilityAnamneza
         self.suicidal = suicidal
         self.organicworkup = organicworkup
         self.conhospi = conhospi
@@ -126,8 +127,9 @@ class MedicalRecord(db.Model):
         return {column.name: getattr(self, column.name, None) for column in MedicalRecord.__table__.columns}
     
 ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns]
+BASE_ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns if column.name is not "id"]
 LABELS: List[str] = ["any", "affective", "bipolar", "schizophreniaSpectr"]
-BASE_ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns
+TRAIN_ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns
                               if (column.name is not "id" and column.name is not "codingNum"
                                   and column.name not in LABELS)]
     

@@ -1,6 +1,6 @@
 from typing import List, Set
 from Repository import Repository
-from MedicalRecord import ATTRIBUTES, BASE_ATTRIBUTES, LABELS, MedicalRecord
+from MedicalRecord import ATTRIBUTES, LABELS, TRAIN_ATTRIBUTES, MedicalRecord
 
 
 class MedicalRecordService:
@@ -42,9 +42,9 @@ class MedicalRecordService:
 
         return dicts
     
-    def getVectors(self, fields: List[str] = BASE_ATTRIBUTES, labels: List[str] = LABELS) -> List[List[float]]:
-        if fields is not BASE_ATTRIBUTES:
-            att: Set[str] = set(BASE_ATTRIBUTES)
+    def getVectors(self, fields: List[str] = TRAIN_ATTRIBUTES, labels: List[str] = LABELS) -> List[List[float]]:
+        if fields is not TRAIN_ATTRIBUTES:
+            att: Set[str] = set(TRAIN_ATTRIBUTES)
 
             for field in fields:
                 if field not in att:
@@ -108,7 +108,7 @@ class MedicalRecordService:
                                               drugUseHistory=recordDict["drugUseHistory"],
                                               traditionalTreat=recordDict["traditionalTreat"],
                                               violence=recordDict["violence"],
-                                              irritabilityanamneza=recordDict["irritabilityanamneza"],
+                                              irritabilityAnamneza=recordDict["irritabilityAnamneza"],
                                               suicidal=recordDict["suicidal"],
                                               organicworkup=recordDict["organicworkup"],
                                               conhospi=recordDict["conhospi"],
