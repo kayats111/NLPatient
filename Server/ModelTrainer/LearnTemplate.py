@@ -3,15 +3,17 @@ from numpy.typing import NDArray
 from typing import List, Tuple
 
 
-def run(data: NDArray, fields: List[str]) -> dict:
+def run(vectors: NDArray, labels: NDArray, fields: List[str], labelNames: List[str]) -> dict:
     """
     From here you call functions to run your code.
     This is the "main" function, DO NOT delete it.
     Examples below.
 
     Args:
-        data (NDArray[NDArray[float64]]): The Medical Records in vector form.
+        vectors (NDArray[NDArray[float64]]): The Medical Records in vector form.
+        labels (NDArray[NDArray[float64]]): The labels of the Medical Records.
         fields (List[str]): The requested fields of the Medical Records vectors.
+        labelNames (List[str]): The requested labels of the Medical Records.
     
     Returns:
         dict: A dict that includes any data to save.
@@ -20,8 +22,8 @@ def run(data: NDArray, fields: List[str]) -> dict:
 
     """
 
-    trainRes: float = train(data)
-    testRes: float = test(data)
+    trainRes: float = train(vectors, labels)
+    testRes: float = test(vectors, labels)
 
     return {
         "model": ["just an example, send a model instead"],
@@ -52,7 +54,7 @@ def createModel():
     return None
 
 
-def train(data) -> float:
+def train(vectors, labels) -> float:
     """
     This is an example of how you can train your model.
     
@@ -63,7 +65,7 @@ def train(data) -> float:
     return 18.5697
 
 
-def test(data) -> float:
+def test(vectors, labels) -> float:
     """
     This is an example of how you can test your model.
     
