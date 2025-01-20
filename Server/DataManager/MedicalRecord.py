@@ -4,7 +4,7 @@ from Extensions import db
 class MedicalRecord(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
     
-    # fields
+    # FIELDS
     codingNum: float = db.Column(db.Float, unique=False, nullable=False)
     yearOfEvent: float = db.Column(db.float, unique=False, nullable=False)
     age: float = db.Column(db.Float, unique=False, nullable=False)
@@ -41,7 +41,7 @@ class MedicalRecord(db.Model):
     depressizeSym: float = db.Column(db.Float, unique=False, nullable=False)
     drugUseCurrent: float = db.Column(db.Float, unique=False, nullable=False)
     drugUseHistory: float = db.Column(db.Float, unique=False, nullable=False)
-    traditreat: float = db.Column(db.Float, unique=False, nullable=False)
+    traditionalTreat: float = db.Column(db.Float, unique=False, nullable=False)
     violence: float = db.Column(db.Float, unique=False, nullable=False)
     irritabilityanamneza: float = db.Column(db.Float, unique=False, nullable=False)
     suicidal: float = db.Column(db.Float, unique=False, nullable=False)
@@ -58,15 +58,64 @@ class MedicalRecord(db.Model):
 
 
 
-    def __init__(self, field1: float, field2: float, field3: float, field4: float, label: float):
+    def __init__(self, codingNum: float, yearOfEvent: float, age: float, gender: float, sector: float, origin: float,
+                 originGroup: float, immigrationYear: float, LMSSocialStateScore: float, clalitMember: float,
+                 parentState: float, parentStateGroup: float, livingWith: float, livingWithGroup: float, siblingsTotal: float,
+                 numInSiblings: float, familyHistoryMH: float, school: float, schoolGroup: float, prodrom: float, prodGroup: float,
+                 posLengthGroup: float, psLengthG2: float, vocalHallucinations: float, visualHallucinations: float,
+                 dellusions: float, disorgenizeBahaviour: float, thoughtProcess: float, speechSym: float, negSigns: float,
+                 sleepDisorder: float, catatonia: float, maniformSym: float, depressizeSym: float, drugUseCurrent: float,
+                 traditionalTreat: float, violence: float, irritabilityanamneza: float, suicidal: float, organicworkup: float,
+                 conhospi: float, any: float, affective: float, bipolar: float, schizophreniaSpectr: float):
+        
         super().__init__()
-        # self.id = id
-        self.field1 = field1
-        self.field2 = field2
-        self.field3 = field3
-        self.field4 = field4
-        self.label = label
 
+        self.codingNum = codingNum
+        self.yearOfEvent = yearOfEvent
+        self.age = age
+        self.gender = gender
+        self.sector = sector
+        self.origin = origin
+        self.originGroup = originGroup
+        self.immigrationYear = immigrationYear
+        self.LMSSocialStateScore = LMSSocialStateScore
+        self.clalitMember = clalitMember
+        self.parentState = parentState
+        self.parentStateGroup = parentStateGroup
+        self.livingWith = livingWith
+        self.livingWithGroup = livingWithGroup
+        self.siblingsTotal = siblingsTotal
+        self.numInSiblings = numInSiblings
+        self.familyHistoryMH = familyHistoryMH
+        self.school = school
+        self.schoolGroup = schoolGroup
+        self.prodrom = prodrom
+        self.prodGroup = prodGroup
+        self.posLengthGroup = posLengthGroup
+        self.psLengthG2 = psLengthG2
+        self.vocalHallucinations = vocalHallucinations
+        self.visualHallucinations = visualHallucinations
+        self.dellusions = dellusions
+        self.disorgenizeBahaviour = disorgenizeBahaviour
+        self.thoughtProcess = thoughtProcess
+        self.speechSym = speechSym
+        self.negSigns = negSigns
+        self.sleepDisorder = sleepDisorder
+        self.catatonia = catatonia
+        self.maniformSym = maniformSym
+        self.depressizeSym = depressizeSym
+        self.drugUseCurrent = drugUseCurrent
+        self.traditionalTreat = traditionalTreat
+        self.violence = violence
+        self.irritabilityanamneza = irritabilityanamneza
+        self.suicidal = suicidal
+        self.organicworkup = organicworkup
+        self.conhospi = conhospi
+        self.any = any
+        self.affective = affective
+        self.bipolar = bipolar
+        self.schizophreniaSpectr = schizophreniaSpectr
+   
     def copy(self, other: 'MedicalRecord') -> None:
         for column in MedicalRecord.__table__.columns:
             field_name: str = column.name
@@ -74,17 +123,10 @@ class MedicalRecord(db.Model):
                 setattr(self, field_name, getattr(other, field_name, None))
 
     def toDict(self) -> dict:
-        return {
-            "id": self.id,
-            "field1": self.field1,
-            "field2": self.field1,
-            "field3": self.field3,
-            "field4": self.field4,
-            "label": self.label
-        }
+        return {column.name: getattr(self, column.name, None) for column in MedicalRecord.__table__.columns}
     
-ATTRIBUTES: List[str] = ["id", "field1", "field2", "field3", "field4", "label"]
-BASE_ATTRIBUTES: List[str] = ["field1", "field2", "field3", "field4", "label"]
+ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns]
+BASE_ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns].remove("id").remove("codingNum")
     
 
 
