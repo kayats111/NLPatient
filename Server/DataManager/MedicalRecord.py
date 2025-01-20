@@ -126,7 +126,10 @@ class MedicalRecord(db.Model):
         return {column.name: getattr(self, column.name, None) for column in MedicalRecord.__table__.columns}
     
 ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns]
-BASE_ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns].remove("id").remove("codingNum")
+LABELS: List[str] = ["any", "affective", "bipolar", "schizophreniaSpectr"]
+BASE_ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns
+                              if (column.name is not "id" and column.name is not "codingNum"
+                                  and column.name not in LABELS)]
     
 
 
