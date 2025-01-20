@@ -147,17 +147,18 @@ def getVectors():
         vectors: List[List[float]]
 
         if "fiedls" in data and "labels" in data:
-            vectors = service.getVectors(fields=data["fields"], labels=data["labels"])
+            vectors, labels = service.getVectors(fields=data["fields"], labels=data["labels"])
         elif "fields" in data:
-            vectors = service.getVectors(fields=data["fields"])
+            vectors, labels = service.getVectors(fields=data["fields"])
         elif "labels" in data:
-            vectors = service.getVectors(labels=data["labels"])
+            vectors, labels = service.getVectors(labels=data["labels"])
         else:
-            vectors = service.getVectors()
+            vectors, labels = service.getVectors()
         
         
         toReturn: dict = {
             "vectors": vectors,
+            "vectorLabels": labels,
             "fields": data["fields"] if "fields" in data else TRAIN_ATTRIBUTES,
             "labels": data["labels"] if "labels" in data else LABELS
         }

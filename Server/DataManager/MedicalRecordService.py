@@ -61,13 +61,16 @@ class MedicalRecordService:
 
         dicts: List[dict] = [record.toDict() for record in records]
 
-        vectors: List[List[float]] = [self.dictToVector(d=d, fields=fields, labels=labels) for d in dicts]
+        vectors: List[List[float]] = [self.dictToVector(d=d, fields=fields) for d in dicts]
+        _labels: List[List[float]] = [self.dictToLabelVector(d=d, labels=labels) for d in dicts]
 
-        return vectors
+        return vectors, _labels
 
-    def dictToVector(self, d: dict, fields: List[str], labels: List[str]) -> List[int]:
-        take: List[str] = fields + labels
-        return [d[att] for att in take]
+    def dictToVector(self, d: dict, fields: List[str]) -> List[int]:
+        return [d[field] for field in fields]
+    
+    def dictToLabelVector(self, d: dict, labels: List[str]) -> List[int]:
+        return [d[label] for label in labels]
 
     def recordFromDict(self, recordDict: dict) -> MedicalRecord:
         record: MedicalRecord = MedicalRecord(codingNum=recordDict["codingNum"],
