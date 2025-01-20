@@ -9,11 +9,7 @@ class MedicalRecordService:
         self.repository: Repository = Repository()
 
     def addRecord(self, recordDict: dict) -> None:
-        record: MedicalRecord = MedicalRecord(field1=recordDict["field1"],
-                                              field2=recordDict["field2"],
-                                              field3=recordDict["field3"],
-                                              field4=recordDict["field4"],
-                                              label=recordDict["label"])
+        record: MedicalRecord = self.recordFromDict(recordDict=recordDict)
         self.repository.addRecord(record)
 
     def getRecordById(self, id: int) -> MedicalRecord:
@@ -23,11 +19,7 @@ class MedicalRecordService:
         self.repository.deleteRecord(id)
 
     def updateRecord(self, data: dict) -> None:
-        record: MedicalRecord = MedicalRecord(field1=data["field1"],
-                                              field2=data["field2"],
-                                              field3=data["field3"],
-                                              field4=data["field4"],
-                                              label=data["label"])
+        record: MedicalRecord = self.recordFromDict(recordDict=data)
         record.id = data["id"]
 
         self.repository.updateRecord(record)
@@ -69,6 +61,54 @@ class MedicalRecordService:
     def dictToVector(self, d: dict, fields: List[str]) -> List[int]:
         return [d[field] for field in fields]
 
-
+    def recordFromDict(self, recordDict: dict) -> MedicalRecord:
+        record: MedicalRecord = MedicalRecord(codingNum=recordDict["codingNum"],
+                                              yearOfEvent=recordDict["yearOfEvent"],
+                                              age=recordDict["age"],
+                                              gender=recordDict["gender"],
+                                              sector=recordDict["sector"],
+                                              origin=recordDict["origin"],
+                                              originGroup=recordDict["originGroup"],
+                                              immigrationYear=recordDict["immigrationYear"],
+                                              LMSSocialStateScore=recordDict["LMSSocialStateScore"],
+                                              clalitMember=recordDict["clalitMember"],
+                                              parentState=recordDict["parentState"],
+                                              parentStateGroup=recordDict["parentStateGroup"],
+                                              livingWith=recordDict["livingWith"],
+                                              livingWithGroup=recordDict["livingWithGroup"],
+                                              siblingsTotal=recordDict["siblingsTotal"],
+                                              numInSiblings=recordDict["numInSiblings"],
+                                              familyHistoryMH=recordDict["familyHistoryMH"],
+                                              school=recordDict["school"],
+                                              schoolGroup=recordDict["schoolGroup"],
+                                              prodrom=recordDict["prodrom"],
+                                              prodGroup=recordDict["prodGroup"],
+                                              posLengthGroup=recordDict["posLengthGroup"],
+                                              psLengthG2=recordDict["psLengthG2"],
+                                              vocalHallucinations=recordDict["vocalHallucinations"],
+                                              visualHallucinations=recordDict["visualHallucinations"],
+                                              dellusions=recordDict["dellusions"],
+                                              disorgenizeBahaviour=recordDict["disorgenizeBahaviour"],
+                                              thoughtProcess=recordDict["thoughtProcess"],
+                                              speechSym=recordDict["speechSym"],
+                                              negSigns=recordDict["negSigns"],
+                                              sleepDisorder=recordDict["sleepDisorder"],
+                                              catatonia=recordDict["catatonia"],
+                                              maniformSym=recordDict["maniformSym"],
+                                              depressizeSym=recordDict["depressizeSym"],
+                                              drugUseCurrent=recordDict["drugUseCurrent"],
+                                              drugUseHistory=recordDict["drugUseHistory"],
+                                              traditionalTreat=recordDict["traditionalTreat"],
+                                              violence=recordDict["violence"],
+                                              irritabilityanamneza=recordDict["irritabilityanamneza"],
+                                              suicidal=recordDict["suicidal"],
+                                              organicworkup=recordDict["organicworkup"],
+                                              conhospi=recordDict["conhospi"],
+                                              any=recordDict["any"],
+                                              affective=recordDict["affective"],
+                                              bipolar=recordDict["bipolar"],
+                                              schizophreniaSpectr=recordDict["schizophreniaSpectr"])
+        
+        return record
 
 
