@@ -9,14 +9,14 @@ class Repository:
         try:
             db.session.add(record)
             db.session.commit()
-        except Exception as err:
+        except Exception as e:
             db.session.rollback()
             raise Exception("cannot add record")
 
     def getRecordById(self, id: int) -> MedicalRecord:
         try:
             record: MedicalRecord = MedicalRecord.query.get(id)
-        except Exception as err:
+        except Exception as e:
             raise Exception("cannot get record")
 
         if record is None:
@@ -33,7 +33,7 @@ class Repository:
         try:
             db.session.delete(record)
             db.session.commit()
-        except Exception as err:
+        except Exception as e:
             db.session.rollback()
             raise Exception("cannot delete record")
     
@@ -50,7 +50,7 @@ class Repository:
     def getAllRecords(self) -> List[MedicalRecord]:
         try:
             return MedicalRecord.query.all()
-        except Exception as err:
+        except Exception as e:
             raise Exception("cannot get records")
 
 

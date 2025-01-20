@@ -1,6 +1,6 @@
 from typing import List, Set
 from Repository import Repository
-from MedicalRecord import ATTRIBUTES, BASE_ATTRIBUTES, MedicalRecord
+from MedicalRecord import ATTRIBUTES, BASE_ATTRIBUTES, LABELS, MedicalRecord
 
 
 class MedicalRecordService:
@@ -42,24 +42,32 @@ class MedicalRecordService:
 
         return dicts
     
-    def getVectors(self, fields: List[str] = BASE_ATTRIBUTES) -> List[List[float]]:
+    def getVectors(self, fields: List[str] = BASE_ATTRIBUTES, labels: List[str] = LABELS) -> List[List[float]]:
         if fields is not BASE_ATTRIBUTES:
             att: Set[str] = set(BASE_ATTRIBUTES)
 
             for field in fields:
                 if field not in att:
                     raise Exception(f"the field '{field}' in not a medical record field")
+                
+        if labels is not LABELS:
+            lbl: Set[str] = set(LABELS)
+
+        for label in labels:
+            if label not in lbl:
+                raise Exception(f"the label '{field}' in not a medical record label")
 
         records: List[MedicalRecord] = self.repository.getAllRecords()
 
         dicts: List[dict] = [record.toDict() for record in records]
 
-        vectors: List[List[float]] = [self.dictToVector(d=d, fields=fields) for d in dicts]
+        vectors: List[List[float]] = [self.dictToVector(d=d, fields=fields, labels=labels) for d in dicts]
 
         return vectors
 
-    def dictToVector(self, d: dict, fields: List[str]) -> List[int]:
-        return [d[field] for field in fields]
+    def dictToVector(self, d: dict, fields: List[str], labels: List[str]) -> List[int]:
+        take: List[str] = fields + labels
+        return [d[att] for att in take]
 
     def recordFromDict(self, recordDict: dict) -> MedicalRecord:
         record: MedicalRecord = MedicalRecord(codingNum=recordDict["codingNum"],
