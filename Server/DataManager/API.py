@@ -54,9 +54,9 @@ def addRecord():
     try:
         service.addRecord(data)
         response = Response()
-    except Exception as err:
-        response = Response(error=True, message=str(err))
-        app.log_exception(err)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
 
     return jsonify(response.toDict()), 200
 
@@ -68,8 +68,8 @@ def readRecord(id: int):
     try:
         record: MedicalRecord = service.getRecordById(id)
         response = Response(value=record.toDict())
-    except Exception as err:
-        response = Response(error=True, message=str(err))
+    except Exception as e:
+        response = Response(error=True, message=str(e))
 
     return jsonify(response.toDict()), 200
 
@@ -81,8 +81,8 @@ def deleteRecord(id: int):
     try:
         service.deleteRecord(id)
         response = Response()
-    except Exception as err:
-        response = Response(error=True, message=str(err))
+    except Exception as e:
+        response = Response(error=True, message=str(e))
 
     return jsonify(response.toDict()), 200
 
@@ -101,9 +101,9 @@ def updateRecord():
     try:
         service.updateRecord(data)
         response = Response()
-    except Exception as err:
-        response = Response(error=True, message=str(err))
-        app.log_exception(err)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
 
     return jsonify(response.toDict()), 200
     
@@ -130,9 +130,9 @@ def getWithFields():
     try:
         records: List[dict] = service.getWithFields(data["fields"])
         response = Response(value=records)
-    except Exception as err:
-        response = Response(error=True, message=str(err))
-        app.log_exception(err)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
 
     return jsonify(response.toDict())
 
@@ -159,9 +159,9 @@ def getVectors():
 
 
         response = Response(value=toReturn)
-    except Exception as err:
-        response = Response(error=True, message=str(err))
-        app.log_exception(err)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
 
     return jsonify(response.toDict())
 
