@@ -108,7 +108,7 @@ def predict():
     response: Response[List[float]]
 
     try:
-        prediction: list[float] = service.predict(predictorName=data["model name"], sample=data["sample"])
+        prediction: List[float] = service.predict(predictorName=data["model name"], sample=data["sample"])
         response = Response(value=prediction)
     except Exception as e:
         response = Response(error=True, message=str(e))
