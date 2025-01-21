@@ -1,4 +1,4 @@
-from typing import List, Set
+from typing import Dict, List, Set
 from Repository import Repository
 from MedicalRecord import ATTRIBUTES, LABELS, TRAIN_ATTRIBUTES, MedicalRecord
 
@@ -121,5 +121,12 @@ class MedicalRecordService:
                                               schizophreniaSpectr=recordDict["schizophreniaSpectr"])
         
         return record
+
+    def getTrainFieldsAndLabels(self) -> Dict[str, List[str]]:
+        return {
+            "fields": TRAIN_ATTRIBUTES,
+            "labels": LABELS
+        }
+
 
 

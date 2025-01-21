@@ -1,4 +1,4 @@
-from typing import List, Set
+from typing import Dict, List, Set
 from flask import Blueprint, Flask, request, jsonify
 from flask_cors import CORS
 from Extensions import db
@@ -171,6 +171,12 @@ def getVectors():
 
     return jsonify(response.toDict())
 
+
+@bp.route("/fields_labels", methods=["GET"])
+def getFieldsAndLabels():
+    response: Response[Dict[str, List[str]]] = Response(value=service.getTrainFieldsAndLabels())
+
+    return jsonify(response.toDict())
 
 
 def validateRequestSchema(request: dict, schema: Set[str]) -> bool:
