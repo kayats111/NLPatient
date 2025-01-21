@@ -6,7 +6,7 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
 
-def run(data: NDArray, fields: List[str]) -> dict:
+def run(vectors: NDArray, labels: NDArray, fields: List[str], labelNames: List[str]) -> dict:
     """
     From here you call functions to run your code.
     This is the "main" function, DO NOT delete it.
@@ -23,8 +23,8 @@ def run(data: NDArray, fields: List[str]) -> dict:
 
     """
 
-    X = data[:, :-1]
-    y = data[:, -1]
+    X = vectors
+    y = labels
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -40,8 +40,8 @@ def run(data: NDArray, fields: List[str]) -> dict:
         "isScikit": True,
         "isPyTorch": False,
         # NOTE: from here its meta-data
-        "train size": int(data.shape[0] * 0.8),
-        "test size": int(data.shape[0] * 0.2),
+        "train size": int(vectors.shape[0] * 0.8),
+        "test size": int(vectors.shape[0] * 0.2),
         "MSE": mse,
         "R2": r2
     }
