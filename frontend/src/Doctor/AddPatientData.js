@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import * as XLSX from 'xlsx';
+import React, { useState } from "react";
+import * as XLSX from "xlsx";
+import axios from "axios"; // For sending HTTP requests
 
 function AddPatientData() {
   const [data, setData] = useState([]);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(null); // For tracking upload progress
 
   // Handle file drop
   const handleDrop = (event) => {
@@ -25,20 +27,51 @@ function AddPatientData() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const binaryStr = e.target.result;
-      const workbook = XLSX.read(binaryStr, { type: 'binary' });
+      const workbook = XLSX.read(binaryStr, { type: "binary" });
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1,defval:"N/A" });
+      const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "N/A" });
 
-      // Handle null or undefined values and replace with 'N/A' or another placeholder
-      const cleanedData = jsonData.map(row => row.map(cell => cell === null || cell === undefined ? 'N/A' : cell));
-      setData(jsonData); // Store cleaned data
+      const cleanedData = jsonData.map((row) =>
+        row.map((cell) => (cell === null || cell === undefined ? "N/A" : cell))
+      );
+
+      setData(cleanedData); // Store cleaned data
     };
     reader.readAsBinaryString(file);
   };
 
+  // Send data to backend one row at a time
+  const uploadData = async () => {
+    if (!data || data.length <= 1) {
+      alert("No data to upload. Please add an Excel file.");
+      return;
+    }
+
+    const headers = data[0]; // Use the first row as headers
+    const rows = data.slice(1); // Exclude the headers
+
+    setUploadProgress({ uploaded: 0, total: rows.length });
+
+    for (let i = 0; i < rows.length; i++) {
+      const rowData = {};
+      rows[i].forEach((value, index) => {
+        rowData[headers[index]] = value; // Map headers to values
+      });
+
+      try {
+        console.log(rowData)
+        await axios.post("http://localhost:3000/add", rowData); // Adjust the backend URL if needed
+        setUploadProgress((prev) => ({ ...prev, uploaded: prev.uploaded + 1 }));
+      } catch (error) {
+        console.error("Error uploading row:", rowData, error);
+      }
+    }
+
+    alert("Data upload complete!");
+  };
+
   return (
-    
     <div style={styles.buttonContainer}>
       <div
         onDrop={handleDrop}
@@ -61,11 +94,11 @@ function AddPatientData() {
                 </tr>
               </thead>
               <tbody>
-                {data.slice(1, 5).map((row, rowIndex) => ( // Show at most 4 rows
+                {data.slice(1, 5).map((row, rowIndex) => (
                   <tr key={rowIndex}>
                     {row.slice(0, 5).map((cell, cellIndex) => (
                       <td key={cellIndex} style={styles.cell}>
-                        {cell ===undefined?"N/A":cell} {/* Display the cell value or placeholder */}
+                        {cell === undefined ? "N/A" : cell}
                       </td>
                     ))}
                   </tr>
@@ -75,7 +108,14 @@ function AddPatientData() {
           </div>
         )}
       </div>
-      <button style={styles.button}>Click Me</button>
+      <button style={styles.button} onClick={uploadData}>
+        Upload Data
+      </button>
+      {uploadProgress && (
+        <div style={styles.progress}>
+          Uploading {uploadProgress.uploaded} / {uploadProgress.total} rows...
+        </div>
+      )}
     </div>
   );
 }
