@@ -8,6 +8,9 @@ function DoctorMain(){
         if(action === "Add Patient Data"){
             navigate('/add-patient-data')
         }
+        else if (action === "View Records"){
+            navigate('/records-viewer')
+        }
         console.log(`${action} button clicked`);
         // You can replace the console log with actual functionality
         // for each button based on the app's requirements
@@ -26,22 +29,10 @@ function DoctorMain(){
                     Add Patient Data  
                 </button>
                 <button
-                    onClick={()=> handleButtonClick('Remove Patient Data')}
+                    onClick={()=> handleButtonClick('View Records')}
                     style={styles.button}
                 >
-                    Remove Patient Data  
-                </button>
-                <button
-                    onClick={()=> handleButtonClick('Update Patient Data')}
-                    style={styles.button}
-                >
-                    Update Patient Data  
-                </button>
-                <button
-                    onClick={()=> handleButtonClick('Predict Patient Data')}
-                    style={styles.button}
-                >
-                    Predict  
+                    View Records  
                 </button>
 
             </div>

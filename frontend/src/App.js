@@ -7,6 +7,10 @@ import SignUpPage from './SignUpPage'; // The main page after login
 import ChoicePage from './ChoicePage';
 import AddPatientData from './Doctor/AddPatientData';
 import TrainPage from './Researcher/TrainPage';
+import RecordsViewer from './Doctor/RecordsViewer';
+import DPredictor from './Doctor/DPredictor';
+import RecordsUpdate from './Doctor/RecordsUpdate.js';
+
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -21,6 +25,9 @@ function App() {
         <Route path="/researcher-main" element={<ResearcherMain />} />
         <Route path="/doctor-main" element={<DoctorMain/>} />
         <Route path="/signup" element={<SignUpPage/>} />
+        <Route path="/records-viewer" element={<RecordsViewer/>}/>
+        <Route path="/doctor-predict" element={<DPredictor/>}/>
+        <Route path="/update-medical-records" element={<RecordsUpdate/>}/>
       </Routes>
     </Router>
   );

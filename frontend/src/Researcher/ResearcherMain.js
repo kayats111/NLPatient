@@ -3,13 +3,40 @@ import { Navigate, useNavigate } from 'react-router-dom';
 
 function ResearcherMain() {
   const navigate = useNavigate(); // Use the hook for navigation
+  const fakehandleDownload = () => {
+    alert('fake handle download');
+  };
+  // const handleDownload = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:5000/download/template");
+  //     if (!response.ok) {
+  //       throw new Error("Failed to download the file");
+  //     }
+
+  //     const blob = await response.blob();
+  //     const url = window.URL.createObjectURL(blob);
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.download = "LearnTemplate.py";
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.remove();
+  //   } catch (error) {
+  //     console.error("Error downloading the file:", error);
+  //   }
+  // };
   const handleButtonClick = (action) => {
     console.log(`${action} button clicked`);
     if(action ==="Train Model"){
       navigate("/train-page")
     }
-    // You can replace the console log with actual functionality
-    // for each button based on the app's requirements
+    else if(action === "Download Template"){
+      // handleDownload()
+      fakehandleDownload()
+    }
+    
+    
+
   };
 
   return (
@@ -25,16 +52,16 @@ function ResearcherMain() {
           Add Model
         </button>
         <button
-          onClick={() => handleButtonClick('Remove Model')}
+          onClick={() => handleButtonClick('View Models')}
           style={styles.button}
         >
-          Remove Model
+          View Models
         </button>
         <button
-          onClick={() => handleButtonClick('Update Model')}
+          onClick={() => handleButtonClick('Download Template')}
           style={styles.button}
         >
-          Update Model
+          Download Template
         </button>
         <button
           onClick={() => handleButtonClick('Train Model')}
