@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.typing import NDArray
-from typing import List, Tuple
+from typing import List
 
 
 def run(vectors: NDArray, labels: NDArray, fields: List[str], labelNames: List[str]) -> dict:
