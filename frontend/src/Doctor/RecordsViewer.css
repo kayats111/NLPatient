@@ -1,0 +1,64 @@
+#records {
+  list-style: none;
+  padding: 0;
+}
+
+.record {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9f9f9;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.record-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.record-buttons button {
+  padding: 6px 10px;
+  font-size: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.record-buttons button:hover {
+  background: #0056b3;
+}
+
+.record-buttons button:active {
+  background: #00408a;
+}
+
+.error-message {
+  color: red;
+}
+
+.pagination-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.pagination-buttons button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.pagination-buttons button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}

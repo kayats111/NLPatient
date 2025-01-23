@@ -1,0 +1,47 @@
+.update-container {
+    padding: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers elements horizontally */
+    justify-content: center; /* Centers elements vertically */
+  }
+  .update-container h1 {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .update-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    justify-content: center; 
+  }
+  
+  .update-label {
+    min-width: 150px;
+    font-weight: bold;
+  }
+  
+  .update-input {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .update-save-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .update-save-button:hover {
+    background-color: #0056b3;
+  }
+  
