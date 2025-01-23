@@ -6,33 +6,39 @@ function ResearcherMain() {
   const fakehandleDownload = () => {
     alert('fake handle download');
   };
-  // const handleDownload = async () => {
-  //   try {
-  //     const response = await fetch("http://localhost:5000/download/template");
-  //     if (!response.ok) {
-  //       throw new Error("Failed to download the file");
-  //     }
+  const handleDownload = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/model_trainer/template");
+      if (!response.ok) {
+        throw new Error("Failed to download the file");
+      }
 
-  //     const blob = await response.blob();
-  //     const url = window.URL.createObjectURL(blob);
-  //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.download = "LearnTemplate.py";
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     link.remove();
-  //   } catch (error) {
-  //     console.error("Error downloading the file:", error);
-  //   }
-  // };
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "LearnTemplate.py";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading the file:", error);
+    }
+  };
   const handleButtonClick = (action) => {
     console.log(`${action} button clicked`);
     if(action ==="Train Model"){
       navigate("/train-page")
     }
     else if(action === "Download Template"){
-      // handleDownload()
-      fakehandleDownload()
+      handleDownload()
+      // fakehandleDownload()
+    }
+    else if(action === 'Add Model'){
+      navigate("/model_uploader")
+    }
+    else if(action === 'View Models'){
+      navigate("/model-viewer")
     }
     
     

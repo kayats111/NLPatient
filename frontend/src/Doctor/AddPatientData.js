@@ -60,11 +60,12 @@ function AddPatientData() {
       });
 
       try {
-        console.log(rowData)
-        await axios.post("http://localhost:3000/add", rowData); // Adjust the backend URL if needed
+        // console.log(rowData)
+        await axios.post("http://localhost:3000/api/data/add", rowData); // Adjust the backend URL if needed
         setUploadProgress((prev) => ({ ...prev, uploaded: prev.uploaded + 1 }));
       } catch (error) {
         console.error("Error uploading row:", rowData, error);
+        break;
       }
     }
 

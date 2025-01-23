@@ -1,4 +1,5 @@
 import logo from './logo.svg';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Login from './Login';  // Adjust the path as needed
 import ResearcherMain from './Researcher/ResearcherMain'; // The main page after login
@@ -10,9 +11,10 @@ import TrainPage from './Researcher/TrainPage';
 import RecordsViewer from './Doctor/RecordsViewer';
 import DPredictor from './Doctor/DPredictor';
 import RecordsUpdate from './Doctor/RecordsUpdate.js';
+import ModelUploader from './Researcher/ModelUploader.js';
+import ViewModels from './Researcher/ViewModels.js';
 
 
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
         <Route path="/records-viewer" element={<RecordsViewer/>}/>
         <Route path="/doctor-predict" element={<DPredictor/>}/>
         <Route path="/update-medical-records" element={<RecordsUpdate/>}/>
+        <Route path="/model_uploader" element={<ModelUploader/>}/>
+        <Route path="model-viewer" element={<ViewModels/>}/>
       </Routes>
     </Router>
   );
