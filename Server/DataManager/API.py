@@ -1,4 +1,4 @@
-from typing import List, Set
+from typing import Dict, List, Set
 from flask import Blueprint, Flask, request, jsonify
 from flask_cors import CORS
 from Extensions import db
@@ -25,7 +25,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 CORS(app)
 
-from MedicalRecord import MedicalRecord, ATTRIBUTES, BASE_ATTRIBUTES
+from MedicalRecord import LABELS, TRAIN_ATTRIBUTES, MedicalRecord, ATTRIBUTES, BASE_ATTRIBUTES
 
 bp = Blueprint('DataManager', __name__, url_prefix="/api/data")
 
@@ -54,9 +54,9 @@ def addRecord():
     try:
         service.addRecord(data)
         response = Response()
-    except Exception as err:
-        response = Response(error=True, message=str(err))
-        app.log_exception(err)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
 
     return jsonify(response.toDict()), 200
 
@@ -68,8 +68,8 @@ def readRecord(id: int):
     try:
         record: MedicalRecord = service.getRecordById(id)
         response = Response(value=record.toDict())
-    except Exception as err:
-        response = Response(error=True, message=str(err))
+    except Exception as e:
+        response = Response(error=True, message=str(e))
 
     return jsonify(response.toDict()), 200
 
@@ -81,8 +81,8 @@ def deleteRecord(id: int):
     try:
         service.deleteRecord(id)
         response = Response()
-    except Exception as err:
-        response = Response(error=True, message=str(err))
+    except Exception as e:
+        response = Response(error=True, message=str(e))
 
     return jsonify(response.toDict()), 200
 
@@ -101,9 +101,9 @@ def updateRecord():
     try:
         service.updateRecord(data)
         response = Response()
-    except Exception as err:
-        response = Response(error=True, message=str(err))
-        app.log_exception(err)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
 
     return jsonify(response.toDict()), 200
     
@@ -130,9 +130,9 @@ def getWithFields():
     try:
         records: List[dict] = service.getWithFields(data["fields"])
         response = Response(value=records)
-    except Exception as err:
-        response = Response(error=True, message=str(err))
-        app.log_exception(err)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
 
     return jsonify(response.toDict())
 
@@ -146,25 +146,37 @@ def getVectors():
     try:
         vectors: List[List[float]]
 
-        if "fields" in data:
-            vectors = service.getVectors(fields=data["fields"])
-        else: 
-            vectors = service.getVectors()
+        if ("fields" in data) and ("labels" in data):
+            vectors, labels = service.getVectors(fields=data["fields"], labels=data["labels"])
+        elif "fields" in data:
+            vectors, labels = service.getVectors(fields=data["fields"])
+        elif "labels" in data:
+            vectors, labels = service.getVectors(labels=data["labels"])
+        else:
+            vectors, labels = service.getVectors()
         
         
         toReturn: dict = {
             "vectors": vectors,
-            "fields": data["fields"] if "fields" in data else BASE_ATTRIBUTES
+            "vectorLabels": labels,
+            "fields": data["fields"] if "fields" in data else TRAIN_ATTRIBUTES,
+            "labels": data["labels"] if "labels" in data else LABELS
         }
 
 
         response = Response(value=toReturn)
-    except Exception as err:
-        response = Response(error=True, message=str(err))
-        app.log_exception(err)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
 
     return jsonify(response.toDict())
 
+
+@bp.route("/fields_labels", methods=["GET"])
+def getFieldsAndLabels():
+    response: Response[Dict[str, List[str]]] = Response(value=service.getTrainFieldsAndLabels())
+
+    return jsonify(response.toDict())
 
 
 def validateRequestSchema(request: dict, schema: Set[str]) -> bool:
