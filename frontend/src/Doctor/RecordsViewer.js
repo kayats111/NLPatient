@@ -2,53 +2,52 @@ import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from 'react-router-dom';
 
 import "./RecordsViewer.css";
-
+const server_url = "http://localhost:3000/api/data"
 const RecordsViewer = () => {
   const navigate = useNavigate(); // Use the hook for navigation
   const [records, setRecords] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const recordsPerPage = 4;
+  const recordsPerPage = 8;
 
   useEffect(() => {
-    // useEffect(() => {
-    //   const fetchRecords = async () => {
-    //     try {
-    //       const response = await fetch("/read/records/all");
-    //       if (!response.ok) {
-    //         throw new Error(`Failed to fetch records: ${response.status}`);
-    //       }
-    //       const data = await response.json();
-    //       setRecords(data);
-    //     } catch (err) {
-    //       setError(err.message);
-    //     }
-    //   };
-  
-    //   fetchRecords();
-    // }, []);
-
-    // Simulate fetching data from the backend
-    const mockFetchRecords = async () => {
+    const fetchRecords = async () => {
       try {
-        // Simulate a delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        // Mock data: Generate thousands of records
-        const mockData = Array.from({ length: 1000 }, (_, index) => ({
-          id: index + 1,
-          name: `Record ${index + 1}`,
-          price: index * 100
-        }));
-
-        setRecords(mockData);
+        const response = await fetch(server_url+"/read/records/all");
+        if (!response.ok) {
+          throw new Error(`Failed to fetch records: ${response.status}`);
+        }
+        const data = await response.json();
+        setRecords(data);
       } catch (err) {
-        setError("Failed to fetch mock records.");
+        setError(err.message);
       }
     };
 
-    mockFetchRecords();
+    fetchRecords();
   }, []);
+
+    // Simulate fetching data from the backend
+  //   const mockFetchRecords = async () => {
+  //     try {
+  //       // Simulate a delay
+  //       await new Promise((resolve) => setTimeout(resolve, 500));
+
+  //       // Mock data: Generate thousands of records
+  //       const mockData = Array.from({ length: 1000 }, (_, index) => ({
+  //         id: index + 1,
+  //         name: `Record ${index + 1}`,
+  //         price: index * 100
+  //       }));
+
+  //       setRecords(mockData);
+  //     } catch (err) {
+  //       setError("Failed to fetch mock records.");
+  //     }
+  //   };
+
+  //   mockFetchRecords();
+  // }, []);
 
   // Calculate the current records to display
   const startIndex = currentPage * recordsPerPage;
@@ -68,8 +67,27 @@ const RecordsViewer = () => {
     navigate("/update-medical-records",{state:{record}})
   };
 
-  const handleDelete = (id) => {
-    alert(`Delete clicked for Record ID: ${id}`);
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(server_url+`/delete/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      // console.log(response)
+      // if (!response) {
+      //   throw new Error(`Failed to delete record with ID ${id}: ${response.status}`);
+      // }
+  
+      // const data = response;
+      // console.log('Record deleted successfully:', id);
+      alert(`Record ID: ${id}, Deleted Successfully`)
+      window.location.reload()
+      // You can update the state here to reflect the deletion
+    } catch (error) {
+      console.error('Error deleting record:', error);
+    }
   };
 
   const handlePredict = (id) => {
@@ -86,7 +104,7 @@ const RecordsViewer = () => {
           <ul id="records">
             {currentRecords.map((record) => (
               <li key={record.id} className="record">
-                <span>{record.name}</span>
+                <span>Record ID: {record.codingNum}</span>
                 <div className="record-buttons">
                   <button onClick={() => handleUpdate(record)}>Update</button>
                   <button onClick={() => handleDelete(record.id)}>Delete</button>
