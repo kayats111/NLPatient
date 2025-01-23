@@ -46,24 +46,40 @@ for record in records:
 
 
 
-response: Response[dict]  # fetch
-headers = {"Content-Type": "application/json"}
-url = "http://localhost:3000/api/data/add"
+# response: Response[dict]  # fetch
+# headers = {"Content-Type": "application/json"}
+# url = "http://localhost:3000/api/data/add"
 
-for index, record in enumerate(records):
-    apiResponse = requests.post(url=url, json=record, headers=headers)
+# for index, record in enumerate(records):
+#     apiResponse = requests.post(url=url, json=record, headers=headers)
 
-    if apiResponse.status_code != 200:
-        raise Exception(f"cannot send data at index {index}")
+#     if apiResponse.status_code != 200:
+#         raise Exception(f"cannot send data at index {index}")
 
-    jj = apiResponse.json()
-    response = Response(value=jj["value"], error=jj["error"], message=jj["message"])
+#     jj = apiResponse.json()
+#     response = Response(value=jj["value"], error=jj["error"], message=jj["message"])
 
-    if response.error:
-        raise Exception(response.message)
+#     if response.error:
+#         raise Exception(response.message)
     
-    print(f"{index + 1} / {len(records)}")
+#     print(f"{index + 1} / {len(records)}")
 
+
+
+actFields = fields.copy()
+actFields.remove("backdiagnos")
+actFields.remove("noconhospi")
+actFields.remove("futurediag")
+actFields.remove("psychotic2nd")
+actFields.remove("any")
+actFields.remove("affective")
+actFields.remove("bipolar")
+actFields.remove("schizophreniaSpectr")
+actFields.remove("codingNum")
+
+sample = [records[0][field] for field in actFields]
+
+print(sample)
 
 print("done!")
 
