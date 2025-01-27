@@ -122,9 +122,35 @@ const TrainedModels = () => {
     setModelMetadata(null);
   };
 
-  const handlePredictClick = () => {
-    alert('Predict button has been pressed');
+  const handlePredictClick = async () => {
+    // Check if selectedModel exists
+    if (!selectedModel) {
+      setError("Please select a model.");
+      return;
+    }
+  
+    try {
+      // Fetch the metadata from the backend as in the handleMetaDataClick
+      const response = await axios.get('http://localhost:3002/api/predictors/meta_data', {
+        params: { "model name": selectedModel }
+      });
+  
+      if (response.data.error) {
+        setError(response.data.message);
+      } else {
+        const metadata = response.data.value;
+  
+        // Pass the model name and metadata to the Predict page using navigate state
+        console.log(metadata.fields);
+        navigate("/doctor-predict", {
+          state: { modelName: selectedModel, modelMetadata: metadata.fields }
+        });
+      }
+    } catch (err) {
+      setError('Failed to fetch model metadata for prediction');
+    }
   };
+  
 
   return (
     <div className="container">
@@ -137,7 +163,9 @@ const TrainedModels = () => {
           <button
             key={modelName}
             className={`list-item ${modelName === selectedModel ? 'active' : ''}`}
-            onClick={() => handleModelClick(modelName)}
+            onClick={() => {
+              handleModelClick(modelName);
+            }}
           >
             {modelName}
           </button>
@@ -147,7 +175,9 @@ const TrainedModels = () => {
       <div className="action-buttons">
         <button
           className={`action-button ${selectedModel ? 'enabled' : 'disabled'}`}
-          onClick={handleMetaDataClick}
+          onClick={()=>{
+            handleMetaDataClick()
+          }}
           disabled={!selectedModel}
         >
           MetaData

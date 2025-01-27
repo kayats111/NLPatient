@@ -36,6 +36,12 @@
   margin-bottom: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+
+  /* Centering */
+  margin-left: auto;
+  margin-right: auto;
+  display: block; /* Ensure it respects margin auto */
+  text-align: center; /* Center text inside the button */
 }
 
 .list-item:hover {

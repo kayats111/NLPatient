@@ -149,6 +149,26 @@ function ViewModels() {
     setShowModal(false); // Close the modal
   };
 
+  const handleDownload = async () => {
+    if (!selectedModel) return;
+
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/api/model_trainer/get_model?model name=${selectedModel}`,
+        { responseType: "blob" }
+      );
+
+      // Create a link to download the file
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(response.data);
+      link.download = `${selectedModel}.py`; // Assuming the file is a Python file
+      link.click();
+    } catch (error) {
+      console.error("Error downloading the model:", error);
+      alert("An error occurred while downloading the model.");
+    }
+  };
+
   return (
     <div className="container">
       <h1>Available Models</h1>
@@ -185,6 +205,14 @@ function ViewModels() {
           disabled={!selectedModel || loading} // Disable during loading
         >
           Delete
+        </button>
+        {/* Download Button */}
+        <button
+          className={`action-button ${selectedModel ? "enabled" : "disabled"}`}
+          onClick={handleDownload}
+          disabled={!selectedModel || loading} // Disable during loading
+        >
+          Download
         </button>
       </div>
 

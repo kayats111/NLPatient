@@ -9,7 +9,8 @@ import ChoicePage from './ChoicePage';
 import AddPatientData from './Doctor/AddPatientData';
 import TrainedModels from './Researcher/TrainedModels';
 import RecordsViewer from './Doctor/RecordsViewer';
-import DPredictor from './Doctor/DPredictor';
+import Predictor from './Researcher/Predictor.js';
+import DPredictor from './Doctor/DPredictor.js';
 import RecordsUpdate from './Doctor/RecordsUpdate.js';
 import ModelUploader from './Researcher/ModelUploader.js';
 import ViewModels from './Researcher/ViewModels.js';
@@ -28,10 +29,11 @@ function App() {
         <Route path="/doctor-main" element={<DoctorMain/>} />
         <Route path="/signup" element={<SignUpPage/>} />
         <Route path="/records-viewer" element={<RecordsViewer/>}/>
-        <Route path="/doctor-predict" element={<DPredictor/>}/>
+        <Route path="/doctor-predict" element={<Predictor/>}/>
         <Route path="/update-medical-records" element={<RecordsUpdate/>}/>
         <Route path="/model_uploader" element={<ModelUploader/>}/>
-        <Route path="model-viewer" element={<ViewModels/>}/>
+        <Route path="/model-viewer" element={<ViewModels/>}/>
+        <Route path="/DPredict" element={<DPredictor/>}/>
       </Routes>
     </Router>
   );

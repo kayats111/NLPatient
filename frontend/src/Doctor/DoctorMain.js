@@ -15,6 +15,9 @@ function DoctorMain(){
         // You can replace the console log with actual functionality
         // for each button based on the app's requirements
     };
+    const handlePredictClick = () => {
+        navigate("/DPredict")
+    };
 
     return (
         <div style = {styles.container}>
@@ -33,6 +36,12 @@ function DoctorMain(){
                     style={styles.button}
                 >
                     View Records  
+                </button>
+                <button
+                    onClick={()=> handlePredictClick()}
+                    style={styles.button}
+                >
+                    Predict  
                 </button>
 
             </div>

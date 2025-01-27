@@ -40,6 +40,9 @@ function ResearcherMain() {
     else if(action === 'View Models'){
       navigate("/model-viewer")
     }
+    else if(action === 'View Records'){
+      navigate("/records-viewer")
+    }
     
     
 
@@ -74,6 +77,12 @@ function ResearcherMain() {
           style={styles.button}
         >
           Trained Models
+        </button>
+        <button
+          onClick={() => handleButtonClick('View Records')}
+          style={styles.button}
+        >
+          View Medical Records
         </button>
       </div>
     </div>

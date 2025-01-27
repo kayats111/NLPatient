@@ -17,12 +17,14 @@
 }
 
 .list-item {
-  padding: 10px;
+  padding: 10px 20px; /* Increase horizontal padding */
   margin: 10px;
   border: 1px solid #ccc;
   cursor: pointer;
   transition: background-color 0.3s;
   font-size: 15px;
+  width: 150px; /* Set a minimum width */
+  text-align: center; /* Center-align text inside the button */
 }
 
 .list-item.unselected {

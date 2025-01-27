@@ -35,7 +35,7 @@ def getPredictorNames() -> List[str]:
 
 @bp.route("/get_predictor", methods=["GET"])
 def getPredictor():
-    data: dict = {"model name": request.args.get("model name")}
+    data: dict = request.get_json()
 
     schema: Set[str] = {"model name"}
 
@@ -97,9 +97,11 @@ def getMetaData():
     return jsonify(response.toDict())
 
 
-@bp.route("/predict", methods=["GET"])
+@bp.route("/predict", methods=["POST"])
 def predict():
+    # print(request.get_json())
     data: dict = request.get_json()
+    print(data["sample"])
 
     schema: Set[str] = {"model name", "sample"}
 
@@ -116,16 +118,6 @@ def predict():
         app.log_exception(e)
     
     return jsonify(response.toDict())
-
-
-
-
-
-
-
-
-
-
 
 
 def validateRequestSchema(request: dict, schema: Set[str]) -> bool:
