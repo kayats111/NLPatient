@@ -1,16 +1,19 @@
 import numpy as np
 from numpy.typing import NDArray
-from typing import List
+from typing import List, Tuple
 
-def run(data: NDArray, fields: List[str]) -> dict:
+
+def run(vectors: NDArray, labels: NDArray, fields: List[str], labelNames: List[str]) -> dict:
     """
     From here you call functions to run your code.
     This is the "main" function, DO NOT delete it.
     Examples below.
 
     Args:
-        data (NDArray[NDArray[float64]]): The Medical Records in vector form.
+        vectors (NDArray[NDArray[float64]]): The Medical Records in vector form.
+        labels (NDArray[NDArray[float64]]): The labels of the Medical Records.
         fields (List[str]): The requested fields of the Medical Records vectors.
+        labelNames (List[str]): The requested labels of the Medical Records.
     
     Returns:
         dict: A dict that includes any data to save.
@@ -19,8 +22,8 @@ def run(data: NDArray, fields: List[str]) -> dict:
 
     """
 
-    trainRes: float = train(data)
-    testRes: float = test(data)
+    trainRes: float = train(vectors, labels)
+    testRes: float = test(vectors, labels)
 
     return {
         "model": ["just an example, send a model instead"],
@@ -34,7 +37,24 @@ def run(data: NDArray, fields: List[str]) -> dict:
         "additional information 3": "you may add any additional information"
     }
 
-def train(data) -> float:
+
+def createModel():
+    """
+    This function is mandatory only for PyTorch models.
+    The function should return an empty model using the constructor,
+    for example: return SimpleModel()
+
+    Args:
+        None
+
+    Returns:
+        An empty PyTorch model
+    """
+
+    return None
+
+
+def train(vectors, labels) -> float:
     """
     This is an example of how you can train your model.
     
@@ -44,7 +64,8 @@ def train(data) -> float:
     """
     return 18.5697
 
-def test(data) -> float:
+
+def test(vectors, labels) -> float:
     """
     This is an example of how you can test your model.
     
@@ -53,6 +74,7 @@ def test(data) -> float:
 
     """
     return 71.5842
+
 
 """
 Write any function or script you wish, just make sure

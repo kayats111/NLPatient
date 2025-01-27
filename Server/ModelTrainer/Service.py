@@ -63,7 +63,7 @@ class Service:
         
         os.remove(filePath)
 
-    def runModel(self, modelName: str, fields: List[str] = None) -> dict:
+    def runModel(self, modelName: str, fields: List[str] = None, labels: List[str] = None) -> dict:
         filePath = os.path.join(SAVED_FOLDER, modelName + ".py")
 
         if not os.path.isfile(filePath):
@@ -85,6 +85,9 @@ class Service:
 
         if fields is not None:
             body = {"fields": fields}
+
+        if labels is not None:
+            body["labels"] = labels
     
         apiResponse = requests.get(url=url, json=body, headers=headers)
         
@@ -98,13 +101,17 @@ class Service:
             raise Exception(response.message)
         
         vectors = np.array(response.value["vectors"])
+        vectorLabels = np.array(response.value["vectorLabels"])
         
         if fields is None:
             # all fields
             fields = response.value["fields"]
 
+        if labels is None:
+            labels = response.value["labels"]
 
-        result: dict = run(vectors, fields)
+
+        result: dict = run(vectors=vectors, labels=vectorLabels, fields=fields, labelNames=labels)
 
         if "model" not in result or "isScikit" not in result or "isPyTorch" not in result:
             raise Exception("the module did not returned the model or whether its Scikit or PyTorch")
@@ -112,7 +119,7 @@ class Service:
         self.addTrainedModel(model=result["model"], modelName=modelName,
                              isScikit=result["isScikit"], isPyTorch=result["isPyTorch"])
         
-        metaData: dict = self.addMetaData(modelName=modelName, result=result, fields=fields)
+        metaData: dict = self.addMetaData(modelName=modelName, result=result, fields=fields, labels=labels)
 
         return metaData
 
@@ -125,19 +132,27 @@ class Service:
             return
         
         if isPyTorch:
-            save(model, os.path.join(TRAINED_FOLDER, modelName + ".pth"))
+            save(model.state_dict(), os.path.join(TRAINED_FOLDER, modelName + ".pth"))
             return
 
     # NOTE: not for API use, but after training the model (lambda?)
     # TODO: check after model training    
-    def addMetaData(self, modelName: str, result: dict, fields: List[str]) -> dict:
+    def addMetaData(self, modelName: str, result: dict, fields: List[str], labels: List[str]) -> dict:
         metaData: dict = result.copy()
 
         metaData.pop("model")
         metaData["model name"] = modelName
         metaData["fields"] = fields
+        metaData["labels"] = labels
 
         self.metaRepository.addMetaData(metaData)
+
+        if "_id" in metaData:
+            metaData.pop("_id")
+
+        return metaData
+
+        
     
     def getTemplatePath(self):
         return TEMPLATE_PATH

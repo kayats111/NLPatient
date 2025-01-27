@@ -107,10 +107,15 @@ def runModel():
     try:
         metaData: dict
 
-        if "fields" in data:
+        if "fields" in data and "labels" in data:
+            metaData = service.runModel(data["model name"], data["fields"], data["labels"])
+        elif "fields" in data:
             metaData = service.runModel(data["model name"], data["fields"])
+        elif "labels" in data:
+            metaData = service.runModel(data["model name"], data["labels"])
         else:
             metaData = service.runModel(data["model name"])
+        
 
         response = Response(value=metaData)
     except Exception as e:
