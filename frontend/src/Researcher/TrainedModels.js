@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import "./TrainedModels.css"; // Import the CSS file
+
 
 const TrainedModels = () => {
   const [modelNames, setModelNames] = useState([]);
@@ -10,7 +12,6 @@ const TrainedModels = () => {
   const [modelMetadata, setModelMetadata] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch the model names
   useEffect(() => {
     const fetchModelNames = async () => {
       try {
@@ -78,6 +79,44 @@ const TrainedModels = () => {
     }
   };
 
+  const handleDownloadClick = async () => {
+    if (!selectedModel) {
+      setError('Please select a model');
+      return;
+    }
+  
+    try {
+      const response = await axios.get('http://localhost:3002/api/predictors/get_predictor', {
+        params: { "model name": selectedModel },
+        responseType: 'blob', // Set response type to blob for file downloads
+      });
+  
+      // Extract the filename from the Content-Disposition header if available
+      const contentDisposition = response.headers['content-disposition'];
+      let filename = `${selectedModel}`;
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (match && match[1]) {
+          filename = match[1]; // Use the filename provided by the server
+          console.log(`file name: ${filename}`)
+        }
+      }
+      console.log(`file name: ${filename}`);
+  
+      // Create a download link and trigger the download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${filename}.pkl`); // Use the extracted filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      setError('Failed to download the model');
+    }
+  };
+  
+
   const handleModalClose = () => {
     setModalVisible(false);
     setModelMetadata(null);
@@ -91,10 +130,8 @@ const TrainedModels = () => {
     <div className="container">
       <h1>Trained Models</h1>
 
-      {/* Error message */}
       {error && <div className="error">{error}</div>}
 
-      {/* Model list with clickable buttons */}
       <div className="model-list">
         {modelNames.map((modelName) => (
           <button
@@ -107,7 +144,6 @@ const TrainedModels = () => {
         ))}
       </div>
 
-      {/* Action buttons */}
       <div className="action-buttons">
         <button
           className={`action-button ${selectedModel ? 'enabled' : 'disabled'}`}
@@ -130,16 +166,21 @@ const TrainedModels = () => {
         >
           Predict
         </button>
+        <button
+          className={`action-button download-button ${selectedModel ? 'enabled' : 'disabled'}`}
+          onClick={handleDownloadClick}
+          disabled={!selectedModel}
+        >
+          Download
+        </button>
       </div>
 
-      {/* Selection message */}
       {selectedModel && (
         <div className="selection-message">
           <p>You have selected: {selectedModel}</p>
         </div>
       )}
 
-      {/* Modal Overlay for Metadata */}
       {modalVisible && (
         <div className="overlay">
           <div className="modal-content">
