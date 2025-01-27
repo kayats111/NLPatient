@@ -50,8 +50,8 @@ def addModel():
 
 @bp.route("/get_model", methods=["GET"])
 def getModel():
-    data: dict = request.get_json()
-
+    data: dict = {"model name" : request.args.get("model name")}
+    
     schema: Set[str] = {"model name"}
 
     if not validateRequestSchema(data, schema):
@@ -95,10 +95,13 @@ def deleteModelFile():
     return jsonify(response.toDict())
 
 
-@bp.route("/run_model", methods=["GET"])
-def runModel():
-    data: dict = request.get_json()
 
+@bp.route("/run_model", methods=["POST"])  # Change to POST since we're sending data
+def runModel():
+    
+    print(request.get_json())
+
+    data = request.get_json()
     if "model name" not in data:
         return jsonify(Response(error=True, message="bad request body").toDict()), 400
     
@@ -107,6 +110,7 @@ def runModel():
     try:
         metaData: dict
 
+        # Handle the presence of "fields" and "labels" in the data
         if "fields" in data and "labels" in data:
             metaData = service.runModel(data["model name"], data["fields"], data["labels"])
         elif "fields" in data:
@@ -116,14 +120,13 @@ def runModel():
         else:
             metaData = service.runModel(data["model name"])
         
-
+        # Return metadata as the response
         response = Response(value=metaData)
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
 
     return jsonify(response.toDict())
-
 
 @bp.route("/template", methods=["GET"])
 def getTemplate():

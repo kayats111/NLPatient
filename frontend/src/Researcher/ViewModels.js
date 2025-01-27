@@ -7,7 +7,13 @@ function ViewModels() {
   const [filteredModels, setFilteredModels] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedModel, setSelectedModel] = useState(null);
+  const [modelMetadata, setModelMetadata] = useState(null); // To store metadata
   const [error, setError] = useState(null);
+  const [fieldsAndLabels, setFieldsAndLabels] = useState(null); // Store fields and labels
+  const [selectedFields, setSelectedFields] = useState([]); // Store selected fields
+  const [selectedLabels, setSelectedLabels] = useState([]); // Store selected labels
+  const [showModal, setShowModal] = useState(false); // Control modal visibility
+  const [loading, setLoading] = useState(false); // Loading state for the spinner or status bar
 
   useEffect(() => {
     // Fetch model names from the backend
@@ -39,19 +45,67 @@ function ViewModels() {
     }
   };
 
-  const handleModelClick = (modelName) => {
+  const handleTrainClick = async () => {
+    if (!selectedModel) return;
+
+    // Start loading
+    setLoading(true);
+
+    // Create the initial data object with the model name
+    let dataToSend = { "model name": selectedModel };
+
+    // Add fields and labels if they are selected
+    if (selectedFields.length > 0 && selectedLabels.length > 0) {
+      dataToSend.fields = selectedFields;
+      dataToSend.labels = selectedLabels;
+    } else if (selectedFields.length > 0) {
+      dataToSend.fields = selectedFields;
+    } else if (selectedLabels.length > 0) {
+      dataToSend.labels = selectedLabels;
+    }
+
+    try {
+      // Send the request to the backend
+      const response = await axios.post("http://localhost:3001/api/model_trainer/run_model", dataToSend);
+
+      // Handle the response, e.g., display success or metadata
+      // console.log(response.data);
+      alert(`Model Name: ${selectedModel} has been trained successfully!`)
+      handleModalClose()
+    } catch (error) {
+      console.error("Error training the model:", error);
+      alert("An error occurred while training the model.");
+    } finally {
+      // Stop loading after request completion
+      setLoading(false);
+    }
+  };
+
+  const handleModelClick = async (modelName) => {
     setSelectedModel(modelName); // Set the selected model
+    // setModelMetadata(null); // Clear previous metadata
   };
 
   const handleButtonClick = async (action) => {
     if (!selectedModel) return;
 
     try {
-      if (action === "Delete") {
+      if (action === "Train") {
+        // Fetch fields and labels from port 3000
+        const response = await axios.get("http://localhost:3000/api/data/fields_labels");
+        const { fields, labels } = response.data.value;
+
+        // Sort fields and labels alphabetically
+        const sortedFields = fields.sort();
+        const sortedLabels = labels.sort();
+
+        setFieldsAndLabels({ fields: sortedFields, labels: sortedLabels }); // Store sorted fields and labels
+        setShowModal(true); // Show modal with the fields and labels
+      } else if (action === "Delete") {
         const response = await axios.delete("http://localhost:3001/api/model_trainer/delete_model", {
           data: { "model name": selectedModel },
         });
-        
+
         if (response.data.error) {
           alert("Failed to delete the model: " + response.data.message);
         } else {
@@ -59,15 +113,40 @@ function ViewModels() {
           setModelNames(modelNames.filter((name) => name !== selectedModel)); // Remove model from the list
           setFilteredModels(filteredModels.filter((name) => name !== selectedModel)); // Update the filtered list
           setSelectedModel(null); // Reset selected model
+          setModelMetadata(null); // Clear metadata
         }
-      } else {
-        alert(`${action} action triggered for: ${selectedModel}`);
-        // Implement other actions like "Train" or "MetaData"
       }
     } catch (error) {
-      console.error("Error during the delete action:", error);
-      alert("An error occurred while trying to delete the model.");
+      alert("An error occurred");
     }
+  };
+
+  const handleFieldSelection = (field) => {
+    setSelectedFields((prevSelectedFields) => {
+      if (prevSelectedFields.includes(field)) {
+        // If field is already selected, remove it
+        return prevSelectedFields.filter((selectedField) => selectedField !== field);
+      } else {
+        // Otherwise, add the field to the selection
+        return [...prevSelectedFields, field];
+      }
+    });
+  };
+
+  const handleLabelSelection = (label) => {
+    setSelectedLabels((prevSelectedLabels) => {
+      if (prevSelectedLabels.includes(label)) {
+        // If label is already selected, remove it
+        return prevSelectedLabels.filter((selectedLabel) => selectedLabel !== label);
+      } else {
+        // Otherwise, add the label to the selection
+        return [...prevSelectedLabels, label];
+      }
+    });
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false); // Close the modal
   };
 
   return (
@@ -96,19 +175,60 @@ function ViewModels() {
         <button
           className={`action-button ${selectedModel ? "enabled" : "disabled"}`}
           onClick={() => handleButtonClick("Train")}
-          disabled={!selectedModel}
+          disabled={!selectedModel || loading} // Disable during loading
         >
           Train
         </button>
         <button
           className={`action-button ${selectedModel ? "enabled" : "disabled"}`}
           onClick={() => handleButtonClick("Delete")}
-          disabled={!selectedModel}
+          disabled={!selectedModel || loading} // Disable during loading
         >
           Delete
         </button>
-        
       </div>
+
+      {/* Modal to select fields and labels */}
+      {showModal && fieldsAndLabels && (
+        <div className="overlay">
+          <div className="modal-content">
+            <h2>Select Fields and Labels</h2>
+            <h3>Fields</h3>
+            <div className="fields-container">
+              {fieldsAndLabels.fields.map((field, index) => (
+                <button
+                  key={index}
+                  className={`field-button ${selectedFields.includes(field) ? "selected" : ""}`}
+                  onClick={() => handleFieldSelection(field)}
+                >
+                  {field}
+                </button>
+              ))}
+            </div>
+            <h3>Labels</h3>
+            <div className="labels-container">
+              {fieldsAndLabels.labels.map((label, index) => (
+                <button
+                  key={index}
+                  className={`label-button ${selectedLabels.includes(label) ? "selected" : ""}`}
+                  onClick={() => handleLabelSelection(label)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="modal-actions">
+              <button className="train-button" onClick={handleTrainClick} disabled={loading}>
+                {loading ? "Training..." : "Train"}
+              </button>
+              <button className="close-modal" onClick={handleModalClose}>Exit</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Show loading spinner if loading is true */}
+      {loading && <div className="loading-spinner">Loading...</div>}
     </div>
   );
 }

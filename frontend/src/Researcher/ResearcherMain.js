@@ -73,7 +73,7 @@ function ResearcherMain() {
           onClick={() => handleButtonClick('Train Model')}
           style={styles.button}
         >
-          Train Model
+          Trained Models
         </button>
       </div>
     </div>

@@ -7,7 +7,7 @@ import DoctorMain from './Doctor/DoctorMain'; // The main page after login
 import SignUpPage from './SignUpPage'; // The main page after login
 import ChoicePage from './ChoicePage';
 import AddPatientData from './Doctor/AddPatientData';
-import TrainPage from './Researcher/TrainPage';
+import TrainedModels from './Researcher/TrainedModels';
 import RecordsViewer from './Doctor/RecordsViewer';
 import DPredictor from './Doctor/DPredictor';
 import RecordsUpdate from './Doctor/RecordsUpdate.js';
@@ -21,7 +21,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/train-page" element={<TrainPage/>}/>
+        <Route path="/train-page" element={<TrainedModels/>}/>
         <Route path="/add-patient-data" element={<AddPatientData/>}/>
         <Route path="/choicepage" element={<ChoicePage/>}/>
         <Route path="/researcher-main" element={<ResearcherMain />} />
