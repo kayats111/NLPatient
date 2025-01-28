@@ -1,88 +1,201 @@
-/* "http://localhost:3001/api/model_trainer/get_names" */
-
-/* Container styles */
+/* General Styles */
 .container {
-    padding: 20px;
-    text-align: center;
-  }
-  
-  /* Error message styles */
-  .error {
-    color: red;
-    font-size: 16px;
-  }
-  
-  /* Search bar styles */
-  .search-bar {
-    margin-bottom: 20px;
-    padding: 10px;
-    width: 80%;
-    max-width: 500px;
-    font-size: 16px;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  /* List styles */
-  .list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    text-align: left;
-    width: 80%;
-    max-width: 500px;
-    margin: 0 auto 20px;
-  }
-  
-  .list-item {
-    padding: 10px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    margin-bottom: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .list-item:hover {
-    background-color: #f1f1f1;
-  }
-  
-  .list-item.active {
-    background-color: #007BFF;
-    color: white;
-  }
-  
-  .button-container {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 60px;
-    width: 80%;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-  
-  .action-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 120px;
-    height: 40px;
-  }
-  
-  .action-button.disabled {
-    background-color: #ccc;
-    color: #fff;
-  }
-  
-  .action-button.enabled {
-    background-color: #007BFF;
-    color: white;
-  }
-  
-  .action-button:disabled {
-    cursor: not-allowed;
-  }
-  
+  padding: 20px;
+  text-align: center;
+}
+
+.error {
+  color: red;
+  font-size: 16px;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+  padding: 10px;
+  width: 80%;
+  max-width: 500px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+}
+
+.list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  width: 80%;
+  max-width: 500px;
+  margin: 0 auto 20px;
+}
+
+.list-item {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  /* Centering */
+  margin-left: auto;
+  margin-right: auto;
+  display: block; /* Ensure it respects margin auto */
+  text-align: center; /* Center text inside the button */
+}
+
+.list-item:hover {
+  background-color: #f1f1f1;
+}
+
+.list-item.active {
+  background-color: #007BFF;
+  color: white;
+}
+
+.button-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  width: 80%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.action-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 120px;
+  height: 40px;
+}
+
+.action-button.disabled {
+  background-color: #ccc;
+  color: #fff;
+}
+
+.action-button.enabled {
+  background-color: #007BFF;
+  color: white;
+}
+
+.action-button:disabled {
+  cursor: not-allowed;
+}
+
+/* Modal Styling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Ensure the modal is on top */
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 60%;
+  max-width: 800px;
+  text-align: center;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  justify-content: center; /* Center the buttons horizontally */
+  gap: 20px; /* Reduced gap between buttons */
+  margin-top: 20px;
+}
+
+/* Train Button */
+.train-button {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.train-button:hover {
+  background-color: #0056b3;
+}
+
+/* Close (Exit) Button */
+.close-modal {
+  padding: 10px 20px;
+  background-color: #FF6347;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.overlay {
+  position: fixed; /* Fix it to the screen */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  z-index: 9999; /* High z-index to be on top of other elements */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.close-modal:hover {
+  background-color: #cc4d3a;
+}
+
+.modal-section {
+  margin-bottom: 20px;
+}
+
+.fields-container, .labels-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.field-button, .label-button {
+  padding: 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.field-button.selected, .label-button.selected {
+  background-color: #007BFF;
+  color: white;
+}
+
+.close-modal {
+  background-color: #FF6347;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.loading-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  color: #007bff;
+}
+

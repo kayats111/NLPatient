@@ -67,7 +67,8 @@ const RecordsViewer = () => {
     navigate("/update-medical-records",{state:{record}})
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (record) => {
+    let id = record.id;
     try {
       const response = await fetch(server_url+`/delete/${id}`, {
         method: 'DELETE',
@@ -82,7 +83,7 @@ const RecordsViewer = () => {
   
       // const data = response;
       // console.log('Record deleted successfully:', id);
-      alert(`Record ID: ${id}, Deleted Successfully`)
+      alert(`Record ID: ${record.codingNum}, Deleted Successfully`)
       window.location.reload()
       // You can update the state here to reflect the deletion
     } catch (error) {
@@ -106,8 +107,8 @@ const RecordsViewer = () => {
               <li key={record.id} className="record">
                 <span>Record ID: {record.codingNum}</span>
                 <div className="record-buttons">
-                  <button onClick={() => handleUpdate(record)}>Update</button>
-                  <button onClick={() => handleDelete(record.id)}>Delete</button>
+                  <button onClick={() => handleUpdate(record)}>View</button>
+                  <button onClick={() => handleDelete(record)}>Delete</button>
                   <button onClick={() => handlePredict(record.id)}>Predict</button>
                 </div>
               </li>

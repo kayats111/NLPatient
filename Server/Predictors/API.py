@@ -29,6 +29,7 @@ def welcome() -> str:
 
 @bp.route("/names", methods=["GET"])
 def getPredictorNames() -> List[str]:
+    # print(service.getPredictorNames())
     return jsonify(Response(value=service.getPredictorNames()).toDict())
 
 
@@ -76,7 +77,7 @@ def deletePredictor():
 
 @bp.route("/meta_data", methods=["GET"])
 def getMetaData():
-    data: dict = request.get_json()
+    data: dict = {"model name": request.args.get("model name")}
 
     schema: Set[str] = {"model name"}
 
@@ -96,9 +97,11 @@ def getMetaData():
     return jsonify(response.toDict())
 
 
-@bp.route("/predict", methods=["GET"])
+@bp.route("/predict", methods=["POST"])
 def predict():
+    # print(request.get_json())
     data: dict = request.get_json()
+    print(data["sample"])
 
     schema: Set[str] = {"model name", "sample"}
 
@@ -115,16 +118,6 @@ def predict():
         app.log_exception(e)
     
     return jsonify(response.toDict())
-
-
-
-
-
-
-
-
-
-
 
 
 def validateRequestSchema(request: dict, schema: Set[str]) -> bool:
