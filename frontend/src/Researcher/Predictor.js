@@ -99,7 +99,7 @@ const Predictor = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Prediction Result</h2>
-            <p>{prediction.join(", ")}</p>
+            <p>{Array.isArray(prediction)?prediction.join(","):prediction}</p>
             <button className="close-modal" onClick={() => setPrediction(null)}>Close</button>
           </div>
         </div>
