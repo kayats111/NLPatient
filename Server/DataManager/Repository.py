@@ -58,4 +58,8 @@ class Repository:
 
         return ids
 
+    def getRecordsWithIds(self, ids: List[int]) -> List[MedicalRecord]:
+        records: List[MedicalRecord] = MedicalRecord.query.filter(MedicalRecord.id.in_(ids)).all()
+
+        return records
 
