@@ -52,5 +52,10 @@ class Repository:
             return MedicalRecord.query.all()
         except Exception as e:
             raise Exception("cannot get records")
+        
+    def getRecordsIds(self) -> List[int]:
+        ids: List[int] = [record.id for record in MedicalRecord.query.with_entities(MedicalRecord.id).all()]
+
+        return ids
 
 
