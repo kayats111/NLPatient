@@ -131,6 +131,9 @@ class MedicalRecordService:
     def getAllIds(self) -> List[int]:
         return self.repository.getRecordsIds()
 
+    def getRecordsWithIds(self, ids: List[int]) -> List[MedicalRecord]:
+        return self.repository.getRecordsWithIds(ids)
+
 
 
 
