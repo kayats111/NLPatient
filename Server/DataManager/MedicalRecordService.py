@@ -128,5 +128,9 @@ class MedicalRecordService:
             "labels": LABELS
         }
 
+    def getAllIds(self) -> List[int]:
+        return self.repository.getRecordsIds()
+
+
 
 
