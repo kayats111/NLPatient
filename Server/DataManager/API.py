@@ -179,6 +179,14 @@ def getFieldsAndLabels():
     return jsonify(response.toDict())
 
 
+@bp.route("/ids", methods=["GET"])
+def getAllIds():
+    response: Response[List[int]] = Response(value=service.getAllIds())
+
+    return jsonify(response.toDict())
+
+
+
 def validateRequestSchema(request: dict, schema: Set[str]) -> bool:
     for field in schema:
         if field not in request:
