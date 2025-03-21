@@ -144,16 +144,19 @@ def getVectors():
     response: Response[dict]
 
     try:
+        if "ids" not in data:
+            raise Exception("request should contain 'ids' attribute")
+
         vectors: List[List[float]]
 
         if ("fields" in data) and ("labels" in data):
-            vectors, labels = service.getVectors(fields=data["fields"], labels=data["labels"])
+            vectors, labels = service.getVectors(ids=data["ids"], fields=data["fields"], labels=data["labels"])
         elif "fields" in data:
-            vectors, labels = service.getVectors(fields=data["fields"])
+            vectors, labels = service.getVectors(ids=data["ids"], fields=data["fields"])
         elif "labels" in data:
-            vectors, labels = service.getVectors(labels=data["labels"])
+            vectors, labels = service.getVectors(ids=data["ids"], labels=data["labels"])
         else:
-            vectors, labels = service.getVectors()
+            vectors, labels = service.getVectors(ids=data["ids"])
         
         
         toReturn: dict = {
