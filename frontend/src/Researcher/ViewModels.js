@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./ViewModels.css"; // Import the CSS file
+import DoctorDrawerMenu from '../Doctor/DoctorDrawerMenu'; 
+import { useResearcherLinks } from '../Context';
 
 function ViewModels() {
   const [modelNames, setModelNames] = useState([]);
@@ -14,7 +16,8 @@ function ViewModels() {
   const [selectedLabels, setSelectedLabels] = useState([]); // Store selected labels
   const [showModal, setShowModal] = useState(false); // Control modal visibility
   const [loading, setLoading] = useState(false); // Loading state for the spinner or status bar
-
+  const {links} = useResearcherLinks();
+  
   useEffect(() => {
     // Fetch model names from the backend
     const fetchModelNames = async () => {
@@ -171,6 +174,7 @@ function ViewModels() {
 
   return (
     <div className="container">
+      <DoctorDrawerMenu links = {links} />
       <h1>Available Models</h1>
       {error && <p className="error">{error}</p>}
       <input

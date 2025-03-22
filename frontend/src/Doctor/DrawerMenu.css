@@ -1,0 +1,61 @@
+.drawer {
+    position: fixed;
+    right: 0; /* Positioning the drawer on the right */
+    top: 0;
+    width: 250px; /* Set width of the drawer */
+    height: 100%;
+    background-color: rgba(255, 255, 255); /* Light color with 80% opacity */
+    color: #333; /* Dark text for better readability */
+    transform: translateX(100%); /* Hide drawer by default */
+    transition: transform 0.3s ease; /* Smooth transition for opening/closing */
+    z-index: 1000;
+    padding-top: 50px; /* Add some padding to the top to ensure the content isn't hidden behind the button */
+  }
+  
+  .drawer.open {
+    transform: translateX(0); /* When open, move the drawer into view */
+  }
+  
+  .drawer-nav {
+    padding: 20px;
+  }
+  
+  .drawer-link {
+    display: block;
+    margin: 10px 0;
+    font-size: 18px;
+    text-decoration: none;
+    color: #333; /* Link color */
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .drawer-link:hover {
+    background-color: #007bff; /* Highlight the link on hover */
+    color: #fff; /* Change text color on hover */
+  }
+  
+  .drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3); /* Light overlay for closing effect */
+    z-index: 999; /* Ensure it's below the drawer */
+  }
+  
+  .menu-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px; /* Positions the button on the right side */
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1050; /* Ensures the button is above the drawer */
+  }
+  

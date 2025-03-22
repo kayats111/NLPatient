@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import "./TrainedModels.css"; // Import the CSS file
-
+import DoctorDrawerMenu from '../Doctor/DoctorDrawerMenu'; 
+import { useResearcherLinks } from '../Context';
 
 const TrainedModels = () => {
   const [modelNames, setModelNames] = useState([]);
@@ -11,7 +12,7 @@ const TrainedModels = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modelMetadata, setModelMetadata] = useState(null);
   const navigate = useNavigate();
-
+  const {links} = useResearcherLinks();
   useEffect(() => {
     const fetchModelNames = async () => {
       try {
@@ -155,7 +156,7 @@ const TrainedModels = () => {
   return (
     <div className="container">
       <h1>Trained Models</h1>
-
+      <DoctorDrawerMenu links = {links} />
       {error && <div className="error">{error}</div>}
 
       <div className="model-list">
