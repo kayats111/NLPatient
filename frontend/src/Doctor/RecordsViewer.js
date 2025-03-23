@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from 'react-router-dom';
+import DoctorDrawerMenu from './DoctorDrawerMenu'; 
+import { useDoctorLinks } from '../Context';
 
 import "./RecordsViewer.css";
 const server_url = "http://localhost:3000/api/data"
@@ -9,6 +11,7 @@ const RecordsViewer = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const recordsPerPage = 8;
+  const {links} = useDoctorLinks();
 
   useEffect(() => {
     const fetchRecords = async () => {
@@ -26,7 +29,7 @@ const RecordsViewer = () => {
 
     fetchRecords();
   }, []);
-
+  
     // Simulate fetching data from the backend
   //   const mockFetchRecords = async () => {
   //     try {
@@ -97,6 +100,7 @@ const RecordsViewer = () => {
 
   return (
     <div>
+      <DoctorDrawerMenu links = {links} />
       <h1>Record Names</h1>
       {error ? (
         <p className="error-message">Error: {error}</p>

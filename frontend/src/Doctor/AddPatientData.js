@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
+import DoctorDrawerMenu from './DoctorDrawerMenu'; 
+import { useDoctorLinks } from '../Context';
 import axios from "axios"; // For sending HTTP requests
 
 function AddPatientData() {
   const [data, setData] = useState([]);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(null); // For tracking upload progress
-
+  const {links} = useDoctorLinks();
+  
   // Handle file drop
   const handleDrop = (event) => {
     event.preventDefault();
@@ -74,6 +77,7 @@ function AddPatientData() {
 
   return (
     <div style={styles.buttonContainer}>
+      <DoctorDrawerMenu links = {links} />
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}

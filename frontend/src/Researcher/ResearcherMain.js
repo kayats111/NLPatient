@@ -1,8 +1,13 @@
 import React from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+import DoctorDrawerMenu from '../Doctor/DoctorDrawerMenu'; 
+import { useResearcherLinks } from '../Context';
+
 
 function ResearcherMain() {
   const navigate = useNavigate(); // Use the hook for navigation
+  const {links} = useResearcherLinks();
+  const updatedLinks = [...links,{name:"Role Page", path:"/choicepage"}]
   const fakehandleDownload = () => {
     alert('fake handle download');
   };
@@ -50,6 +55,7 @@ function ResearcherMain() {
 
   return (
     <div style={styles.container}>
+      <DoctorDrawerMenu links = {updatedLinks} />
       <h2>Welcome to the Researcher Hub</h2>
       <p>You are now logged in.</p>
 

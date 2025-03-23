@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import "./DPredictor.css"; // Import the CSS file
+import "./DPredictor.css"; 
+import DoctorDrawerMenu from './DoctorDrawerMenu'; 
+import { useDoctorLinks } from '../Context';
 
 const DPredictor = () => {
   const [modelNames, setModelNames] = useState([]);
   const [selectedModel, setSelectedModel] = useState(null);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const {links} = useDoctorLinks();
 
   useEffect(() => {
     const fetchModelNames = async () => {
@@ -60,6 +63,7 @@ const DPredictor = () => {
 
   return (
     <div className="container">
+      <DoctorDrawerMenu links = {links} /> 
       <h1>Trained Models</h1>
 
       {error && <div className="error">{error}</div>}
