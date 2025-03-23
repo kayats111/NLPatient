@@ -1,16 +1,21 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import "./RecordsUpdate.css"; 
-import axios from "axios"; // For sending HTTP requests
+import axios from "axios";
 import { Navigate, useNavigate } from 'react-router-dom';
-
+import { useRole } from "../context/roleContext";
+import { useRoleLinks } from "../context/FetchContext";
+import DrawerMenu from '../DrawerMenu'; 
 
 
 const RecordsUpdate = () => {
-  const navigate = useNavigate(); // Use the hook for navigation
+  const navigate = useNavigate();
   const { state } = useLocation();
   const record = state?.record || {}; 
   const [updatedRecord, setUpdatedRecord] = useState(record); 
+  const { role } = useRole();
+  const { links } = useRoleLinks();
+  // console.log("bug",links)
 
   // Handle input changes
   const handleInputChange = (key, value) => {
@@ -20,17 +25,21 @@ const RecordsUpdate = () => {
     });
   };
 
-  const handleSaveCHanges = async ()=>{
-    try{
+  const handleSaveChanges = async () => {
+    try {
       await axios.patch("http://localhost:3000/api/data/update", updatedRecord);
-      alert("Changes Saved!")
-      navigate("/records-viewer")
+      alert("Changes Saved!");
+      navigate("/doctor-main");
     } catch (error) {
       console.error("Error uploading row:", updatedRecord, error);
     }
-  }
+  };
+
+  const isEditable = role === "doctor" || role === "admin";
+
   return (
     <div className="update-container">
+      <DrawerMenu links = {links} />
       <h1>Update Record</h1>
       <div className="update-form-grid">
         {Object.entries(updatedRecord).map(([key, value]) => (
@@ -41,16 +50,19 @@ const RecordsUpdate = () => {
               value={value}
               onChange={(e) => handleInputChange(key, e.target.value)}
               className="update-input"
+              disabled={role === "researcher"} // Disable input for researcher role
             />
           </div>
         ))}
       </div>
-      <button
-        className="update-save-button"
-        onClick={() => handleSaveCHanges()}
-      >
-        Save Changes
-      </button>
+      {isEditable && ( // Show button only if the role is doctor or admin
+        <button
+          className="update-save-button"
+          onClick={handleSaveChanges}
+        >
+          Save Changes
+        </button>
+      )}
     </div>
   );
 };

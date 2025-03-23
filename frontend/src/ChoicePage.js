@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+import DrawerMenu from './DrawerMenu'; 
+// import { useAdminLinks } from './context/Context';
+import { useRoleLinks } from "./context/FetchContext";
 
 
 function ChoicePage(){
     const navigate = useNavigate();
+    const {links} = useRoleLinks();
 
     const handleChoice = (choice) => {
         if (choice === "Researcher"){
@@ -15,6 +19,7 @@ function ChoicePage(){
     };
     return (
         <div style={styles.container}>
+          <DrawerMenu links = {links} />
           <button style={styles.button} onClick={() => handleChoice('Researcher')}>
             Researcher
           </button>

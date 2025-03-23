@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import './styles.css';
-
+import {useRole} from "./context/roleContext";
 
 
 function Login(){
@@ -9,12 +9,20 @@ function Login(){
     const [password, setPassword] = useState('');
     const [error, setError] = useState(''); // State to track the error message
     const navigate = useNavigate(); // Use the hook for navigation
-
+    const {role} = useRole();
     const handleSubmit = (event) => {
-        navigate('/choicepage'); // TODO DELETE THIS
+        if (role === "admin"){
+          navigate('/choicepage'); // TODO DELETE THIS
+        }
+        else if (role ==="researcher"){
+          navigate('/researcher-main');
+        }
+        else if (role === "doctor"){
+          navigate('/doctor-main');
+        }
         event.preventDefault();
-        console.log('Email:', email);
-        console.log('Password:', password);
+        // console.log('Email:', email);
+        // console.log('Password:', password);
         if(email === "Hello@gmail.com" || password === "123"){
             setError("ERROR YOU COCK SUCKER-this is just a place holder")
             // console.log("Error set:", "ERROR YOU COCK SUCKER");

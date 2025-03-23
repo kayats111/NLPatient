@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
-import "./TrainedModels.css"; // Import the CSS file
-import DoctorDrawerMenu from '../Doctor/DoctorDrawerMenu'; 
-import { useResearcherLinks } from '../Context';
+import axios from 'axios';
+import './TrainedModels.css'; // Import the CSS file
+import DrawerMenu from '../DrawerMenu';
+import { useRoleLinks } from "../context/FetchContext";
+import { useRole } from '../context/roleContext';
 
 const TrainedModels = () => {
   const [modelNames, setModelNames] = useState([]);
@@ -12,7 +13,9 @@ const TrainedModels = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modelMetadata, setModelMetadata] = useState(null);
   const navigate = useNavigate();
-  const {links} = useResearcherLinks();
+  const { links } = useRoleLinks();
+  const { role } = useRole();
+
   useEffect(() => {
     const fetchModelNames = async () => {
       try {
@@ -85,26 +88,22 @@ const TrainedModels = () => {
       setError('Please select a model');
       return;
     }
-  
+
     try {
       const response = await axios.get('http://localhost:3002/api/predictors/get_predictor', {
         params: { "model name": selectedModel },
         responseType: 'blob', // Set response type to blob for file downloads
       });
-  
-      // Extract the filename from the Content-Disposition header if available
+
       const contentDisposition = response.headers['content-disposition'];
       let filename = `${selectedModel}`;
       if (contentDisposition) {
         const match = contentDisposition.match(/filename="?([^"]+)"?/);
         if (match && match[1]) {
           filename = match[1]; // Use the filename provided by the server
-          console.log(`file name: ${filename}`)
         }
       }
-      console.log(`file name: ${filename}`);
-  
-      // Create a download link and trigger the download
+
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -116,7 +115,6 @@ const TrainedModels = () => {
       setError('Failed to download the model');
     }
   };
-  
 
   const handleModalClose = () => {
     setModalVisible(false);
@@ -124,39 +122,34 @@ const TrainedModels = () => {
   };
 
   const handlePredictClick = async () => {
-    // Check if selectedModel exists
     if (!selectedModel) {
       setError("Please select a model.");
       return;
     }
-  
+
     try {
-      // Fetch the metadata from the backend as in the handleMetaDataClick
       const response = await axios.get('http://localhost:3002/api/predictors/meta_data', {
         params: { "model name": selectedModel }
       });
-  
+
       if (response.data.error) {
         setError(response.data.message);
       } else {
         const metadata = response.data.value;
-  
-        // Pass the model name and metadata to the Predict page using navigate state
-        console.log(metadata.fields);
+
         navigate("/doctor-predict", {
-          state: { modelName: selectedModel, modelMetadata: metadata.fields }
+          state: { modelName: selectedModel, modelMetadata: metadata.fields, labels: metadata.labels }
         });
       }
     } catch (err) {
       setError('Failed to fetch model metadata for prediction');
     }
   };
-  
 
   return (
     <div className="container">
       <h1>Trained Models</h1>
-      <DoctorDrawerMenu links = {links} />
+      <DrawerMenu links={links} />
       {error && <div className="error">{error}</div>}
 
       <div className="model-list">
@@ -164,9 +157,7 @@ const TrainedModels = () => {
           <button
             key={modelName}
             className={`list-item ${modelName === selectedModel ? 'active' : ''}`}
-            onClick={() => {
-              handleModelClick(modelName);
-            }}
+            onClick={() => handleModelClick(modelName)}
           >
             {modelName}
           </button>
@@ -174,22 +165,24 @@ const TrainedModels = () => {
       </div>
 
       <div className="action-buttons">
-        <button
-          className={`action-button ${selectedModel ? 'enabled' : 'disabled'}`}
-          onClick={()=>{
-            handleMetaDataClick()
-          }}
-          disabled={!selectedModel}
-        >
-          MetaData
-        </button>
-        <button
-          className={`action-button delete-button ${selectedModel ? 'enabled' : 'disabled'}`}
-          onClick={handleDeleteClick}
-          disabled={!selectedModel}
-        >
-          Delete
-        </button>
+        {role !== 'doctor' && (
+          <>
+            <button
+              className={`action-button ${selectedModel ? 'enabled' : 'disabled'}`}
+              onClick={handleMetaDataClick}
+              disabled={!selectedModel}
+            >
+              MetaData
+            </button>
+            <button
+              className={`action-button delete-button ${selectedModel ? 'enabled' : 'disabled'}`}
+              onClick={handleDeleteClick}
+              disabled={!selectedModel}
+            >
+              Delete
+            </button>
+          </>
+        )}
         <button
           className={`action-button predict-button ${selectedModel ? 'enabled' : 'disabled'}`}
           onClick={handlePredictClick}
@@ -197,13 +190,15 @@ const TrainedModels = () => {
         >
           Predict
         </button>
-        <button
-          className={`action-button download-button ${selectedModel ? 'enabled' : 'disabled'}`}
-          onClick={handleDownloadClick}
-          disabled={!selectedModel}
-        >
-          Download
-        </button>
+        {role !== 'doctor' && (
+          <button
+            className={`action-button download-button ${selectedModel ? 'enabled' : 'disabled'}`}
+            onClick={handleDownloadClick}
+            disabled={!selectedModel}
+          >
+            Download
+          </button>
+        )}
       </div>
 
       {selectedModel && (

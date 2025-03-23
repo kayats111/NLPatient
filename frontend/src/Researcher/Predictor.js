@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom"; // to read the passed state
 import './Predictor.css'; // Importing the new CSS file
 import axios from "axios";
+import DrawerMenu from '../DrawerMenu'; 
+import { useRoleLinks } from "../context/FetchContext";
+
 
 const Predictor = () => {
   const location = useLocation();
-  const { modelName, modelMetadata } = location.state || {}; // Destructure state passed from TrainedModels
+  const { links } = useRoleLinks();
+  const { modelName, modelMetadata,labels } = location.state || {}; // Destructure state passed from TrainedModels
 
   const [inputs, setInputs] = useState({});
   const [loading, setLoading] = useState(false);
@@ -32,7 +36,7 @@ const Predictor = () => {
 
   const handlePredict = async () => {
     const inputList = modelMetadata.map(field => inputs[field]); // Map inputs to the correct order of modelMetadata
-  
+    // console.log("metadata",modelMetadata)
     setLoading(true);
     setError(""); // Reset any previous error
     try {
@@ -40,7 +44,7 @@ const Predictor = () => {
         "http://localhost:3002/api/predictors/predict",  // Use POST method for prediction
         {
           "model name": modelName,  // Ensure the model name is passed
-          "sample": inputList.map((x)=>Number(x)),        // Pass the sample data
+          "sample": inputList.map((x) => Number(x)),        // Pass the sample data
         },
         {
           headers: {
@@ -49,8 +53,9 @@ const Predictor = () => {
         }
       );
   
-      console.log(response.data)
+      // console.log(response.data)
       if (response.status === 200) {
+        // console.log(response.data)
         setPrediction(response.data.value); // Assuming 'value' contains the prediction result
       } else {
         setError(response.data.message || "Something went wrong.");
@@ -68,8 +73,8 @@ const Predictor = () => {
 
   return (
     <div className="container">
+      <DrawerMenu links={links} />
       <h1 className="heading">Predict for {modelName}</h1>
-
       <div className="input-container">
         {modelMetadata.map((field, index) => (
           <div key={index} className="input-item">
@@ -99,7 +104,13 @@ const Predictor = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Prediction Result</h2>
-            <p>{Array.isArray(prediction)?prediction.join(","):prediction}</p>
+            <ul>
+              {labels.map((field, index) => (
+                <li key={index}>
+                  <strong>{field}:</strong> {prediction[index] || "No result"}
+                </li>
+              ))}
+            </ul>
             <button className="close-modal" onClick={() => setPrediction(null)}>Close</button>
           </div>
         </div>

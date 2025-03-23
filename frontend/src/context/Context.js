@@ -35,7 +35,7 @@ export const ResearcherMenuProvider = ({ children }) => {
     { name: "Researcher Dashboard", path: "/researcher-main" },
     { name: "View Models", path: "/model-viewer" },
     { name: "Trained Models", path: "/train-page" },
-    { name: "Medical Records", path: "/records-viewer" },
+    { name: "Patient Records", path: "/records-viewer" },
   ]);
 
   return (
@@ -44,3 +44,27 @@ export const ResearcherMenuProvider = ({ children }) => {
     </ResearcherMenu.Provider>
   );
 };
+  // Create the context
+  const AdminMenu = createContext();
+
+  // Custom hook to access the context
+  export const useAdminLinks = () => useContext(AdminMenu);
+  
+  // Create a provider component
+  export const AdminMenuProvider = ({ children }) => {
+    const [links] = useState([
+      { name: "Doctor Dashboard", path: "/doctor-main" },
+      { name: "Patient Records", path: "/records-viewer" },
+      { name: "Add Patient Data", path: "/add-patient-data" },
+      { name: "Researcher Dashboard", path: "/researcher-main" },
+      { name: "View Models", path: "/model-viewer" },
+      { name: "Trained Models", path: "/train-page" },
+      {name:"Role Page", path:"/choicepage"},
+    ]);
+  
+    return (
+      <AdminMenu.Provider value={{ links }}>
+        {children}
+      </AdminMenu.Provider>
+    );
+  };
