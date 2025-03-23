@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
-import DoctorDrawerMenu from '../Doctor/DoctorDrawerMenu'; 
-import { useResearcherLinks } from '../Context';
+import DrawerMenu from '../DrawerMenu'; 
+// import { useResearcherLinks } from '../context/Context';
+import { useRoleLinks } from "../context/FetchContext";
 
 function ModelUploader() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(null);
-  const {links} = useResearcherLinks();
+  const {links} = useRoleLinks();
   
 
   // Handle file drop
@@ -57,7 +58,7 @@ function ModelUploader() {
 
   return (
     <div style={styles.container}>
-      <DoctorDrawerMenu links = {links} />
+      <DrawerMenu links = {links} />
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}

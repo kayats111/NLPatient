@@ -1,11 +1,11 @@
 .update-container {
   padding: 20px;
   max-height: 90vh;
-  overflow-y: auto; /* Enables vertical scrolling if content overflows */
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Align items at the top */
+  justify-content: flex-start;
 }
 
 .update-container h1 {
@@ -15,27 +15,33 @@
 
 .update-form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Creates responsive columns */
-  gap: 20px; /* Adds space between fields */
-  width: 100%; /* Ensures grid takes full width of container */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Auto adjust columns */
+  gap: 20px; 
+  width: 100%;
 }
 
 .update-field {
   display: flex;
-  flex-direction: column; /* Aligns label and input vertically */
+  flex-direction: column;
 }
 
 .update-label {
   font-weight: bold;
-  margin-bottom: 5px; /* Adds space between label and input */
+  margin-bottom: 5px;
 }
+
 
 .update-input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
-  width: 80%; /* Ensures input spans the entire column */
+  width: 80%; /* Ensure input takes up available width within grid column */
+  background-color: #fff;
+}
+
+.update-input:disabled {
+  background-color: #f0f0f0; /* Light background color for disabled inputs */
 }
 
 .update-save-button {

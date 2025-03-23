@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import DoctorDrawerMenu from './DoctorDrawerMenu'; 
-import { useDoctorLinks } from '../Context';
+import DrawerMenu from '../DrawerMenu'; 
+// import { useDoctorLinks } from '../context/Context';
+import { useRoleLinks } from "../context/FetchContext";
 
 function DoctorMain() {
     const navigate = useNavigate();
-    const {links} = useDoctorLinks();
-    const updatedLinks = [...links, {name:"Role Page",path:"/choicepage"}]
+    const {links} = useRoleLinks();
 
     const handleButtonClick = (action) => {
         if (action === "Add Patient Data") {
@@ -17,12 +17,12 @@ function DoctorMain() {
     };
 
     const handlePredictClick = () => {
-        navigate("/DPredict");
+        navigate("/train-page");
     };
 
     return (
         <div style={styles.container}>
-            <DoctorDrawerMenu links = {updatedLinks} />
+            <DrawerMenu links = {links} />
 
             <h2>Welcome to the Doctors Hub</h2>
             <p>You are now logged in.</p>

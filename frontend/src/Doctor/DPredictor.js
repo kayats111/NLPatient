@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import "./DPredictor.css"; 
-import DoctorDrawerMenu from './DoctorDrawerMenu'; 
-import { useDoctorLinks } from '../Context';
+import DrawerMenu from '../DrawerMenu'; 
+// import { useDoctorLinks } from '../context/Context';
+import { useRoleLinks } from "../context/FetchContext";
 
 const DPredictor = () => {
   const [modelNames, setModelNames] = useState([]);
   const [selectedModel, setSelectedModel] = useState(null);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const {links} = useDoctorLinks();
+  const {links} = useRoleLinks();
 
   useEffect(() => {
     const fetchModelNames = async () => {
@@ -52,8 +53,9 @@ const DPredictor = () => {
 
         // Pass the model name and metadata to the Predict page using navigate state
         // console.log(metadata.fields);
+        // console.log(metadata.labels)
         navigate("/doctor-predict", {
-          state: { modelName: selectedModel, modelMetadata: metadata.fields }
+          state: { modelName: selectedModel, modelMetadata: metadata.fields,labels:metadata.labels }
         });
       }
     } catch (err) {
@@ -63,7 +65,7 @@ const DPredictor = () => {
 
   return (
     <div className="container">
-      <DoctorDrawerMenu links = {links} /> 
+      <DrawerMenu links = {links} /> 
       <h1>Trained Models</h1>
 
       {error && <div className="error">{error}</div>}

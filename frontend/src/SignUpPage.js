@@ -12,9 +12,9 @@ function SignUpPage() {
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        console.log(email)
-        console.log(password)
-        console.log(clickedLabel)
+        // console.log(email)
+        // console.log(password)
+        // console.log(clickedLabel)
 
     };
    

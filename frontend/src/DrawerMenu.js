@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"; // Import Link for routing
 
 import "./DrawerMenu.css"; // Import the CSS file
 
-const DoctorDrawerMenu = ({ links =[] }) => {
+const DrawerMenu = ({ links =[] }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -32,4 +32,4 @@ const DoctorDrawerMenu = ({ links =[] }) => {
   );
 };
 
-export default DoctorDrawerMenu;
+export default DrawerMenu;

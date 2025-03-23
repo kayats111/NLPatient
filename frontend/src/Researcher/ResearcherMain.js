@@ -1,13 +1,13 @@
 import React from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import DoctorDrawerMenu from '../Doctor/DoctorDrawerMenu'; 
-import { useResearcherLinks } from '../Context';
+import DrawerMenu from '../DrawerMenu'; 
+// import { useResearcherLinks } from '../context/Context';
+import { useRoleLinks } from "../context/FetchContext";
 
 
 function ResearcherMain() {
   const navigate = useNavigate(); // Use the hook for navigation
-  const {links} = useResearcherLinks();
-  const updatedLinks = [...links,{name:"Role Page", path:"/choicepage"}]
+  const {links} = useRoleLinks();
   const fakehandleDownload = () => {
     alert('fake handle download');
   };
@@ -31,7 +31,7 @@ function ResearcherMain() {
     }
   };
   const handleButtonClick = (action) => {
-    console.log(`${action} button clicked`);
+    // console.log(`${action} button clicked`);
     if(action ==="Train Model"){
       navigate("/train-page")
     }
@@ -55,7 +55,7 @@ function ResearcherMain() {
 
   return (
     <div style={styles.container}>
-      <DoctorDrawerMenu links = {updatedLinks} />
+      <DrawerMenu links = {links} />
       <h2>Welcome to the Researcher Hub</h2>
       <p>You are now logged in.</p>
 
