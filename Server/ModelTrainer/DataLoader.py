@@ -2,19 +2,21 @@ from typing import List, Tuple
 from Response import Response
 import requests
 import random
+from numpy.typing import NDArray
 
 
 class DataLoader:
 
     def __init__(self, fields: List[str] = None, labels: List[str] = None,
                  train_relative_size: int = 0, test_relative_size: int = 0, epochs_number: int = 0,
-                 batches_number: int = 0):
+                 batches_size: int = 0, total_samples: int = 0):
         self.train_relative_size: int = train_relative_size
         self.test_relative_size: int = test_relative_size
         self.epochs_number: int = epochs_number
-        self.batches_number: int = batches_number
+        self.batches_size: int = batches_size
         self.fields: List[str] = fields
         self.labels: List[str] = labels
+        self.total_samples: int = total_samples
         
         self.train_batches: List[List[int]] = None
         self.test_batches: List[List[int]] = None
@@ -27,9 +29,10 @@ class DataLoader:
 
         train_set, test_set = self.__divide_train_test(ids)
 
+        self.train_batches = self.__divide_to_batches(train_set)
+        self.test_batches = self.__divide_to_batches(test_set)
 
-        # divide to train-test
-        # divide to batches
+        
         # init indexes
 
         pass
@@ -57,8 +60,12 @@ class DataLoader:
     def __divide_train_test(self, ids: List[int]) -> Tuple[List[int], List[int]]:
         if self.train_relative_size + self.test_relative_size != 100:
             raise Exception("the train + test relative sizes should be 100 percent")
+        
+        if self.total_samples > len(ids):
+            raise Exception("not enough samples in the database")
 
         random.shuffle(ids)
+        ids = ids[:self.total_samples]
 
         n: int = len(ids)
            
@@ -67,7 +74,17 @@ class DataLoader:
 
         return train_set, test_set
         
-        
+    def __divide_to_batches(self, id_set: List[int]) -> List[List[int]]:
+        batches: List[List[int]] = []
+        curr: int = 0
+
+        while curr * self.batch_size < len(id_set):
+            batch: List[int] = id_set[curr * self.batch_size : min((curr + 1) * self.batch_size, len(id_set))]
+
+            batches.append(batch)
+
+        return batches
+
 
         
 
