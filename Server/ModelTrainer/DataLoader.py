@@ -8,11 +8,11 @@ from numpy.typing import NDArray
 class DataLoader:
 
     def __init__(self, fields: List[str] = None, labels: List[str] = None,
-                 train_relative_size: int = 0, test_relative_size: int = 0, epochs_number: int = 0,
+                 train_relative_size: int = 0, test_relative_size: int = 0, epochs: int = 0,
                  batches_size: int = 0, sample_limit: int = 0):
         self.train_relative_size: int = train_relative_size
         self.test_relative_size: int = test_relative_size
-        self.epochs_number: int = epochs_number
+        self.epochs: int = epochs
         self.batches_size: int = batches_size
         self.fields: List[str] = fields
         self.labels: List[str] = labels
@@ -87,7 +87,7 @@ class DataLoader:
         if self.train_relative_size + self.test_relative_size != 100:
             raise Exception("the train + test relative sizes should be 100 percent")
         
-        if self.epochs_number < 1:
+        if self.epochs < 1:
             raise Exception("the number of epochs should be al least 1")
         
         if self.batches_size < 1:
@@ -96,7 +96,8 @@ class DataLoader:
         if self.sample_limit < 1:
             raise Exception("the limit on samples should be greater or equal to 0")
 
-
+    def hasNext(self) -> bool:
+        return self.curr_epoch < self.epochs
         
 
 
