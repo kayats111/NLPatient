@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Tuple
 from Response import Response
 import requests
+import random
 
 
 class DataLoader:
@@ -51,8 +52,18 @@ class DataLoader:
 
         return ids
         
+    def __divide_train_test(self, ids: List[int]) -> Tuple[List[int], List[int]]:
+        if self.train_relative_size + self.test_relative_size != 100:
+            raise Exception("the train + test relative sizes should be 100 percent")
 
-        
+        random.shuffle(ids)
+
+        n: int = len(ids)
+           
+        train_set: List[int] = ids[ : int(n * (self.train_relative_size / 100))]
+        test_set: List[int] = ids[int(n * (self.train_relative_size / 100)) : ]
+
+        return train_set, test_set
         
         
 
