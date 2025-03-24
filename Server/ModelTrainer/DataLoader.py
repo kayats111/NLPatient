@@ -25,6 +25,8 @@ class DataLoader:
     def load(self) -> None:
         ids: List[int] = self.__fetch_ids()
 
+        train_set, test_set = self.__divide_train_test(ids)
+
 
         # divide to train-test
         # divide to batches
