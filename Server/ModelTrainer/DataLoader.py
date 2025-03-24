@@ -9,20 +9,22 @@ class DataLoader:
 
     def __init__(self, fields: List[str] = None, labels: List[str] = None,
                  train_relative_size: int = 0, test_relative_size: int = 0, epochs_number: int = 0,
-                 batches_size: int = 0, total_samples: int = 0):
+                 batches_size: int = 0, sample_limit: int = 0):
         self.train_relative_size: int = train_relative_size
         self.test_relative_size: int = test_relative_size
         self.epochs_number: int = epochs_number
         self.batches_size: int = batches_size
         self.fields: List[str] = fields
         self.labels: List[str] = labels
-        self.total_samples: int = total_samples
+        self.sample_limit: int = sample_limit
         
         self.train_batches: List[List[int]] = None
         self.test_batches: List[List[int]] = None
         self.curr_train_batch: int = -1
         self.curr_test_batch: int = -1
         self.curr_epoch: int = -1
+
+        self.__validate_requirements()
 
     def load(self) -> None:
         ids: List[int] = self.__fetch_ids()
@@ -56,15 +58,12 @@ class DataLoader:
 
         return ids
         
-    def __divide_train_test(self, ids: List[int]) -> Tuple[List[int], List[int]]:
-        if self.train_relative_size + self.test_relative_size != 100:
-            raise Exception("the train + test relative sizes should be 100 percent")
-        
-        if self.total_samples > len(ids):
+    def __divide_train_test(self, ids: List[int]) -> Tuple[List[int], List[int]]:        
+        if self.sample_limit > len(ids):
             raise Exception("not enough samples in the database")
 
         random.shuffle(ids)
-        ids = ids[:self.total_samples]
+        ids = ids[:self.sample_limit]
 
         n: int = len(ids)
            
@@ -83,6 +82,19 @@ class DataLoader:
             batches.append(batch)
 
         return batches
+
+    def __validate_requirements(self) -> None:
+        if self.train_relative_size + self.test_relative_size != 100:
+            raise Exception("the train + test relative sizes should be 100 percent")
+        
+        if self.epochs_number < 1:
+            raise Exception("the number of epochs should be al least 1")
+        
+        if self.batches_size < 1:
+            raise Exception("the size of a batch should be at least 1")
+        
+        if self.sample_limit < 1:
+            raise Exception("the limit on samples should be greater or equal to 0")
 
 
         
