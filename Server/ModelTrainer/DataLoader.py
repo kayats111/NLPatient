@@ -32,10 +32,9 @@ class DataLoader:
         self.train_batches = self.__divide_to_batches(train_set)
         self.test_batches = self.__divide_to_batches(test_set)
 
-        
-        # init indexes
-
-        pass
+        self.curr_epoch = 0
+        self.curr_train_batch = 0
+        self.curr_test_batch = 0
 
     def __fetch_ids(self) -> List[int]:
         response: Response[dict]
