@@ -75,6 +75,7 @@ class LearnModel:
 """
 You may add here any script, class or function to help you with the model training and testing.
 For example, you can add here a neural network definition.
+
 """
 
 
