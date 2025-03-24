@@ -34,11 +34,33 @@ class LearnModel:
             vectors (NDArray[NDArray[float64]]): The Medical Records in vector form.
             labels (NDArray[NDArray[float64]]): The labels of the Medical Records.
 
+        NOTE: if you DO NOT wish to train your model, please keep it as it is. DO NOT delete it!
+
         """
 
         # KNN example:
         # self.model.fit(vectors, labels)
         # self.meta_data["last mse"] = mean_squared_error(labels, self.model.predict(vectors))
+
+    def test(vectors: NDArray, labels: NDArray) -> None:
+        """
+        This method will be used to test (or partially test) your model according to
+        your preferences (train size, test size, batches, epochs) while using the system.
+        One run of this method is equivalent to one run on a batch of the test set.
+        If you do not have any batches or epochs, the model will be tested on all of
+        the data in one run, once.
+
+        Do not return anything from this method!
+        If you wish to save some data at the end of its run, please use the meta_data
+        field, or add fields as you desire.
+
+        NOTE: if you DO NOT wish to test your model, please keep it as it is. DO NOT delete it!
+
+        Args:
+            vectors (NDArray[NDArray[float64]]): The Medical Records in vector form.
+            labels (NDArray[NDArray[float64]]): The labels of the Medical Records.
+
+        """
 
 
 
