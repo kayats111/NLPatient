@@ -1,5 +1,4 @@
 from numpy.typing import NDArray
-from typing import List
 
 # This class will be run by the system, follow its guidelines.
 # Usage example with KNN is provided in comments
@@ -62,6 +61,21 @@ class LearnModel:
 
         """
 
+        # KNN example:
+        # predicted = self.model.predict(vectors)
+        # self.meta_data["last mse"] = mean_squared_error(labels, predicted)
+
+    """
+    You may add here any method you wish to help you with the model training and testing.
+
+    """
+
+
+
+"""
+You may add here any script, class or function to help you with the model training and testing.
+For example, you can add here a neural network definition.
+"""
 
 
 
