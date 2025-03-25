@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom"; // to read the passed state
+import { useLocation } from "react-router-dom";
 import './Predictor.css'; // Importing the new CSS file
 import axios from "axios";
-import DrawerMenu from '../DrawerMenu'; 
+import DrawerMenu from '../DrawerMenu';
 import { useRoleLinks } from "../context/FetchContext";
-
 
 const Predictor = () => {
   const location = useLocation();
   const { links } = useRoleLinks();
-  const { modelName, modelMetadata,labels } = location.state || {}; // Destructure state passed from TrainedModels
+  const { modelName, modelMetadata, labels } = location.state || {};
 
   const [inputs, setInputs] = useState({});
   const [loading, setLoading] = useState(false);
@@ -18,9 +17,8 @@ const Predictor = () => {
 
   useEffect(() => {
     if (modelMetadata) {
-      // Initialize inputs with an empty string for each modelMetadata field
       const initialInputs = modelMetadata.reduce((acc, field) => {
-        acc[field] = ""; // Set empty string as initial value for each field
+        acc[field] = ""; 
         return acc;
       }, {});
       setInputs(initialInputs);
@@ -30,33 +28,30 @@ const Predictor = () => {
   const handleInputChange = (field, value) => {
     setInputs(prevInputs => ({
       ...prevInputs,
-      [field]: value, // Update value for specific field
+      [field]: value,
     }));
   };
 
   const handlePredict = async () => {
-    const inputList = modelMetadata.map(field => inputs[field]); // Map inputs to the correct order of modelMetadata
-    // console.log("metadata",modelMetadata)
+    const inputList = modelMetadata.map(field => inputs[field]);
     setLoading(true);
-    setError(""); // Reset any previous error
+    setError(""); 
     try {
       const response = await axios.post(
-        "http://localhost:3002/api/predictors/predict",  // Use POST method for prediction
+        "http://localhost:3002/api/predictors/predict", 
         {
-          "model name": modelName,  // Ensure the model name is passed
-          "sample": inputList.map((x) => Number(x)),        // Pass the sample data
+          "model name": modelName,  
+          "sample": inputList.map((x) => Number(x)),        
         },
         {
           headers: {
-            "Content-Type": "application/json",  // Ensure the request content type is application/json
+            "Content-Type": "application/json",  
           },
         }
       );
-  
-      // console.log(response.data)
+
       if (response.status === 200) {
-        // console.log(response.data)
-        setPrediction(response.data.value); // Assuming 'value' contains the prediction result
+        setPrediction(response.data.value);
       } else {
         setError(response.data.message || "Something went wrong.");
       }
@@ -66,6 +61,24 @@ const Predictor = () => {
       setLoading(false);
     }
   };
+
+  const closeModalOnOutsideClick = (event) => {
+    if (event.target.classList.contains('modal-overlay')) {
+      setPrediction(null);
+    }
+  };
+
+  useEffect(() => {
+    if (prediction) {
+      document.addEventListener('click', closeModalOnOutsideClick);
+
+      return () => {
+        document.removeEventListener('click', closeModalOnOutsideClick);
+      };
+    }
+  }, [prediction]);
+
+  const isPredictButtonDisabled = Object.values(inputs).some(input => input === "");
 
   if (!modelName || !modelMetadata) {
     return <p>Error: No model selected or metadata available.</p>;
@@ -78,14 +91,14 @@ const Predictor = () => {
       <div className="input-container">
         {modelMetadata.map((field, index) => (
           <div key={index} className="input-item">
-            <label className="label">{field}</label>
+            <label htmlFor={field} className="label">{field}</label>
             <input
+              id={field}
               type="text"
               className="input"
               value={inputs[field] || ""}
               onChange={(e) => handleInputChange(field, e.target.value)}
             />
-            <span className="field-value">{inputs[field]}</span>
           </div>
         ))}
       </div>
@@ -94,7 +107,7 @@ const Predictor = () => {
         <button
           className="predict-button"
           onClick={handlePredict}
-          disabled={Object.values(inputs).some(input => input === "")}
+          disabled={isPredictButtonDisabled}
         >
           {loading ? "Loading..." : "Predict"}
         </button>
@@ -104,13 +117,24 @@ const Predictor = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Prediction Result</h2>
-            <ul>
-              {labels.map((field, index) => (
-                <li key={index}>
-                  <strong>{field}:</strong> {prediction[index] || "No result"}
-                </li>
-              ))}
-            </ul>
+            <div className="metadata-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Field</th>
+                    <th>Prediction</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {labels.map((field, index) => (
+                    <tr key={index}>
+                      <th>{field}</th>
+                      <td>{prediction[index] || "No result"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             <button className="close-modal" onClick={() => setPrediction(null)}>Close</button>
           </div>
         </div>

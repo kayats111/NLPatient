@@ -211,12 +211,23 @@ const TrainedModels = () => {
         <div className="overlay">
           <div className="modal-content">
             <h2>Model Metadata</h2>
-            <div className="metadata">
-              {modelMetadata && Object.entries(modelMetadata).map(([key, value]) => (
-                <div key={key} className="metadata-item">
-                  <strong>{key}:</strong> {JSON.stringify(value, null, 2)}
-                </div>
-              ))}
+            <div className="metadata-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Field</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {modelMetadata && Object.entries(modelMetadata).map(([key, value]) => (
+                    <tr key={key}>
+                      <th>{key}</th>
+                      <td>{JSON.stringify(value, null, 2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
             <div className="modal-actions">
               <button className="close-modal" onClick={handleModalClose}>
