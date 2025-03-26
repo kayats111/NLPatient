@@ -122,6 +122,11 @@ class DataLoader:
             self.curr_epoch += 1
             self.curr_train_batch = 0
 
+        batch: Dict[str, NDArray] = self.__get_batch_by_ids(ids_batch=ids_batch)
+
+        return batch 
+    
+    def __get_batch_by_ids(self, ids_batch: List[int]) -> Dict[str, NDArray]:
         body: dict = {"ids": ids_batch}
         url = "http://localhost:3000/api/data/read/vectors"
 
@@ -143,6 +148,7 @@ class DataLoader:
     def has_next_test(self) -> bool:
         return self.curr_test_batch < len(self.test_batches)
 
+    
         
         
 
