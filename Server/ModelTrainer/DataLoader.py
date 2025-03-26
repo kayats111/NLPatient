@@ -140,7 +140,8 @@ class DataLoader:
             "vectorLabels": vectorLabels
         }
 
-
+    def has_next_test(self) -> bool:
+        return self.curr_test_batch < len(self.test_batches)
 
         
         
