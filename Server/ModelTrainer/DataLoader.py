@@ -1,8 +1,9 @@
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 from Response import Response
 import requests
 import random
 from numpy.typing import NDArray
+import numpy as np
 
 
 class DataLoader:
@@ -39,14 +40,27 @@ class DataLoader:
         self.curr_test_batch = 0
 
     def __fetch_ids(self) -> List[int]:
-        response: Response[dict]
-        headers: dict = {"Content-Type": "application/json"}
         url: str = "http://localhost:3000/api/data/ids"
 
-        api_response = requests.get(url=url, headers=headers)
+        response: Response[dict] = self.__fetch(url=url)
 
+        ids: List[int] = response.value
+
+        return ids
+    
+    def __fetch(self, url: str, body: dict = None) -> Response[dict]:
+        response: Response[dict]
+        headers: dict = {"Content_type": "application/json"}
+        
+        api_response = None
+
+        if body is not None:
+            api_response = requests.get(url=url, headers=headers, json=body)
+        else:
+            api_response = requests.get(url=url, headers=headers)
+        
         if api_response.status_code != 200:
-            raise Exception("cannot fetch ids")
+            raise Exception("cannot fetch data")
         
         jj = api_response.json()
         response = Response(value=jj["value"], error=jj["error"], message=jj["message"])
@@ -54,9 +68,7 @@ class DataLoader:
         if response.error:
             raise Exception(response.message)
         
-        ids: List[int] = response.value
-
-        return ids
+        return response
         
     def __divide_train_test(self, ids: List[int]) -> Tuple[List[int], List[int]]:        
         if self.sample_limit > len(ids):
@@ -96,8 +108,41 @@ class DataLoader:
         if self.sample_limit < 1:
             raise Exception("the limit on samples should be greater or equal to 0")
 
-    def hasNext(self) -> bool:
+    def has_next_train(self) -> bool:
         return self.curr_epoch < self.epochs
+    
+    def get_next_train(self) -> Dict[str, NDArray]:
+        if not self.has_next_train():
+            raise Exception("no batches or epochs left")
+        
+        ids_batch: List[int] = self.train_batches[self.curr_train_batch]
+        self.curr_train_batch += 1
+
+        if self.curr_train_batch == len(self.train_batches):
+            self.curr_epoch += 1
+            self.curr_train_batch = 0
+
+        body: dict = {"ids": ids_batch}
+        url = "http://localhost:3000/api/data/read/vectors"
+
+        if self.fields is not None:
+            body["fields"] = self.fields
+        if self.labels is not None:
+            body["labels"] = self.labels
+
+        response: Response[dict] = self.__fetch(url=url, body=body)
+
+        vectors = np.array(response.value["vectors"])
+        vectorLabels = np.array(response.value["vectorLabels"])
+
+        return {
+            "vectors": vectors,
+            "vectorLabels": vectorLabels
+        }
+
+
+
+        
         
 
 
