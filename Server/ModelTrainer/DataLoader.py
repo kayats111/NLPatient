@@ -148,7 +148,16 @@ class DataLoader:
     def has_next_test(self) -> bool:
         return self.curr_test_batch < len(self.test_batches)
 
-    
+    def get_next_test(self) -> Dict[str, NDArray]:
+        if not self.has_next_test():
+            raise Exception("no batches left")
+        
+        ids_batch: List[int] = self.test_batches[self.curr_test_batch]
+        self.curr_test_batch += 1
+
+        batch: Dict[str, NDArray] = self.__get_batch_by_ids(ids_batch=ids_batch)
+
+        return batch
         
         
 
