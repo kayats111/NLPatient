@@ -1,13 +1,12 @@
 import os
 import pickle
 from torch import save
-from typing import List
-from Response import Response
-import numpy as np
-import requests
+from typing import Dict, List
 from importlib import import_module
 
 from MetaDataRepository import MetaDataRepository
+from DataLoader import DataLoader
+from numpy.typing import NDArray
 
 
 
@@ -63,63 +62,27 @@ class Service:
         
         os.remove(filePath)
 
-    def runModel(self, modelName: str, fields: List[str] = None, labels: List[str] = None) -> dict:
-        filePath = os.path.join(SAVED_FOLDER, modelName + ".py")
-
-        if not os.path.isfile(filePath):
-            raise Exception(f"the model {modelName} does not exist")
-
-        moduleName: str = SAVED_FOLDER + "." + modelName
-
-        module = import_module(moduleName)
-
-        if not hasattr(module, "run"):
-            raise Exception(f"{modelName} has no run function")
+    def runModel(self, modelName: str, fields: List[str] = None, labels: List[str] = None,
+                 train_relative_size: int = 0, test_relative_size: int = 0, epochs: int = 0,
+                 batch_size: int = 0, sample_limit: int = 0) -> dict:
+        learn_model = self.load_learn_model(model_name=modelName)
         
-        run = getattr(module, "run")
+        data_loader = DataLoader(fields=fields, labels=labels, train_relative_size=train_relative_size,
+                                 test_relative_size=test_relative_size, epochs=epochs, batches_size=batch_size,
+                                 sample_limit=sample_limit)
         
-        response: Response[dict]  # fetch
-        headers = {"Content-Type": "application/json"}
-        url = "http://localhost:3000/api/data/read/vectors"
-        body: dict = {}
+        while data_loader.has_next_train():
+            batch: Dict[str, NDArray] = data_loader.get_next_train()
+            learn_model.train(vectors=batch["vectors"], labels=batch["vectorLabels"])
 
-        if fields is not None:
-            body = {"fields": fields}
+        while data_loader.has_next_test():
+            batch: Dict[str, NDArray] = data_loader.get_next_test()
+            learn_model.test(vectors=batch["vectors"], labels=batch["vectorLabels"])
 
-        if labels is not None:
-            body["labels"] = labels
-    
-        apiResponse = requests.get(url=url, json=body, headers=headers)
+        self.addTrainedModel(model=learn_model.model, modelName=modelName,
+                             isScikit=learn_model.is_scikit, isPyTorch=learn_model.is_pytorch)
         
-        if apiResponse.status_code != 200:
-            raise Exception("cannot fetch data")
-        
-        jj = apiResponse.json()
-        response = Response(value=jj["value"], error=jj["error"], message=jj["message"])
-
-        if response.error:
-            raise Exception(response.message)
-        
-        vectors = np.array(response.value["vectors"])
-        vectorLabels = np.array(response.value["vectorLabels"])
-        
-        if fields is None:
-            # all fields
-            fields = response.value["fields"]
-
-        if labels is None:
-            labels = response.value["labels"]
-
-
-        result: dict = run(vectors=vectors, labels=vectorLabels, fields=fields, labelNames=labels)
-
-        if "model" not in result or "isScikit" not in result or "isPyTorch" not in result:
-            raise Exception("the module did not returned the model or whether its Scikit or PyTorch")
-
-        self.addTrainedModel(model=result["model"], modelName=modelName,
-                             isScikit=result["isScikit"], isPyTorch=result["isPyTorch"])
-        
-        metaData: dict = self.addMetaData(modelName=modelName, result=result, fields=fields, labels=labels)
+        metaData: dict = self.addMetaData(modelName=modelName, meta_data=learn_model.meta_data, fields=fields, labels=labels)
 
         return metaData
 
@@ -137,22 +100,45 @@ class Service:
 
     # NOTE: not for API use, but after training the model (lambda?)
     # TODO: check after model training    
-    def addMetaData(self, modelName: str, result: dict, fields: List[str], labels: List[str]) -> dict:
-        metaData: dict = result.copy()
+    def addMetaData(self, modelName: str, meta_data: dict, fields: List[str], labels: List[str]) -> dict:
+        meta_data["model name"] = modelName
+        meta_data["fields"] = fields
+        meta_data["labels"] = labels
 
-        metaData.pop("model")
-        metaData["model name"] = modelName
-        metaData["fields"] = fields
-        metaData["labels"] = labels
+        self.metaRepository.addMetaData(meta_data)
 
-        self.metaRepository.addMetaData(metaData)
+        if "_id" in meta_data:
+            meta_data.pop("_id")
 
-        if "_id" in metaData:
-            metaData.pop("_id")
+        return meta_data
 
-        return metaData
+    def load_learn_model(self, model_name: str):
+        filePath = os.path.join(SAVED_FOLDER, model_name + ".py")
 
+        if not os.path.isfile(filePath):
+            raise Exception(f"the model {model_name} does not exist")
+
+        moduleName: str = SAVED_FOLDER + "." + model_name
+
+        module = import_module(moduleName)
+
+        learn_model_class = getattr(module, "LearnModel", None)
+
+        if learn_model_class is None:
+            raise Exception("the model file does not contain the LearnModel class")
         
+        if not hasattr(learn_model_class, "train") or not callable(getattr(learn_model_class, "train")):
+            raise Exception("no train method in LearnModel class")
+        
+        if not hasattr(learn_model_class, "test") or not callable(getattr(learn_model_class, "test")):
+            raise Exception("no test method in LearnModel class")
+        
+        learn_model = learn_model_class()
+
+        return learn_model
+
+
+
     
     def getTemplatePath(self):
         return TEMPLATE_PATH
