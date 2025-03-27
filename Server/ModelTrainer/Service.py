@@ -24,25 +24,26 @@ class Service:
         self.metaRepository: MetaDataRepository = MetaDataRepository()
         self.parameter_repository: HyperParametersRepository = HyperParametersRepository()
 
-    def addModel(self, modelFile, hyper_parameters: List[str]) -> None:
-        if hyper_parameters is None:
-            raise Exception("the hyper parameters list cannot be null")
-
+    def addModel(self, file) -> None:
         modelNames: List[str] = self.getModelNames()
-        tempName: str = modelFile.filename.split(".")[0]
+        tempName: str = file.filename.split(".")[0]
 
         if tempName in modelNames:
             raise Exception("a model with the same name already exists")
 
-        filePath = os.path.join(SAVED_FOLDER, modelFile.filename)
+        filePath = os.path.join(SAVED_FOLDER, file.filename)
 
         with open(filePath, "w") as f:
-            f.write(modelFile.read().decode("utf-8"))
-
-        self.parameter_repository.add_hyper_parameters(model_name=modelFile.filename, parameters=hyper_parameters)
+            f.write(file.read().decode("utf-8"))
 
         # TODO: change to save in something destributed
+
+    def add_model_hyper_parameters(self, model_name: str, hyper_parameters: List[str]) -> None:
+        if hyper_parameters is None:
+            raise Exception("the hyper parameters list cannot be null")
         
+        self.parameter_repository.add_hyper_parameters(model_name=model_name, parameters=hyper_parameters)
+
     def getModelFile(self, modelName: str):
         filePath = os.path.join(SAVED_FOLDER, modelName + ".py")
 
@@ -101,7 +102,8 @@ class Service:
         self.addTrainedModel(model=learn_model.model, modelName=model_name,
                              isScikit=learn_model.is_scikit, isPyTorch=learn_model.is_pytorch)
         
-        metaData: dict = self.addMetaData(modelName=model_name, meta_data=learn_model.meta_data, fields=fields, labels=labels)
+        metaData: dict = self.addMetaData(modelName=model_name, meta_data=learn_model.meta_data,
+                                          fields=fields, labels=labels, hyper_parameters=hyper_parameters)
 
         return metaData
 
@@ -168,7 +170,8 @@ class Service:
 
         return learn_model
 
-
+    def get_names_and_parameters(self) -> List[Dict[str, List[str]]]:
+        return self.parameter_repository.model_names_and_parameters()
 
     
     def getTemplatePath(self):

@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 from pymongo import MongoClient
 import yaml
 
@@ -46,5 +46,15 @@ class HyperParametersRepository:
             raise Exception(f"a model named {model_name} does not exist")
 
         self.hyper_collection.delete_one(filter=_filter)
+
+    def model_names_and_parameters(self) -> List[Dict[str, List[str]]]:
+        cursor = self.hyper_collection.find()
+
+        models: List[Dict[str, List[str]]] = [model for model in cursor]
+
+        for model in models:
+            model.pop("_id")
+
+        return models
 
     
