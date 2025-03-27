@@ -31,13 +31,13 @@ class Service:
 
         if tempName in modelNames:
             raise Exception("a model with the same name already exists")
-        
-        self.validate_new_model_file(file=file)
 
         filePath = os.path.join(SAVED_FOLDER, file.filename)
 
         with open(filePath, "w") as f:
             f.write(file.read().decode("utf-8"))
+
+        self.validate_new_model_file(file_name=file.filename)
 
         # TODO: change to save in something destributed
 
@@ -170,21 +170,30 @@ class Service:
     def getTemplatePath(self):
         return TEMPLATE_PATH
     
-    def validate_new_model_file(self, file) -> None:
-        if not hasattr(file, "LearnModel") or not inspect.isclass(getattr(file, "LearnModel")):
-            raise Exception(f"no LearnModel class in {file.filename}")
+    def validate_new_model_file(self, file_name: str) -> None:
+        filePath = os.path.join(SAVED_FOLDER, file_name + ".py")
+
+        module = import_module(SAVED_FOLDER + "." + file_name[:-3])
+
+        if not hasattr(module, "LearnModel") or not inspect.isclass(getattr(module, "LearnModel")):
+            os.remove(filePath)
+            raise Exception(f"no LearnModel class in {file_name}")
         
-        learn_model_class = getattr(file, "LearnModel", None)
+        learn_model_class = getattr(module, "LearnModel", None)
 
         callables: List[str] = ["train", "test", "__init__"]
         fields: List[str] = ["model", "hyper_parameters", "is_scikit", "is_pytorch", "meta_data"]
 
         for c in callables:
             if not hasattr(learn_model_class, c) or not callable(getattr(learn_model_class, c)):
+                os.remove(filePath)
                 raise Exception(f"no {c} method in LearnModel class")
+            
+        learn_model = learn_model_class(hyper_parameters={})
 
         for f in fields:
-            if not hasattr(learn_model_class, f):
+            if not hasattr(learn_model, f):
+                os.remove(filePath)
                 raise Exception(f"no {f} field in LearnModel class")
         
 

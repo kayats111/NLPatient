@@ -164,6 +164,7 @@ cython_debug/
 DataManager/conf.yaml
 ModelTrainer/SavedModels
 ModelTrainer/TrainedModels
+ModelTrainer/temp
 ModelTrainer/conf.yaml
 Predictors/conf.yaml
 
