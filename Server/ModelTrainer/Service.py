@@ -77,6 +77,9 @@ class Service:
             batch: Dict[str, NDArray] = data_loader.get_next_train()
             learn_model.train(vectors=batch["vectors"], labels=batch["vectorLabels"])
 
+            fields = batch["fields"]
+            labels = batch["labels"]
+
         while data_loader.has_next_test():
             batch: Dict[str, NDArray] = data_loader.get_next_test()
             learn_model.test(vectors=batch["vectors"], labels=batch["vectorLabels"])

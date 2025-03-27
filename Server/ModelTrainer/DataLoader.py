@@ -139,10 +139,14 @@ class DataLoader:
 
         vectors = np.array(response.value["vectors"])
         vectorLabels = np.array(response.value["vectorLabels"])
+        fields = response.value["fields"]
+        labels = response.value["labels"]
 
         return {
             "vectors": vectors,
-            "vectorLabels": vectorLabels
+            "vectorLabels": vectorLabels,
+            "fields": fields,
+            "labels": labels
         }
 
     def has_next_test(self) -> bool:
