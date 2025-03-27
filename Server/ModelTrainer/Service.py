@@ -12,7 +12,7 @@ from numpy.typing import NDArray
 
 SAVED_FOLDER: str = "SavedModels"
 TRAINED_FOLDER: str = "TrainedModels"
-TEMPLATE_PATH: str = "LearnTemplate.py"
+TEMPLATE_PATH: str = "LearnModel.py"
 
 class Service:
 
@@ -62,14 +62,16 @@ class Service:
         
         os.remove(filePath)
 
-    def runModel(self, modelName: str, fields: List[str] = None, labels: List[str] = None,
+    def runModel(self, model_name: str, fields: List[str] = None, labels: List[str] = None,
                  train_relative_size: int = 0, test_relative_size: int = 0, epochs: int = 0,
                  batch_size: int = 0, sample_limit: int = 0) -> dict:
-        learn_model = self.load_learn_model(model_name=modelName)
+        learn_model = self.load_learn_model(model_name=model_name)
         
         data_loader = DataLoader(fields=fields, labels=labels, train_relative_size=train_relative_size,
                                  test_relative_size=test_relative_size, epochs=epochs, batches_size=batch_size,
                                  sample_limit=sample_limit)
+        
+        data_loader.load()
         
         while data_loader.has_next_train():
             batch: Dict[str, NDArray] = data_loader.get_next_train()
@@ -79,10 +81,10 @@ class Service:
             batch: Dict[str, NDArray] = data_loader.get_next_test()
             learn_model.test(vectors=batch["vectors"], labels=batch["vectorLabels"])
 
-        self.addTrainedModel(model=learn_model.model, modelName=modelName,
+        self.addTrainedModel(model=learn_model.model, modelName=model_name,
                              isScikit=learn_model.is_scikit, isPyTorch=learn_model.is_pytorch)
         
-        metaData: dict = self.addMetaData(modelName=modelName, meta_data=learn_model.meta_data, fields=fields, labels=labels)
+        metaData: dict = self.addMetaData(modelName=model_name, meta_data=learn_model.meta_data, fields=fields, labels=labels)
 
         return metaData
 

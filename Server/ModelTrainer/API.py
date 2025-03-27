@@ -95,14 +95,12 @@ def deleteModelFile():
     return jsonify(response.toDict())
 
 
-
 @bp.route("/run_model", methods=["POST"])  # Change to POST since we're sending data
 def runModel():
-    
-    print(request.get_json())
-
     data = request.get_json()
-    if "model name" not in data:
+    schema: Set[str] = {"model name", "trainRelativeSize", "testRelativeSize", "epochs", "batchSize", "sampleLimit"}
+
+    if not validateRequestSchema(request=data, schema=schema):
         return jsonify(Response(error=True, message="bad request body").toDict()), 400
     
     response: Response[dict]
@@ -112,13 +110,21 @@ def runModel():
 
         # Handle the presence of "fields" and "labels" in the data
         if "fields" in data and "labels" in data:
-            metaData = service.runModel(data["model name"], data["fields"], data["labels"])
+            metaData = service.runModel(model_name=data["model name"], fields=data["fields"], labels=data["labels"],
+                                        train_relative_size=data["trainRelativeSize"], test_relative_size=data["testRelativeSize"],
+                                        epochs=data["epochs"], batch_size=data["batchSize"], sample_limit=data["sampleLimit"])
         elif "fields" in data:
-            metaData = service.runModel(data["model name"], data["fields"])
+            metaData = service.runModel(model_name=data["model name"], fields=data["fields"],
+                                        train_relative_size=data["trainRelativeSize"], test_relative_size=data["testRelativeSize"],
+                                        epochs=data["epochs"], batch_size=data["batchSize"], sample_limit=data["sampleLimit"])
         elif "labels" in data:
-            metaData = service.runModel(data["model name"], data["labels"])
+            metaData = service.runModel(model_name=data["model name"], labels=data["labels"],
+                                        train_relative_size=data["trainRelativeSize"], test_relative_size=data["testRelativeSize"],
+                                        epochs=data["epochs"], batch_size=data["batchSize"], sample_limit=data["sampleLimit"])
         else:
-            metaData = service.runModel(data["model name"])
+            metaData = service.runModel(model_name=data["model name"],
+                                        train_relative_size=data["trainRelativeSize"], test_relative_size=data["testRelativeSize"],
+                                        epochs=data["epochs"], batch_size=data["batchSize"], sample_limit=data["sampleLimit"])
         
         # Return metadata as the response
         response = Response(value=metaData)
@@ -127,6 +133,7 @@ def runModel():
         app.log_exception(e)
 
     return jsonify(response.toDict())
+
 
 @bp.route("/template", methods=["GET"])
 def getTemplate():

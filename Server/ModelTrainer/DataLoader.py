@@ -14,7 +14,7 @@ class DataLoader:
         self.train_relative_size: int = train_relative_size
         self.test_relative_size: int = test_relative_size
         self.epochs: int = epochs
-        self.batches_size: int = batches_size
+        self.batch_size: int = batches_size
         self.fields: List[str] = fields
         self.labels: List[str] = labels
         self.sample_limit: int = sample_limit
@@ -90,8 +90,8 @@ class DataLoader:
 
         while curr * self.batch_size < len(id_set):
             batch: List[int] = id_set[curr * self.batch_size : min((curr + 1) * self.batch_size, len(id_set))]
-
             batches.append(batch)
+            curr += 1
 
         return batches
 
@@ -102,7 +102,7 @@ class DataLoader:
         if self.epochs < 1:
             raise Exception("the number of epochs should be al least 1")
         
-        if self.batches_size < 1:
+        if self.batch_size < 1:
             raise Exception("the size of a batch should be at least 1")
         
         if self.sample_limit < 1:

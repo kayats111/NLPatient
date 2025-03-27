@@ -17,7 +17,7 @@ class LearnModel:
 
         # add fields to your desire
 
-    def train(vectors: NDArray, labels: NDArray) -> None:
+    def train(self, vectors: NDArray, labels: NDArray) -> None:
         """
         This method will be used to train (or partially train) your model according to
         your preferences (train size, test size, batches, epochs) while using the system.
@@ -41,7 +41,7 @@ class LearnModel:
         # self.model.fit(vectors, labels)
         # self.meta_data["last mse"] = mean_squared_error(labels, self.model.predict(vectors))
 
-    def test(vectors: NDArray, labels: NDArray) -> None:
+    def test(self, vectors: NDArray, labels: NDArray) -> None:
         """
         This method will be used to test (or partially test) your model according to
         your preferences (train size, test size, batches, epochs) while using the system.
