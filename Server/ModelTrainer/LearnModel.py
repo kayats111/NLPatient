@@ -13,7 +13,7 @@ class LearnModel:
         """
 
         # put here a new model
-        self.model = None  # KNN example: self.model = KNeighborsRegressor(n_neighbors=5) from Scikit-Learn
+        self.model = None  # KNN example: self.model = KNeighborsRegressor(hyper_parameters["k"]) from Scikit-Learn
         self.hyper_parameters: dict = hyper_parameters
 
         # only one of those should be true
