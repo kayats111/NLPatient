@@ -3,6 +3,7 @@ import pickle
 from torch import save
 from typing import Dict, List, Set
 from importlib import import_module
+import inspect
 
 from MetaDataRepository import MetaDataRepository
 from HyperParameterRepository import HyperParametersRepository
@@ -30,6 +31,8 @@ class Service:
 
         if tempName in modelNames:
             raise Exception("a model with the same name already exists")
+        
+        self.validate_new_model_file(file=file)
 
         filePath = os.path.join(SAVED_FOLDER, file.filename)
 
@@ -156,15 +159,6 @@ class Service:
         module = import_module(moduleName)
 
         learn_model_class = getattr(module, "LearnModel", None)
-
-        if learn_model_class is None:
-            raise Exception("the model file does not contain the LearnModel class")
-        
-        if not hasattr(learn_model_class, "train") or not callable(getattr(learn_model_class, "train")):
-            raise Exception("no train method in LearnModel class")
-        
-        if not hasattr(learn_model_class, "test") or not callable(getattr(learn_model_class, "test")):
-            raise Exception("no test method in LearnModel class")
         
         learn_model = learn_model_class(hyper_parameters=hyper_parameters)
 
@@ -172,12 +166,29 @@ class Service:
 
     def get_names_and_parameters(self) -> List[Dict[str, List[str]]]:
         return self.parameter_repository.model_names_and_parameters()
-
     
     def getTemplatePath(self):
         return TEMPLATE_PATH
     
+    def validate_new_model_file(self, file) -> None:
+        if not hasattr(file, "LearnModel") or not inspect.isclass(getattr(file, "LearnModel")):
+            raise Exception(f"no LearnModel class in {file.filename}")
+        
+        learn_model_class = getattr(file, "LearnModel", None)
 
+        callables: List[str] = ["train", "test", "__init__"]
+        fields: List[str] = ["model", "hyper_parameters", "is_scikit", "is_pytorch", "meta_data"]
+
+        for c in callables:
+            if not hasattr(learn_model_class, c) or not callable(getattr(learn_model_class, c)):
+                raise Exception(f"no {c} method in LearnModel class")
+
+        for f in fields:
+            if not hasattr(learn_model_class, f):
+                raise Exception(f"no {f} field in LearnModel class")
+        
+
+        
 
 
 
