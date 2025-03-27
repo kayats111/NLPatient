@@ -20,7 +20,8 @@ class LearnModel:
         self.is_scikit: bool = False
         self.is_pytorch: bool = False
 
-        # use this field to add any metadata you would like, keep in mind that is_scikit and is_pytorch are saved automatically
+        # use this field to add any metadata you would like,
+        # keep in mind that is_scikit, is_pytorch and hyper_parameters are saved automatically
         self.meta_data: dict = {}
 
         # add fields to your desire
