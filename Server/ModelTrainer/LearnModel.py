@@ -4,9 +4,17 @@ from numpy.typing import NDArray
 # Usage example with KNN is provided in comments
 class LearnModel:
 
-    def __init__(self):
+    def __init__(self, hyper_parameters: dict):
+        """
+        Args:
+            hyper_parameters: a dict of <parameter_name, parameter_value>.
+            KNN example: <"k", 5>.
+
+        """
+
         # put here a new model
         self.model = None  # KNN example: self.model = KNeighborsRegressor(n_neighbors=5) from Scikit-Learn
+        self.hyper_parameters: dict = hyper_parameters
 
         # only one of those should be true
         self.is_scikit: bool = False
