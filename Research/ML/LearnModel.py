@@ -1,14 +1,19 @@
 from numpy.typing import NDArray
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.metrics import mean_squared_error, r2_score
 
 # This class will be run by the system, follow its guidelines.
 # Usage example with KNN is provided in comments
 class LearnModel:
 
     def __init__(self, hyper_parameters: dict):
+        """
+        Args:
+            hyper_parameters: a dict of <parameter_name, parameter_value>.
+            KNN example: <"k", 5>.
+
+        """
+
         # put here a new model
-        self.model = KNeighborsRegressor(n_neighbors=5)
+        self.model = None  # KNN example: self.model = KNeighborsRegressor(n_neighbors=5) from Scikit-Learn
         self.hyper_parameters: dict = hyper_parameters
 
         # only one of those should be true
