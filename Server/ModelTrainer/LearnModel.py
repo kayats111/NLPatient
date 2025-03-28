@@ -16,10 +16,6 @@ class LearnModel:
         self.model = None  # KNN example: self.model = KNeighborsRegressor(hyper_parameters["k"]) from Scikit-Learn
         self.hyper_parameters: dict = hyper_parameters
 
-        # only one of those should be true
-        self.is_scikit: bool = False
-        self.is_pytorch: bool = False
-
         # use this field to add any metadata you would like,
         # keep in mind that is_scikit, is_pytorch and hyper_parameters are saved automatically
         self.meta_data: dict = {}
@@ -28,7 +24,7 @@ class LearnModel:
 
     def train(self, vectors: NDArray, labels: NDArray) -> None:
         """
-        This method will be used to train (or partially train) your model according to
+        This method will be used to train (ML), or partially train (DL) your model according to
         your preferences (train size, test size, batches, epochs) while using the system.
         One run of this method is equivalent to one run on a batch of the training set.
         If you do not have any batches or epochs, the model will be trained on all of
@@ -52,7 +48,7 @@ class LearnModel:
 
     def test(self, vectors: NDArray, labels: NDArray) -> None:
         """
-        This method will be used to test (or partially test) your model according to
+        This method will be used to test (ML), or partially test (DL) your model according to
         your preferences (train size, test size, batches, epochs) while using the system.
         One run of this method is equivalent to one run on a batch of the test set.
         If you do not have any batches or epochs, the model will be tested on all of
