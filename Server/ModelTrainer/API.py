@@ -56,7 +56,7 @@ def add_model_hyper_parameters():
     response: Response[bool]
     
     try:
-        service.add_model_hyper_parameters(model_name=data["modelName"], hyper_parameters=data["hyperParameters"])
+        service.add_model_parameters(model_name=data["modelName"], hyper_parameters=data["hyperParameters"])
         response = Response(value=True)
     except Exception as e:
         response = Response(error=True, message=str(e))

@@ -41,7 +41,7 @@ class Service:
 
         # TODO: change to save in something destributed
 
-    def add_model_hyper_parameters(self, model_name: str, hyper_parameters: List[str]) -> None:
+    def add_model_parameters(self, model_name: str, hyper_parameters: List[str]) -> None:
         if hyper_parameters is None:
             raise Exception("the hyper parameters list cannot be null")
         
