@@ -2,6 +2,8 @@ from typing import Dict, List
 from pymongo import MongoClient
 import yaml
 
+from ModelType import ModelType
+
 
 with open('conf.yaml') as f:
     conf = yaml.safe_load(f)
@@ -18,7 +20,7 @@ class HyperParametersRepository:
 
         self.hyper_collection = db.HyperParameters
 
-    def add_hyper_parameters(self, model_name: str, parameters: List[str]) -> None:
+    def add_hyper_parameters(self, model_name: str, parameters: List[str], model_type: ModelType) -> None:
         _filter: dict = {"model_name": model_name}
 
         if self.hyper_collection.find_one(filter=_filter) is not None:
@@ -26,7 +28,8 @@ class HyperParametersRepository:
 
         self.hyper_collection.insert_one({
                 "model_name": model_name,
-                "parameters": parameters
+                "parameters": parameters,
+                "model_type": model_type
             })
         
     def read_parameters(self, model_name: str) -> List[str]:
@@ -57,4 +60,13 @@ class HyperParametersRepository:
 
         return models
 
+    def read_type(self, model_name: str) -> ModelType:
+        _filter: dict = {"model_name": model_name}
+
+        hyper_record: dict = self.hyper_collection.find_one(filter=_filter)
+
+        if hyper_record is None:
+            raise Exception(f"a model named {model_name} does not exist")
+        
+        return hyper_record["model_tpye"]
     
