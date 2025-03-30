@@ -24,6 +24,8 @@ class DataLoader:
         self.curr_train_batch: int = -1
         self.curr_test_batch: int = -1
         self.curr_epoch: int = -1
+        self.train_size: int = -1
+        self.test_size: int = -1
 
         self.__validate_requirements()
 
@@ -81,9 +83,12 @@ class DataLoader:
         ids = ids[:self.sample_limit]
 
         n: int = len(ids)
+
+        self.train_size = int(n * (self.train_relative_size / 100))
+        self.test_size = len(ids) - self.train_size
            
-        train_set: List[int] = ids[ : int(n * (self.train_relative_size / 100))]
-        test_set: List[int] = ids[int(n * (self.train_relative_size / 100)) : ]
+        train_set: List[int] = ids[ : self.train_size]
+        test_set: List[int] = ids[self.train_size : ]
 
         return train_set, test_set
         

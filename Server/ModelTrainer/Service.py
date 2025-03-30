@@ -110,7 +110,9 @@ class Service:
         
         metaData: dict = self.addMetaData(modelName=model_name, meta_data=learn_model.meta_data,
                                           fields=fields, labels=labels, hyper_parameters=hyper_parameters,
-                                          model_type=model_type)
+                                          model_type=model_type, train_relative_size=train_relative_size,
+                                          test_relative_size=test_relative_size,
+                                          train_size=data_loader.train_size, test_size=data_loader.test_size)
 
         return metaData
     
@@ -199,12 +201,17 @@ class Service:
     # NOTE: not for API use, but after training the model (lambda?)
     # TODO: check after model training    
     def addMetaData(self, modelName: str, meta_data: dict, fields: List[str], labels: List[str],
-                    hyper_parameters: dict, model_type: str) -> dict:
+                    hyper_parameters: dict, model_type: str, train_relative_size: int,
+                    test_relative_size: int, train_size: int, test_size: int) -> dict:
         meta_data["model name"] = modelName
         meta_data["fields"] = fields
         meta_data["labels"] = labels
         meta_data["hyper parameters"] = hyper_parameters
         meta_data["model type"] = model_type
+        meta_data["train_relative_size"] = train_relative_size
+        meta_data["test_relative_size"] = test_relative_size
+        meta_data["train_size"] = train_size
+        meta_data["test_size"] = test_size
 
         self.metaRepository.addMetaData(meta_data)
 
