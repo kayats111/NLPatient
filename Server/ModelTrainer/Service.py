@@ -9,6 +9,7 @@ from MetaDataRepository import MetaDataRepository
 from HyperParameterRepository import HyperParametersRepository
 from DataLoader import DataLoader
 from numpy.typing import NDArray
+import numpy as np
 
 
 
@@ -41,11 +42,11 @@ class Service:
 
         # TODO: change to save in something destributed
 
-    def add_model_parameters(self, model_name: str, hyper_parameters: List[str]) -> None:
+    def add_model_parameters(self, model_name: str, hyper_parameters: List[str], model_type: str) -> None:
         if hyper_parameters is None:
             raise Exception("the hyper parameters list cannot be null")
         
-        self.parameter_repository.add_hyper_parameters(model_name=model_name, parameters=hyper_parameters)
+        self.parameter_repository.add_hyper_parameters(model_name=model_name, parameters=hyper_parameters, model_type=model_type)
 
     def getModelFile(self, modelName: str):
         filePath = os.path.join(SAVED_FOLDER, modelName + ".py")
@@ -60,7 +61,7 @@ class Service:
 
         return filePath
 
-    def get_model_hyper_parameters(self, model_name: str) -> List[str]:
+    def get_model_hyper_parameters(self, model_name: str) -> dict:
         return self.parameter_repository.read_parameters(model_name=model_name)
 
     def getModelNames(self) -> List[str]:
@@ -79,8 +80,8 @@ class Service:
         self.parameter_repository.delete_parameters(model_name=modelName)
 
     def runModel(self, model_name: str, fields: List[str] = None, labels: List[str] = None,
-                 train_relative_size: int = 0, test_relative_size: int = 0, epochs: int = 0,
-                 batch_size: int = 0, sample_limit: int = 0, hyper_parameters: dict = None) -> dict:
+                 train_relative_size: int = 80, test_relative_size: int = 20, epochs: int = 1,
+                 batch_size: int = 100, sample_limit: int = -1, hyper_parameters: dict = {}) -> dict:
         self.validate_hyper_parameters(model_name=model_name, hyper_parameters=hyper_parameters)
 
         learn_model = self.load_learn_model(model_name=model_name, hyper_parameters=hyper_parameters)
@@ -90,7 +91,71 @@ class Service:
                                  sample_limit=sample_limit)
         
         data_loader.load()
+
+        model_type: str = self.parameter_repository.read_type(model_name=model_name)
+
+        fields_labels: dict = {}
+
+        if model_type == "SCIKIT":
+            fields_labels = self.run_scikit_model(learn_model=learn_model, data_loader=data_loader)
+        elif model_type == "PYTORCH":
+            fields_labels = self.run_pytorch_model(learn_model=learn_model, data_loader=data_loader)
+
+        fields = fields_labels["fields"]
+        labels = fields_labels["labels"]       
+
+        self.addTrainedModel(model=learn_model.model, modelName=model_name,
+                             isScikit=model_type=="SCIKIT", isPyTorch=model_type=="PYTORCH")
         
+        metaData: dict = self.addMetaData(modelName=model_name, meta_data=learn_model.meta_data,
+                                          fields=fields, labels=labels, hyper_parameters=hyper_parameters,
+                                          model_type=model_type)
+
+        return metaData
+    
+    def run_scikit_model(self, learn_model, data_loader: DataLoader) -> Dict[str, List[str]]:
+        fields: List[str]
+        labels: List[str]
+        vectors: NDArray
+        vectorLabels: NDArray
+
+        if data_loader.has_next_train():
+            batch: Dict[str, NDArray] = data_loader.get_next_train()
+            vectors = batch["vectors"]
+            vectorLabels = batch["vectorLabels"]
+            fields = batch["fields"]
+            labels = batch["labels"]
+
+            while data_loader.has_next_train():
+                batch: Dict[str, NDArray] = data_loader.get_next_train()
+                np.concatenate((vectors, batch["vectors"]))
+                np.concatenate((vectorLabels, batch["vectorLabels"]))
+            
+            learn_model.train(vectors=vectors, labels=vectorLabels)
+
+        if data_loader.has_next_test():
+            batch: Dict[str, NDArray] = data_loader.get_next_test()
+            vectors = batch["vectors"]
+            vectorLabels = batch["vectorLabels"]
+            fields = batch["fields"]
+            labels = batch["labels"]
+
+            while data_loader.has_next_test():
+                batch: Dict[str, NDArray] = data_loader.get_next_test()
+                np.concatenate((vectors, batch["vectors"]))
+                np.concatenate((vectorLabels, batch["vectorLabels"]))
+                
+            learn_model.test(vectors=vectors, labels=vectorLabels)
+
+        return {
+            "fields": fields,
+            "labels": labels
+        }
+        
+    def run_pytorch_model(self, learn_model, data_loader: DataLoader) -> Dict[str, List[str]]:
+        fields: List[str]
+        labels: List[str]
+
         while data_loader.has_next_train():
             batch: Dict[str, NDArray] = data_loader.get_next_train()
             learn_model.train(vectors=batch["vectors"], labels=batch["vectorLabels"])
@@ -102,16 +167,13 @@ class Service:
             batch: Dict[str, NDArray] = data_loader.get_next_test()
             learn_model.test(vectors=batch["vectors"], labels=batch["vectorLabels"])
 
-        self.addTrainedModel(model=learn_model.model, modelName=model_name,
-                             isScikit=learn_model.is_scikit, isPyTorch=learn_model.is_pytorch)
-        
-        metaData: dict = self.addMetaData(modelName=model_name, meta_data=learn_model.meta_data,
-                                          fields=fields, labels=labels, hyper_parameters=hyper_parameters)
-
-        return metaData
+        return {
+            "fields": fields,
+            "labels": labels
+        }
 
     def validate_hyper_parameters(self, model_name: str, hyper_parameters: dict) -> None:
-        hyper_parameters_names: Set[str] = set(self.parameter_repository.read_parameters(model_name=model_name))
+        hyper_parameters_names: Set[str] = set(self.parameter_repository.read_parameters(model_name=model_name)["parameters"])
 
         for param in hyper_parameters_names:
             if param not in hyper_parameters:
@@ -135,11 +197,13 @@ class Service:
 
     # NOTE: not for API use, but after training the model (lambda?)
     # TODO: check after model training    
-    def addMetaData(self, modelName: str, meta_data: dict, fields: List[str], labels: List[str], hyper_parameters: dict) -> dict:
+    def addMetaData(self, modelName: str, meta_data: dict, fields: List[str], labels: List[str],
+                    hyper_parameters: dict, model_type: str) -> dict:
         meta_data["model name"] = modelName
         meta_data["fields"] = fields
         meta_data["labels"] = labels
         meta_data["hyper parameters"] = hyper_parameters
+        meta_data["model type"] = model_type
 
         self.metaRepository.addMetaData(meta_data)
 
@@ -164,7 +228,7 @@ class Service:
 
         return learn_model
 
-    def get_names_and_parameters(self) -> List[Dict[str, List[str]]]:
+    def get_names_and_parameters(self) -> List[dict]:
         return self.parameter_repository.model_names_and_parameters()
     
     def getTemplatePath(self):
@@ -182,7 +246,7 @@ class Service:
         learn_model_class = getattr(module, "LearnModel", None)
 
         callables: List[str] = ["train", "test", "__init__"]
-        fields: List[str] = ["model", "hyper_parameters", "is_scikit", "is_pytorch", "meta_data"]
+        fields: List[str] = ["model", "hyper_parameters", "meta_data"]
 
         for c in callables:
             if not hasattr(learn_model_class, c) or not callable(getattr(learn_model_class, c)):

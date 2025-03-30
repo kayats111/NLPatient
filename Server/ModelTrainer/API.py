@@ -48,7 +48,7 @@ def addModel():
 @bp.route("/add/parameters", methods=["POST"])
 def add_model_hyper_parameters():
     data: dict = request.get_json()
-    schema: Set[str] = {"modelName", "hyperParameters"}
+    schema: Set[str] = {"modelName", "hyperParameters", "modelType"}
 
     if not validateRequestSchema(request=data, schema=schema):
         return jsonify(Response(error=True, message="bad request body").toDict()), 400
@@ -56,7 +56,8 @@ def add_model_hyper_parameters():
     response: Response[bool]
     
     try:
-        service.add_model_parameters(model_name=data["modelName"], hyper_parameters=data["hyperParameters"])
+        service.add_model_parameters(model_name=data["modelName"], hyper_parameters=data["hyperParameters"],
+                                     model_type=data["modelType"])
         response = Response(value=True)
     except Exception as e:
         response = Response(error=True, message=str(e))
@@ -87,7 +88,7 @@ def getModel():
 
 @bp.route("/get_names_parameters", methods=["GET"])
 def getModelNamesAndParameters():
-    names_parameters: Dict[str, List[str]] = service.get_names_and_parameters()
+    names_parameters: List[dict] = service.get_names_and_parameters()
     return jsonify(Response(value=names_parameters).toDict())
 
 

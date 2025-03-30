@@ -46,6 +46,9 @@ class DataLoader:
 
         ids: List[int] = response.value
 
+        if self.sample_limit <= 0:
+            self.sample_limit = len(ids)
+
         return ids
     
     def __fetch(self, url: str, body: dict = None) -> Response[dict]:
@@ -104,9 +107,6 @@ class DataLoader:
         
         if self.batch_size < 1:
             raise Exception("the size of a batch should be at least 1")
-        
-        if self.sample_limit < 1:
-            raise Exception("the limit on samples should be greater or equal to 0")
 
     def has_next_train(self) -> bool:
         return self.curr_epoch < self.epochs
