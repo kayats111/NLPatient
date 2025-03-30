@@ -1,3 +1,4 @@
+from collections import defaultdict
 import os
 import pickle
 from torch import save
@@ -253,7 +254,7 @@ class Service:
                 os.remove(filePath)
                 raise Exception(f"no {c} method in LearnModel class")
             
-        learn_model = learn_model_class(hyper_parameters={})
+        learn_model = learn_model_class(hyper_parameters=defaultdict(lambda: 0))
 
         for f in fields:
             if not hasattr(learn_model, f):
