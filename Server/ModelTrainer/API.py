@@ -115,7 +115,7 @@ def deleteModelFile():
 
 @bp.route("/run_model", methods=["POST"])  # Change to POST since we're sending data
 def runModel():
-    data = request.get_json()
+    data: dict = request.get_json()
     schema: Set[str] = {"model name", "trainRelativeSize", "testRelativeSize", "epochs", "batchSize", "sampleLimit", "hyperParameters"}
 
     if not validateRequestSchema(request=data, schema=schema):
