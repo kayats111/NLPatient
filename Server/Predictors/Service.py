@@ -105,14 +105,14 @@ class Service:
 
         module = import_module(moduleName)
 
-        if not hasattr(module, "createModel"):
-            raise Exception(f"{predictorName} has no createModel function")
+        hyper_parameters: dict = self.repository.getMetaData(predictorName=predictorName)["hyper parameters"]
         
-        createModel = getattr(module, "createModel")
+        learn_model_class = getattr(module, "LearnModel")
+        learn_model = learn_model_class(hyper_parameters=hyper_parameters)
 
-        path = filePath = os.path.join(TRAINED_FOLDER, predictorName + ".pth")
+        path = os.path.join(TRAINED_FOLDER, predictorName + ".pth")
 
-        predictor = createModel()
+        predictor = learn_model.model
         predictor.load_state_dict(torch.load(path))
         predictor.eval()
 
