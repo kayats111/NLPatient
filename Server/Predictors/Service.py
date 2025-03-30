@@ -25,7 +25,7 @@ class Service:
    
     def getPredictorPath(self, name: str) -> str:
         if not self.isPredictorExists(name):
-            raise Exception(f"the predictor {name} does not exists")
+            raise Exception(f"the predictor {name} does not exist")
         
         metaData: dict = self.getMetaData(name)
         
@@ -38,7 +38,7 @@ class Service:
     
     def deletePredictor(self, name: str) -> None:
         if not self.isPredictorExists(name):
-            raise Exception(f"the predictor {name} does not exists")
+            raise Exception(f"the predictor {name} does not exist")
         
         metaData: dict = self.getMetaData(name)
 
