@@ -30,7 +30,7 @@ class Service:
         metaData: dict = self.getMetaData(name)
         
         filename: str = name
-        filename += ".pkl" if metaData["isScikit"] else ".pth"
+        filename += ".pkl" if metaData["model type"] == "SCIKIT" else ".pth"
 
         filePath = os.path.join(TRAINED_FOLDER, filename)
 
@@ -43,7 +43,7 @@ class Service:
         metaData: dict = self.getMetaData(name)
 
         filename: str = name
-        filename += ".pkl" if metaData["isScikit"] else ".pth"
+        filename += ".pkl" if metaData["model type"] == "SCIKIT" else ".pth"
         
         filePath = os.path.join(TRAINED_FOLDER, filename)
         
@@ -64,9 +64,9 @@ class Service:
         
         prediction: List[str] = []
 
-        if metaData["isScikit"]:
+        if metaData["model type"] == "SCIKIT":
             prediction = self.predictScikit(predictorName=predictorName, sample=sample)
-        elif metaData["isPyTorch"]:
+        elif metaData["model tpye"] == "PYTORCH":
             prediction = self.predictPyTorch(predictorName=predictorName, sample=sample)
 
         return prediction

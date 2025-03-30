@@ -29,7 +29,6 @@ def welcome() -> str:
 
 @bp.route("/names", methods=["GET"])
 def getPredictorNames() -> List[str]:
-    # print(service.getPredictorNames())
     return jsonify(Response(value=service.getPredictorNames()).toDict())
 
 
@@ -77,7 +76,7 @@ def deletePredictor():
 
 @bp.route("/meta_data", methods=["GET"])
 def getMetaData():
-    data: dict = {"model name": request.args.get("model name")}
+    data: dict = request.get_json()
 
     schema: Set[str] = {"model name"}
 
@@ -99,7 +98,6 @@ def getMetaData():
 
 @bp.route("/predict", methods=["POST"])
 def predict():
-    # print(request.get_json())
     data: dict = request.get_json()
     print(data["sample"])
 
