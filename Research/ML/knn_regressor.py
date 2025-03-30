@@ -2,8 +2,7 @@ from numpy.typing import NDArray
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
-# This class will be run by the system, follow its guidelines.
-# Usage example with KNN is provided in comments
+
 class LearnModel:
 
     def __init__(self, hyper_parameters: dict):
