@@ -3,13 +3,12 @@ from flask import Blueprint, Flask, request, jsonify, send_file
 from flask_cors import CORS
 from Response import Response
 from Service import Service
-import yaml
+import os
 
 
-with open('conf.yaml') as f:
-    conf = yaml.safe_load(f)
+env_vars: dict = os.environ
 
-port = conf["API"]["port"]
+port = int(env_vars["api_port"])
 
 
 
@@ -134,7 +133,7 @@ def validateRequestSchema(request: dict, schema: Set[str]) -> bool:
 if __name__ == "__main__":
     app.register_blueprint(bp)
 
-    app.run(debug=True, port=port)
+    app.run(host='0.0.0.0', debug=True, port=port)
 
 
 
