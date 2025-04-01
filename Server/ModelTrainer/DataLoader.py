@@ -42,7 +42,7 @@ class DataLoader:
         self.curr_test_batch = 0
 
     def __fetch_ids(self) -> List[int]:
-        url: str = "http://localhost:3000/api/data/ids"
+        url: str = "http://data-manager:3000/api/data/ids"
 
         response: Response[dict] = self.__fetch(url=url)
 
@@ -133,7 +133,7 @@ class DataLoader:
     
     def __get_batch_by_ids(self, ids_batch: List[int]) -> Dict[str, NDArray]:
         body: dict = {"ids": ids_batch}
-        url = "http://localhost:3000/api/data/read/vectors"
+        url = "http://data-manager:3000/api/data/read/vectors"
 
         if self.fields is not None:
             body["fields"] = self.fields
