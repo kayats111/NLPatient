@@ -1,13 +1,13 @@
 from numpy.typing import NDArray
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_absolute_error,mean_squared_error
-
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import mean_squared_error, r2_score
 
 class LearnModel:
 
     def __init__(self, hyper_parameters: dict):
-        self.model = LinearRegression()
+        self.model = DecisionTreeRegressor(random_state = 0)
         self.hyper_parameters: dict = hyper_parameters
+
         self.meta_data: dict = {}
 
     def train(self, vectors: NDArray, labels: NDArray) -> None:
@@ -15,14 +15,13 @@ class LearnModel:
 
     def test(self, vectors: NDArray, labels: NDArray) -> None:
         predicted = self.model.predict(vectors)
+        mse = mean_squared_error(labels, predicted)
+        r2 = r2_score(labels, predicted)
 
-        score = self.model.score(vectors, labels)
-        mae = mean_absolute_error(y_true=labels,y_pred=predicted)
-        mse = mean_squared_error(y_true=labels,y_pred=predicted)
-
-        self.meta_data["score"] = score
-        self.meta_data["mae"] = mae
         self.meta_data["mse"] = mse
+        self.meta_data["r2"] = r2
+
+
 
 
 

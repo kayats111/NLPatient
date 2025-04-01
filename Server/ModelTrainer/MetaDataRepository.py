@@ -1,4 +1,3 @@
-from typing import Optional
 from pymongo import MongoClient
 import yaml
 

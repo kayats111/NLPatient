@@ -1,4 +1,4 @@
-from typing import List, Set
+from typing import Dict, List, Set
 from flask import Blueprint, Flask, request, jsonify, send_file
 from flask_cors import CORS
 from Response import Response
@@ -26,20 +26,38 @@ def welcome() -> str:
     return "Welcome"
 
 
-@bp.route("/add_model", methods=["POST"])
+@bp.route("/add/model", methods=["POST"])
 def addModel():
-
-    print(request.files.keys())
-
     if "model file" not in request.files:
         return jsonify(Response(error=True, message="no model file").toDict()), 400
-
+    
     file = request.files["model file"]
     
     response: Response[bool]
 
     try:
-        service.addModel(file)
+        service.addModel(file=file)
+        response = Response(value=True)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+
+    return jsonify(response.toDict())
+
+
+@bp.route("/add/parameters", methods=["POST"])
+def add_model_hyper_parameters():
+    data: dict = request.get_json()
+    schema: Set[str] = {"modelName", "hyperParameters", "modelType"}
+
+    if not validateRequestSchema(request=data, schema=schema):
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
+    
+    response: Response[bool]
+    
+    try:
+        service.add_model_parameters(model_name=data["modelName"], hyper_parameters=data["hyperParameters"],
+                                     model_type=data["modelType"])
         response = Response(value=True)
     except Exception as e:
         response = Response(error=True, message=str(e))
@@ -50,7 +68,7 @@ def addModel():
 
 @bp.route("/get_model", methods=["GET"])
 def getModel():
-    data: dict = {"model name" : request.args.get("model name")}
+    data: dict = request.get_json()
     
     schema: Set[str] = {"model name"}
 
@@ -68,10 +86,10 @@ def getModel():
         return jsonify(response.toDict())
     
 
-@bp.route("/get_names", methods=["GET"])
-def getModelNames():
-    names: List[str] = service.getModelNames()
-    return jsonify(Response(value=names).toDict())
+@bp.route("/get_names_parameters", methods=["GET"])
+def getModelNamesAndParameters():
+    names_parameters: List[dict] = service.get_names_and_parameters()
+    return jsonify(Response(value=names_parameters).toDict())
 
 
 @bp.route("/delete_model", methods=["DELETE"])
@@ -95,14 +113,12 @@ def deleteModelFile():
     return jsonify(response.toDict())
 
 
-
 @bp.route("/run_model", methods=["POST"])  # Change to POST since we're sending data
 def runModel():
-    
-    print(request.get_json())
+    data: dict = request.get_json()
+    schema: Set[str] = {"model name", "trainRelativeSize", "testRelativeSize", "epochs", "batchSize", "sampleLimit", "hyperParameters"}
 
-    data = request.get_json()
-    if "model name" not in data:
+    if not validateRequestSchema(request=data, schema=schema):
         return jsonify(Response(error=True, message="bad request body").toDict()), 400
     
     response: Response[dict]
@@ -112,13 +128,25 @@ def runModel():
 
         # Handle the presence of "fields" and "labels" in the data
         if "fields" in data and "labels" in data:
-            metaData = service.runModel(data["model name"], data["fields"], data["labels"])
+            metaData = service.runModel(model_name=data["model name"], fields=data["fields"], labels=data["labels"],
+                                        train_relative_size=data["trainRelativeSize"], test_relative_size=data["testRelativeSize"],
+                                        epochs=data["epochs"], batch_size=data["batchSize"], sample_limit=data["sampleLimit"],
+                                        hyper_parameters=data["hyperParameters"])
         elif "fields" in data:
-            metaData = service.runModel(data["model name"], data["fields"])
+            metaData = service.runModel(model_name=data["model name"], fields=data["fields"],
+                                        train_relative_size=data["trainRelativeSize"], test_relative_size=data["testRelativeSize"],
+                                        epochs=data["epochs"], batch_size=data["batchSize"], sample_limit=data["sampleLimit"],
+                                        hyper_parameters=data["hyperParameters"])
         elif "labels" in data:
-            metaData = service.runModel(data["model name"], data["labels"])
+            metaData = service.runModel(model_name=data["model name"], labels=data["labels"],
+                                        train_relative_size=data["trainRelativeSize"], test_relative_size=data["testRelativeSize"],
+                                        epochs=data["epochs"], batch_size=data["batchSize"], sample_limit=data["sampleLimit"],
+                                        hyper_parameters=data["hyperParameters"])
         else:
-            metaData = service.runModel(data["model name"])
+            metaData = service.runModel(model_name=data["model name"],
+                                        train_relative_size=data["trainRelativeSize"], test_relative_size=data["testRelativeSize"],
+                                        epochs=data["epochs"], batch_size=data["batchSize"], sample_limit=data["sampleLimit"],
+                                        hyper_parameters=data["hyperParameters"])
         
         # Return metadata as the response
         response = Response(value=metaData)
@@ -127,6 +155,7 @@ def runModel():
         app.log_exception(e)
 
     return jsonify(response.toDict())
+
 
 @bp.route("/template", methods=["GET"])
 def getTemplate():

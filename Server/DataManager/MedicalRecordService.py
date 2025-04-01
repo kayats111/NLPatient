@@ -42,7 +42,7 @@ class MedicalRecordService:
 
         return dicts
     
-    def getVectors(self, fields: List[str] = TRAIN_ATTRIBUTES, labels: List[str] = LABELS) -> List[List[float]]:
+    def getVectors(self, ids: List[int], fields: List[str] = TRAIN_ATTRIBUTES, labels: List[str] = LABELS) -> List[List[float]]:
         if fields is not TRAIN_ATTRIBUTES:
             att: Set[str] = set(TRAIN_ATTRIBUTES)
 
@@ -57,7 +57,7 @@ class MedicalRecordService:
                 if label not in lbl:
                     raise Exception(f"the label '{label}' in not a medical record label")
 
-        records: List[MedicalRecord] = self.repository.getAllRecords()
+        records: List[MedicalRecord] = self.repository.getRecordsWithIds(ids=ids)
 
         dicts: List[dict] = [record.toDict() for record in records]
 
@@ -127,6 +127,10 @@ class MedicalRecordService:
             "fields": TRAIN_ATTRIBUTES,
             "labels": LABELS
         }
+
+    def getAllIds(self) -> List[int]:
+        return self.repository.getRecordsIds()
+
 
 
 

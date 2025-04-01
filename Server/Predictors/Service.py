@@ -25,12 +25,12 @@ class Service:
    
     def getPredictorPath(self, name: str) -> str:
         if not self.isPredictorExists(name):
-            raise Exception(f"the predictor {name} does not exists")
+            raise Exception(f"the predictor {name} does not exist")
         
         metaData: dict = self.getMetaData(name)
         
         filename: str = name
-        filename += ".pkl" if metaData["isScikit"] else ".pth"
+        filename += ".pkl" if metaData["model type"] == "SCIKIT" else ".pth"
 
         filePath = os.path.join(TRAINED_FOLDER, filename)
 
@@ -38,12 +38,12 @@ class Service:
     
     def deletePredictor(self, name: str) -> None:
         if not self.isPredictorExists(name):
-            raise Exception(f"the predictor {name} does not exists")
+            raise Exception(f"the predictor {name} does not exist")
         
         metaData: dict = self.getMetaData(name)
 
         filename: str = name
-        filename += ".pkl" if metaData["isScikit"] else ".pth"
+        filename += ".pkl" if metaData["model type"] == "SCIKIT" else ".pth"
         
         filePath = os.path.join(TRAINED_FOLDER, filename)
         
@@ -64,9 +64,9 @@ class Service:
         
         prediction: List[str] = []
 
-        if metaData["isScikit"]:
+        if metaData["model type"] == "SCIKIT":
             prediction = self.predictScikit(predictorName=predictorName, sample=sample)
-        elif metaData["isPyTorch"]:
+        elif metaData["model tpye"] == "PYTORCH":
             prediction = self.predictPyTorch(predictorName=predictorName, sample=sample)
 
         return prediction
@@ -105,14 +105,14 @@ class Service:
 
         module = import_module(moduleName)
 
-        if not hasattr(module, "createModel"):
-            raise Exception(f"{predictorName} has no createModel function")
+        hyper_parameters: dict = self.repository.getMetaData(predictorName=predictorName)["hyper parameters"]
         
-        createModel = getattr(module, "createModel")
+        learn_model_class = getattr(module, "LearnModel")
+        learn_model = learn_model_class(hyper_parameters=hyper_parameters)
 
-        path = filePath = os.path.join(TRAINED_FOLDER, predictorName + ".pth")
+        path = os.path.join(TRAINED_FOLDER, predictorName + ".pth")
 
-        predictor = createModel()
+        predictor = learn_model.model
         predictor.load_state_dict(torch.load(path))
         predictor.eval()
 
