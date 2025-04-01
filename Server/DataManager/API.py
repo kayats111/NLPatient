@@ -2,20 +2,19 @@ from typing import Dict, List, Set
 from flask import Blueprint, Flask, request, jsonify
 from flask_cors import CORS
 from Extensions import db
-import yaml
+import os
 from Response import Response
 from MedicalRecordService import MedicalRecordService
 
 
 
-with open('conf.yaml') as f:
-    conf = yaml.safe_load(f)
+env_vars: dict = os.environ
 
-user = conf["DB"]["user"]
-password = conf["DB"]["password"]
-host = conf["DB"]["host"]
-db_name = conf["DB"]["name"]
-port = conf["API"]["port"]
+user = env_vars["mysql-user"]
+password = env_vars["mysql-password"]
+host = env_vars["mysql-host"]
+db_name = env_vars["mysql-dbname"]
+port = env_vars["api-port"]
 
 app: Flask = Flask(__name__)
 
