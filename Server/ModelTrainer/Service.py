@@ -12,7 +12,6 @@ from HyperParameterRepository import HyperParametersRepository
 from DataLoader import DataLoader
 from numpy.typing import NDArray
 import numpy as np
-import os
 
 NFS_DIRECTORY: str = os.environ["nfs_dir"]
 

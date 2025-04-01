@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import List
 import pickle
 from MetaDataRepository import MetaDataRepository
@@ -6,7 +7,9 @@ from importlib import import_module
 import torch
 import numpy as np
 
+NFS_DIRECTORY: str = os.environ["nfs_dir"]
 
+sys.path.append(NFS_DIRECTORY)
 
 SAVED_FOLDER: str = "SavedModels"
 TRAINED_FOLDER: str = "TrainedModels"
@@ -15,7 +18,6 @@ TRAINED_FOLDER: str = "TrainedModels"
 class Service:
 
     def __init__(self):
-        # remove
         os.makedirs(SAVED_FOLDER, exist_ok=True)
         os.makedirs(TRAINED_FOLDER, exist_ok=True)
         
@@ -36,7 +38,7 @@ class Service:
         filename: str = name
         filename += ".pkl" if metaData["model type"] == "SCIKIT" else ".pth"
 
-        filePath = os.path.join(TRAINED_FOLDER, filename)
+        filePath = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, filename)
 
         return filePath
     
@@ -49,7 +51,7 @@ class Service:
         filename: str = name
         filename += ".pkl" if metaData["model type"] == "SCIKIT" else ".pth"
         
-        filePath = os.path.join(TRAINED_FOLDER, filename)
+        filePath = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, filename)
         
         os.remove(filePath)
         self.repository.removeMetaData(name)
@@ -91,7 +93,7 @@ class Service:
         return predictedLabel
 
     def loadScikit(self, predictorName: str):
-        filePath = os.path.join(TRAINED_FOLDER, predictorName + ".pkl")
+        filePath = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, predictorName + ".pkl")
         predictor = None
 
         with open(filePath, "rb") as f:
@@ -100,7 +102,7 @@ class Service:
         return predictor
     
     def loadPyTorch(self, predictorName: str):
-        filePath = os.path.join(SAVED_FOLDER, predictorName + ".py")
+        filePath = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, predictorName + ".py")
 
         if not os.path.isfile(filePath):
             raise Exception(f"the model {predictorName} does not exist")
