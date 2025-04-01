@@ -8,3 +8,5 @@ venv/
 conf.yaml
 SavedModels
 TrainedModels
+SavedModels
+TrainedModels

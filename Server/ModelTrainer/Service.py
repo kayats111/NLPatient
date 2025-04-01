@@ -1,5 +1,6 @@
 from collections import defaultdict
 import os
+import sys
 import pickle
 from torch import save
 from typing import Dict, List, Set
@@ -11,8 +12,11 @@ from HyperParameterRepository import HyperParametersRepository
 from DataLoader import DataLoader
 from numpy.typing import NDArray
 import numpy as np
+import os
 
+NFS_DIRECTORY: str = os.environ["nfs_dir"]
 
+sys.path.append(NFS_DIRECTORY)
 
 SAVED_FOLDER: str = "SavedModels"
 TRAINED_FOLDER: str = "TrainedModels"
@@ -21,8 +25,8 @@ TEMPLATE_PATH: str = "LearnModel.py"
 class Service:
 
     def __init__(self):
-        os.makedirs(SAVED_FOLDER, exist_ok=True)
-        os.makedirs(TRAINED_FOLDER, exist_ok=True)
+        os.makedirs(NFS_DIRECTORY + "/" + SAVED_FOLDER, exist_ok=True)
+        os.makedirs(NFS_DIRECTORY + "/" + TRAINED_FOLDER, exist_ok=True)
 
         self.metaRepository: MetaDataRepository = MetaDataRepository()
         self.parameter_repository: HyperParametersRepository = HyperParametersRepository()
@@ -34,7 +38,7 @@ class Service:
         if tempName in modelNames:
             raise Exception("a model with the same name already exists")
 
-        filePath = os.path.join(SAVED_FOLDER, file.filename)
+        filePath = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, file.filename)
 
         with open(filePath, "w") as f:
             f.write(file.read().decode("utf-8"))
@@ -50,7 +54,7 @@ class Service:
         self.parameter_repository.add_hyper_parameters(model_name=model_name, parameters=hyper_parameters, model_type=model_type)
 
     def getModelFile(self, modelName: str):
-        filePath = os.path.join(SAVED_FOLDER, modelName + ".py")
+        filePath = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, modelName + ".py")
 
         if not os.path.isfile(filePath):
             raise Exception(f"the model {modelName} does not exist")
@@ -58,7 +62,7 @@ class Service:
         return open(filePath, "r")
     
     def getModelPath(self, modelName: str) -> str:
-        filePath = os.path.join(SAVED_FOLDER, modelName + ".py")
+        filePath = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, modelName + ".py")
 
         return filePath
 
@@ -66,12 +70,13 @@ class Service:
         return self.parameter_repository.read_parameters(model_name=model_name)
 
     def getModelNames(self) -> List[str]:
-        models: List[str] = [file.split(".")[0] for file in os.listdir(SAVED_FOLDER) if os.path.isfile(os.path.join(SAVED_FOLDER, file))]
+        models: List[str] = [file.split(".")[0] for file in os.listdir(NFS_DIRECTORY + "/" + SAVED_FOLDER)
+                             if os.path.isfile(os.path.join(NFS_DIRECTORY, SAVED_FOLDER, file))]
 
         return models
     
     def removeModelFile(self, modelName: str) -> None:
-        filePath = os.path.join(SAVED_FOLDER, modelName + ".py")
+        filePath = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, modelName + ".py")
 
         if not os.path.isfile(filePath):
             raise Exception(f"the model {modelName} does not exist")
@@ -190,12 +195,12 @@ class Service:
     # TODO: check after model training
     def addTrainedModel(self, model, modelName: str, isScikit: bool=False, isPyTorch: bool=False) -> None:
         if isScikit:
-            with open(os.path.join(TRAINED_FOLDER, modelName + ".pkl"),'wb') as f:
+            with open(os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, modelName + ".pkl"),'wb') as f:
                 pickle.dump(model, f)
             return
         
         if isPyTorch:
-            save(model.state_dict(), os.path.join(TRAINED_FOLDER, modelName + ".pth"))
+            save(model.state_dict(), os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, modelName + ".pth"))
             return
 
     # NOTE: not for API use, but after training the model (lambda?)
@@ -221,7 +226,7 @@ class Service:
         return meta_data
 
     def load_learn_model(self, model_name: str, hyper_parameters: dict):
-        filePath = os.path.join(SAVED_FOLDER, model_name + ".py")
+        filePath = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, model_name + ".py")
 
         if not os.path.isfile(filePath):
             raise Exception(f"the model {model_name} does not exist")
@@ -243,7 +248,8 @@ class Service:
         return TEMPLATE_PATH
     
     def validate_new_model_file(self, file_name: str) -> None:
-        filePath = os.path.join(SAVED_FOLDER, file_name + ".py")
+        filePath = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, file_name + ".py")
+        
 
         module = import_module(SAVED_FOLDER + "." + file_name[:-3])
 
