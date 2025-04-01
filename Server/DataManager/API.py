@@ -10,11 +10,14 @@ from MedicalRecordService import MedicalRecordService
 
 env_vars: dict = os.environ
 
-user = env_vars["mysql-user"]
-password = env_vars["mysql-password"]
-host = env_vars["mysql-host"]
-db_name = env_vars["mysql-dbname"]
-port = env_vars["api-port"]
+user = env_vars["mysql_user"]
+password = env_vars["mysql_password"]
+host = env_vars["mysql_host"]
+db_name = env_vars["mysql_dbname"]
+port = int(env_vars["api_port"])
+
+print(env_vars)
+print(port)
 
 app: Flask = Flask(__name__)
 
@@ -208,6 +211,6 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
-    app.run(debug=True, port=port)
+    app.run(host='0.0.0.0', debug=True, port=port)
 
     
