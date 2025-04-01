@@ -6,6 +6,7 @@ channels:
 dependencies:
   - python == 3.11
   - flask
+  - flask-sqlalchemy
   - flask-cors
   - pymysql
   - cryptography
