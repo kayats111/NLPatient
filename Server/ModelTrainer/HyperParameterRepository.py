@@ -1,13 +1,12 @@
 from typing import List
 from pymongo import MongoClient
-import yaml
+import os
 
 
 
-with open('conf.yaml') as f:
-    conf = yaml.safe_load(f)
+env_vars: dict = os.environ
 
-url: str = conf["DB"]["url"]
+url: str = env_vars["mongo_url"]
 
 
 
