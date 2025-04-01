@@ -16,9 +16,6 @@ host = env_vars["mysql_host"]
 db_name = env_vars["mysql_dbname"]
 port = int(env_vars["api_port"])
 
-print(env_vars)
-print(port)
-
 app: Flask = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{user}:{password}@{host}/{db_name}'
