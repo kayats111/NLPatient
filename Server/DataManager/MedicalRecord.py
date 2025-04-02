@@ -127,10 +127,10 @@ class MedicalRecord(db.Model):
         return {column.name: getattr(self, column.name, None) for column in MedicalRecord.__table__.columns}
     
 ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns]
-BASE_ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns if column.name is not "id"]
+BASE_ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns if column.name != "id"]
 LABELS: List[str] = ["any", "affective", "bipolar", "schizophreniaSpectr"]
 TRAIN_ATTRIBUTES: List[str] = [column.name for column in MedicalRecord.__table__.columns
-                              if (column.name is not "id" and column.name is not "codingNum"
+                              if (column.name != "id" and column.name != "codingNum"
                                   and column.name not in LABELS)]
     
 

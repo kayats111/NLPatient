@@ -4,6 +4,7 @@ import requests
 import random
 from numpy.typing import NDArray
 import numpy as np
+import os
 
 
 class DataLoader:
@@ -42,7 +43,8 @@ class DataLoader:
         self.curr_test_batch = 0
 
     def __fetch_ids(self) -> List[int]:
-        url: str = "http://localhost:3000/api/data/ids"
+        data_manager: str = os.environ["data_manager"]
+        url: str = f"http://{data_manager}:3000/api/data/ids"
 
         response: Response[dict] = self.__fetch(url=url)
 
@@ -132,8 +134,9 @@ class DataLoader:
         return batch 
     
     def __get_batch_by_ids(self, ids_batch: List[int]) -> Dict[str, NDArray]:
+        data_manager: str = os.environ["data_manager"]
         body: dict = {"ids": ids_batch}
-        url = "http://localhost:3000/api/data/read/vectors"
+        url = f"http://{data_manager}:3000/api/data/read/vectors"
 
         if self.fields is not None:
             body["fields"] = self.fields

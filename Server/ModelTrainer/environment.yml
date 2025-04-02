@@ -1,0 +1,14 @@
+name: nlpatient
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python == 3.11
+  - flask
+  - flask-cors
+  - pytorch
+  - scikit-learn
+  - numpy
+  - requests
+  - pymongo

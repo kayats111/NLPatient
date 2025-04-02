@@ -1,11 +1,11 @@
 from typing import List, Optional
 from pymongo import MongoClient
-import yaml
+import os
 
-with open('conf.yaml') as f:
-    conf = yaml.safe_load(f)
 
-url: str = conf["DB"]["url"]
+env_vars: dict = os.environ
+
+url: str = env_vars["mongo_url"]
 
 
 class MetaDataRepository:
