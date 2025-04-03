@@ -10,7 +10,6 @@ import AddPatientData from './Doctor/AddPatientData';
 import TrainedModels from './Researcher/TrainedModels';
 import RecordsViewer from './Doctor/RecordsViewer';
 import Predictor from './Researcher/Predictor.js';
-import DPredictor from './Doctor/DPredictor.js';
 import RecordsUpdate from './Doctor/RecordsUpdate.js';
 import ModelUploader from './Researcher/ModelUploader.js';
 import ViewModels from './Researcher/ViewModels.js';
@@ -39,7 +38,6 @@ function App() {
                   <Route path="/update-medical-records" element={<RecordsUpdate />} />
                   <Route path="/model_uploader" element={<ModelUploader />} />
                   <Route path="/model-viewer" element={<ViewModels />} />
-                  <Route path="/DPredict" element={<DPredictor />} />
                 </Routes>
               </div>
             </Router>

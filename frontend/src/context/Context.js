@@ -13,7 +13,8 @@ export const DoctorMenuProvider = ({ children }) => {
     { name: "Doctor Dashboard", path: "/doctor-main" },
     { name: "Patient Records", path: "/records-viewer" },
     { name: "Add Patient Data", path: "/add-patient-data" },
-    { name: "Predict", path: "/DPredict" }
+    { name: "Predict", path: "/train-page" },
+    {name:"Role Page", path:"/choicepage"},
   ]);
 
   return (
@@ -36,6 +37,7 @@ export const ResearcherMenuProvider = ({ children }) => {
     { name: "View Models", path: "/model-viewer" },
     { name: "Trained Models", path: "/train-page" },
     { name: "Patient Records", path: "/records-viewer" },
+    {name:"Role Page", path:"/choicepage"},
   ]);
 
   return (
