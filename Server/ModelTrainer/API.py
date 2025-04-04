@@ -53,7 +53,7 @@ def add_model_hyper_parameters():
         return jsonify(Response(error=True, message="bad request body").toDict()), 400
     
     response: Response[bool]
-    
+    print(data)
     try:
         service.add_model_parameters(model_name=data["modelName"], hyper_parameters=data["hyperParameters"],
                                      model_type=data["modelType"])

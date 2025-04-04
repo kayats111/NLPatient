@@ -199,3 +199,57 @@
   color: #007bff;
 }
 
+.input-fields {
+  margin-top: 20px;
+}
+
+.input-field {
+  margin-bottom: 15px;
+}
+
+.input-field label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-field input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.hyperparams-container {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.hyperparams-fields {
+  display: flex;
+  flex-direction: column;
+}
+
+.hyperparam-field {
+  margin-bottom: 15px;
+}
+
+.hyperparam-field label {
+  display: block;
+  font-weight: bold;
+}
+
+.hyperparam-field input {
+  width: 80%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+
+
+
+
+
