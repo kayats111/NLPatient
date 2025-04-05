@@ -59,3 +59,7 @@
     z-index: 1050; /* Ensures the button is above the drawer */
   }
   
+  .drawer-link.active {
+  background-color: #007bff; /* Highlight color for active link */
+  color: #fff; /* Change text color for active link */
+}

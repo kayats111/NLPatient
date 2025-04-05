@@ -33,15 +33,14 @@ def getPredictorNames() -> List[str]:
 
 @bp.route("/get_predictor", methods=["GET"])
 def getPredictor():
-    data: dict = request.get_json()
 
+    data: dict = {"model name" : request.args.get("model name")}
     schema: Set[str] = {"model name"}
 
     if not validateRequestSchema(data, schema):
         return jsonify(Response(error=True, message="bad request body").toDict()), 400
     
     response: Response
-
     try:
         path = service.getPredictorPath(data["model name"])
         return send_file(path, as_attachment=True)
@@ -53,8 +52,7 @@ def getPredictor():
 
 @bp.route("/delete", methods=["DELETE"])
 def deletePredictor():
-    data: dict = request.get_json()
-
+    data: dict = {"model name" : request.args.get("model name")}
     schema: Set[str] = {"model name"}
 
     if not validateRequestSchema(data, schema):
@@ -75,8 +73,7 @@ def deletePredictor():
 
 @bp.route("/meta_data", methods=["GET"])
 def getMetaData():
-    data: dict = request.get_json()
-
+    data: dict = {"model name" : request.args.get("model name")}
     schema: Set[str] = {"model name"}
 
     if not validateRequestSchema(data, schema):
@@ -98,8 +95,6 @@ def getMetaData():
 @bp.route("/predict", methods=["POST"])
 def predict():
     data: dict = request.get_json()
-    print(data["sample"])
-
     schema: Set[str] = {"model name", "sample"}
 
     if not validateRequestSchema(data, schema):

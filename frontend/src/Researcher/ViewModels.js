@@ -240,7 +240,7 @@ function ViewModels() {
       setModalStep(2);
       await fetchRecordCount();
     }
-    if (modalStep == 2){
+    if (modalStep === 2){
       setModalStep(3);
     }
   };

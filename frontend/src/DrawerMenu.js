@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Menu } from "lucide-react"; // Only keep the Menu icon
-import { Link } from "react-router-dom"; // Import Link for routing
+import { Link, useLocation } from "react-router-dom"; // Import Link and useLocation for routing
 
 import "./DrawerMenu.css"; // Import the CSS file
 
-const DrawerMenu = ({ links =[] }) => {
+const DrawerMenu = ({ links = [] }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation(); // Get current route location
 
   return (
     <>
@@ -17,7 +18,12 @@ const DrawerMenu = ({ links =[] }) => {
         <nav className="drawer-nav">
           {/* Render the links passed as a prop */}
           {links.map((link, index) => (
-            <Link to={link.path} className="drawer-link" onClick={() => setIsOpen(false)} key={index}>
+            <Link
+              to={link.path}
+              className={`drawer-link ${location.pathname === link.path ? "active" : ""}`}
+              onClick={() => setIsOpen(false)}
+              key={index}
+            >
               {link.name}
             </Link>
           ))}

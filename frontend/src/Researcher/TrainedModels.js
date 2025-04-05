@@ -94,7 +94,7 @@ const TrainedModels = () => {
         params: { "model name": selectedModel },
         responseType: 'blob', // Set response type to blob for file downloads
       });
-
+      console.log(selectedModel)
       const contentDisposition = response.headers['content-disposition'];
       let filename = `${selectedModel}`;
       if (contentDisposition) {

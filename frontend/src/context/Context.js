@@ -34,6 +34,7 @@ export const useResearcherLinks = () => useContext(ResearcherMenu);
 export const ResearcherMenuProvider = ({ children }) => {
   const [links] = useState([
     { name: "Researcher Dashboard", path: "/researcher-main" },
+    {name: "Add New Model",path:"/model_uploader"},
     { name: "View Models", path: "/model-viewer" },
     { name: "Trained Models", path: "/train-page" },
     { name: "Patient Records", path: "/records-viewer" },
@@ -59,6 +60,7 @@ export const ResearcherMenuProvider = ({ children }) => {
       { name: "Patient Records", path: "/records-viewer" },
       { name: "Add Patient Data", path: "/add-patient-data" },
       { name: "Researcher Dashboard", path: "/researcher-main" },
+      {name: "Add New Model",path:"/model_uploader"},
       { name: "View Models", path: "/model-viewer" },
       { name: "Trained Models", path: "/train-page" },
       {name:"Role Page", path:"/choicepage"},
