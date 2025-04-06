@@ -71,9 +71,9 @@ class Service:
         
         prediction: List[str] = []
 
-        if metaData["isScikit"]:
+        if metaData["model type"] == "SCIKIT":
             prediction = self.predictScikit(predictorName=predictorName, sample=sample)
-        elif metaData["isPyTorch"]:
+        elif metaData["model type"] == "PYTORCH":
             prediction = self.predictPyTorch(predictorName=predictorName, sample=sample)
 
         return prediction

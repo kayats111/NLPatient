@@ -45,10 +45,12 @@ const TrainedModels = () => {
     }
 
     try {
-      const response = await axios.get('http://localhost:3002/api/predictors/meta_data', {
-        params: { "model name": selectedModel }
+      // const response = await axios.get('http://localhost:3002/api/predictors/meta_data', {
+      //   params: { "model name": selectedModel }
+      // });
+      const response = await axios.post('http://localhost:3002/api/predictors/meta_data',{
+        "model name": selectedModel
       });
-
       if (response.data.error) {
         setError(response.data.message);
       } else {
@@ -90,26 +92,29 @@ const TrainedModels = () => {
     }
 
     try {
-      const response = await axios.get('http://localhost:3002/api/predictors/get_predictor', {
-        params: { "model name": selectedModel },
-        responseType: 'blob', // Set response type to blob for file downloads
-      });
-      const contentDisposition = response.headers['content-disposition'];
-      let filename = `${selectedModel}`;
-      if (contentDisposition) {
-        const match = contentDisposition.match(/filename="?([^"]+)"?/);
-        if (match && match[1]) {
-          filename = match[1]; // Use the filename provided by the server
-        }
-      }
-
+      const response = await axios.post(
+        'http://localhost:3002/api/predictors/get_predictor',
+        { "model name": selectedModel }, // POST data goes in the body
+        { responseType: 'blob' } // Set response type to blob for file downloads
+      );
+      const disposition = response.headers['content-disposition']
+      const filename = disposition.split('filename=')[1].replace(/"/g, '').trim();
+      console.log(filename)     
+      // if (contentDisposition) {
+      //   const match = contentDisposition.match(/filename="?([^"]+)"?/);
+      //   if (match && match[1]) {
+      //     filename = match[1]; // Use the filename provided by the server
+      //   }
+      // }
+      
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${filename}.pkl`); // Use the extracted filename
+      link.setAttribute('download', `${filename}`); // Use the extracted filename
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      
     } catch (err) {
       setError('Failed to download the model');
     }
@@ -127,8 +132,8 @@ const TrainedModels = () => {
     }
 
     try {
-      const response = await axios.get('http://localhost:3002/api/predictors/meta_data', {
-        params: { "model name": selectedModel }
+      const response = await axios.post('http://localhost:3002/api/predictors/meta_data',{
+        "model name": selectedModel
       });
 
       if (response.data.error) {

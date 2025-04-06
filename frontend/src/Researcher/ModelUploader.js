@@ -10,7 +10,7 @@ function ModelUploader() {
   const { links } = useRoleLinks();
 
   const [hyperParams, setHyperParams] = useState([]);
-  const [modelType, setModelType] = useState("Scikit");
+  const [modelType, setModelType] = useState("SCIKIT");
 
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
 
@@ -54,7 +54,7 @@ function ModelUploader() {
         },
       });
       const dataToSend = {
-        "modelName": selectedFile.name,
+        "modelName": selectedFile.name.replace(/\.py$/, ""),
         "hyperParameters": hyperParams,
         "modelType": modelType,
       };
@@ -136,10 +136,10 @@ function ModelUploader() {
                 className="button"
                 onClick={() => setHyperParams([...hyperParams, ""])}
               >
-                Add Another Hyperparameter
+                Add Hyperparameter
               </button>
               <button className="button" onClick={closeModal}>
-                Close
+                Done
               </button>
             </div>
           </div>
@@ -153,8 +153,8 @@ function ModelUploader() {
           value={modelType}
           onChange={(e) => setModelType(e.target.value)}
         >
-          <option value="Scikit">Scikit</option>
-          <option value="PyTorch">PyTorch</option>
+          <option value="SCIKIT">Scikit</option>
+          <option value="PYTORCH">PyTorch</option>
         </select>
       </div>
 

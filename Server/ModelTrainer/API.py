@@ -13,7 +13,7 @@ port = int(env_vars["api_port"])
 
 
 app: Flask = Flask(__name__)
-CORS(app)
+CORS(app,expose_headers=["Content-Disposition"])
 bp = Blueprint('ModelTrainer', __name__, url_prefix="/api/model_trainer")
 
 service: Service = Service()
@@ -64,7 +64,7 @@ def add_model_hyper_parameters():
     return jsonify(response.toDict())
 
 
-@bp.route("/get_model", methods=["GET"])
+@bp.route("/get_model", methods=["POST"])
 def getModel():
     data: dict = request.get_json()
     

@@ -13,7 +13,7 @@ port = int(env_vars["api_port"])
 
 
 app: Flask = Flask(__name__)
-CORS(app)
+CORS(app,expose_headers=["Content-Disposition"])
 bp = Blueprint('Predictors', __name__, url_prefix="/api/predictors")
 
 service: Service = Service()
@@ -31,7 +31,7 @@ def getPredictorNames() -> List[str]:
     return jsonify(Response(value=service.getPredictorNames()).toDict())
 
 
-@bp.route("/get_predictor", methods=["GET"])
+@bp.route("/get_predictor", methods=["POST"])
 def getPredictor():
 
     data: dict = request.get_json()
@@ -45,7 +45,7 @@ def getPredictor():
     response: Response
     try:
         path = service.getPredictorPath(data["model name"])
-        return send_file(path, as_attachment=True)
+        return send_file(path,download_name=path.split("\\")[-1], as_attachment=True)
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
@@ -54,7 +54,9 @@ def getPredictor():
 
 @bp.route("/delete", methods=["DELETE"])
 def deletePredictor():
-    data: dict = {"model name" : request.args.get("model name")}
+    data: dict = request.get_json()
+
+    # data: dict = {"model name" : request.args.get("model name")}
     schema: Set[str] = {"model name"}
 
     if not validateRequestSchema(data, schema):
@@ -73,9 +75,12 @@ def deletePredictor():
 
 
 
-@bp.route("/meta_data", methods=["GET"])
+@bp.route("/meta_data", methods=["POST"])
 def getMetaData():
-    data: dict = {"model name" : request.args.get("model name")}
+
+    data: dict = request.get_json()
+    
+    # data: dict = {"model name" : request.args.get("model name")}
     schema: Set[str] = {"model name"}
 
     if not validateRequestSchema(data, schema):
