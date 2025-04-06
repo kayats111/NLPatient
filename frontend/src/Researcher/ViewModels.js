@@ -111,7 +111,6 @@ function ViewModels() {
       "sampleLimit":sampleLimit,
       "hyperParameters" : hyperParams,
     };
-    console.log(dataToSend)
     // Add fields and labels if they are selected
     if (selectedFields.length > 0 && selectedLabels.length > 0) {
       dataToSend.fields = selectedFields;
