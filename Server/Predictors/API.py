@@ -34,7 +34,9 @@ def getPredictorNames() -> List[str]:
 @bp.route("/get_predictor", methods=["GET"])
 def getPredictor():
 
-    data: dict = {"model name" : request.args.get("model name")}
+    data: dict = request.get_json()
+
+    # data: dict = {"model name" : request.args.get("model name")}
     schema: Set[str] = {"model name"}
 
     if not validateRequestSchema(data, schema):

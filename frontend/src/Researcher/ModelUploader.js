@@ -53,11 +53,12 @@ function ModelUploader() {
           setUploadProgress(`Upload progress: ${percentage}%`);
         },
       });
-      await axios.post("http://localhost:3001/api/model_trainer/add/parameters", {
+      const dataToSend = {
         "modelName": selectedFile.name,
         "hyperParameters": hyperParams,
         "modelType": modelType,
-      });
+      };
+      await axios.post("http://localhost:3001/api/model_trainer/add/parameters",dataToSend );
 
       setUploadProgress("Upload successful!");
     } catch (error) {

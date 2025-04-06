@@ -46,6 +46,7 @@ def addModel():
 
 @bp.route("/add/parameters", methods=["POST"])
 def add_model_hyper_parameters():
+    print(request)
     data: dict = request.get_json()
     schema: Set[str] = {"modelName", "hyperParameters", "modelType"}
 
@@ -114,6 +115,7 @@ def deleteModelFile():
 
 @bp.route("/run_model", methods=["POST"])  # Change to POST since we're sending data
 def runModel():
+    print(request)
     data: dict = request.get_json()
     schema: Set[str] = {"model name", "trainRelativeSize", "testRelativeSize", "epochs", "batchSize", "sampleLimit", "hyperParameters"}
 

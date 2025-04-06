@@ -102,7 +102,7 @@ function ViewModels() {
     // Start loading
     setLoading(true);
 
-    let dataToSend = { 
+    const dataToSend = { 
       "model name": selectedModel,
       "trainRelativeSize":trainSize,
       "testRelativeSize":testSize,

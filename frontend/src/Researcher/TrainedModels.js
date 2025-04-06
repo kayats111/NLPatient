@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './TrainedModels.css'; // Import the CSS file
+import './TrainedModels.css';
 import DrawerMenu from '../DrawerMenu';
 import { useRoleLinks } from "../context/FetchContext";
 import { useRole } from '../context/roleContext';
@@ -75,7 +75,7 @@ const TrainedModels = () => {
         setError(response.data.message);
       } else {
         setModelNames(modelNames.filter((modelName) => modelName !== selectedModel));
-        setSelectedModel(null); // Deselect the model after deletion
+        setSelectedModel(null); 
         setError('Model deleted successfully');
       }
     } catch (err) {
@@ -94,7 +94,6 @@ const TrainedModels = () => {
         params: { "model name": selectedModel },
         responseType: 'blob', // Set response type to blob for file downloads
       });
-      console.log(selectedModel)
       const contentDisposition = response.headers['content-disposition'];
       let filename = `${selectedModel}`;
       if (contentDisposition) {
