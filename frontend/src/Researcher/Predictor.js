@@ -85,7 +85,7 @@ const Predictor = () => {
   }
 
   return (
-    <div className="container">
+    <div className="predictor container">
       <DrawerMenu links={links} />
       <h1 className="heading">Predict for {modelName}</h1>
       <div className="input-container">

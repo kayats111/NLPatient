@@ -88,7 +88,7 @@ function ModelUploader() {
   };
 
   return (
-    <div className="container">
+    <div className="modelUpCont">
       <DrawerMenu links={links} />
       <div
         onDrop={handleDrop}
