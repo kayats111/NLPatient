@@ -1,0 +1,82 @@
+/* approval-page-container */
+.approval-page-container {
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* approval-page-title */
+.approval-page-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* approval-page-no-approvals */
+.approval-page-no-approvals {
+  text-align: center;
+  font-size: 18px;
+  color: #888;
+}
+
+/* approval-page-table */
+.approval-page-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+/* approval-page-header */
+.approval-page-header {
+  padding: 12px 15px;
+  text-align: left;
+  background-color: #f4f4f4;
+  font-weight: bold;
+  border-bottom: 2px solid #ddd;
+}
+
+/* approval-page-row */
+.approval-page-row {
+  border-bottom: 1px solid #f4f4f4;
+}
+
+/* approval-page-cell */
+.approval-page-cell {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+/* approval-page-actions */
+.approval-page-actions {
+  display:flex;
+  text-align: center;
+}
+
+/* approval-page-approve-btn */
+.approval-page-approve-btn,
+.approval-page-deny-btn {
+  padding: 8px 12px;
+  margin: 5px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.approval-page-approve-btn {
+  background-color: #4CAF50;
+}
+
+.approval-page-deny-btn {
+  background-color: #f44336;
+}
+
+.approval-page-approve-btn:hover {
+  background-color: #45a049;
+}
+
+.approval-page-deny-btn:hover {
+  background-color: #e53935;
+}

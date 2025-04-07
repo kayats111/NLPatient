@@ -12,13 +12,13 @@ function ChoicePage() {
 
   const handleChoice = (choice) => {
     if (choice === "Researcher") {
-      setRole("researcher");
+      setRole("Researcher");
       navigate('/researcher-main');
     } else if (choice === "Doctor") {
-      setRole("doctor");
+      setRole("Doctor");
       navigate('/doctor-main');
     } else if (choice === "Admin") {
-      setRole("admin");
+      setRole("Admin");
       setAdminMessage("You have set your role as admin!"); // Set the message when "Admin" is clicked
     }
   };
