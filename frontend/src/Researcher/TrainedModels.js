@@ -151,7 +151,7 @@ const TrainedModels = () => {
   };
 
   return (
-    <div className="container">
+    <div className="trainedCont">
       <h1>Trained Models</h1>
       <DrawerMenu links={links} />
       {error && <div className="error">{error}</div>}

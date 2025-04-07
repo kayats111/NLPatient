@@ -269,7 +269,7 @@ function ViewModels() {
   
 
   return (
-    <div className="container">
+    <div className="vmc">
       <DrawerMenu links={links} />
       <h1>Available Models</h1>
       {error && <p className="error">{error}</p>}

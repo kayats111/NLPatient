@@ -1,5 +1,5 @@
 /* Container for the update form */
-.container {
+.predictor .container {
   padding: 20px;
   max-height: 90vh;
   overflow-y: auto;
@@ -9,13 +9,13 @@
   justify-content: flex-start;
 }
 
-.container h1 {
+.predictor .container h1 {
   margin-bottom: 20px;
   text-align: center;
 }
 
 /* Grid layout for the form fields */
-.input-container {
+.predictor .input-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Auto adjust columns */
   gap: 20px;
