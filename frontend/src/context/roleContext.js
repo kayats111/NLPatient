@@ -18,7 +18,7 @@ export const RoleProvider = ({ children }) => {
       // Here, you could call an API or check localStorage, for example:
     //   const userRole = localStorage.getItem('userRole'); // Example: getting from localStorage
     //   setRole(userRole); // Set the role to the context state
-        setRole("admin");
+        setRole("Admin");
     };
     fetchUserRole();
   }, []);

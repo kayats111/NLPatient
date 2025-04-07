@@ -14,10 +14,15 @@ import RecordsUpdate from './Doctor/RecordsUpdate.js';
 import ModelUploader from './Researcher/ModelUploader.js';
 import ViewModels from './Researcher/ViewModels.js';
 import DrawerMenu from './DrawerMenu.js'; // Import the drawer menu
+import ApprovalPage from './Users/ApprovalPage.js';
+import WaitingApproval from './WaitingApproval.js';
 import { RoleProvider } from './context/roleContext.js';
+import { UserProvider } from './context/UserContext';
+
 
 function App() {
   return (
+  <UserProvider>
     <RoleProvider>
       <DoctorMenuProvider>
         <ResearcherMenuProvider>
@@ -38,6 +43,8 @@ function App() {
                   <Route path="/update-medical-records" element={<RecordsUpdate />} />
                   <Route path="/model_uploader" element={<ModelUploader />} />
                   <Route path="/model-viewer" element={<ViewModels />} />
+                  <Route path="/approval-page" element={<ApprovalPage />} />
+                  <Route path="/pending_approval" element={<WaitingApproval />} />
                 </Routes>
               </div>
             </Router>
@@ -45,6 +52,7 @@ function App() {
         </ResearcherMenuProvider>
       </DoctorMenuProvider>
     </RoleProvider>
+  </UserProvider>
   );
 }
 

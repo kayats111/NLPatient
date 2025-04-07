@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import DrawerMenu from '../DrawerMenu'; 
 import { useRoleLinks } from "../context/FetchContext";
+import "./ModelUploader.css";  // Import the CSS file
 
 function ModelUploader() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -9,7 +10,7 @@ function ModelUploader() {
   const { links } = useRoleLinks();
 
   const [hyperParams, setHyperParams] = useState([]);
-  const [modelType, setModelType] = useState("Scikit");
+  const [modelType, setModelType] = useState("SCIKIT");
 
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
 
@@ -41,7 +42,6 @@ function ModelUploader() {
 
     try {
       setUploadProgress("Uploading...");
-      // console.log(selectedFile)
       await axios.post("http://localhost:3001/api/model_trainer/add/model", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -53,11 +53,12 @@ function ModelUploader() {
           setUploadProgress(`Upload progress: ${percentage}%`);
         },
       });
-      await axios.post("http://localhost:3001/api/model_trainer/add/parameters", {
-        "modelName": selectedFile.name,
+      const dataToSend = {
+        "modelName": selectedFile.name.replace(/\.py$/, ""),
         "hyperParameters": hyperParams,
         "modelType": modelType,
-      });
+      };
+      await axios.post("http://localhost:3001/api/model_trainer/add/parameters",dataToSend );
 
       setUploadProgress("Upload successful!");
     } catch (error) {
@@ -87,34 +88,34 @@ function ModelUploader() {
   };
 
   return (
-    <div style={styles.container}>
+    <div className="container">
       <DrawerMenu links={links} />
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        style={styles.dropArea}
+        className="dropArea"
       >
         <h2>Upload Python Model</h2>
         <p>Drag and drop a Python file here</p>
         {selectedFile && <p>Selected file: {selectedFile.name}</p>}
       </div>
 
-      <div style={styles.buttonContainer}>
-        <button style={styles.button} onClick={uploadFile}>
+      <div className="buttonContainer">
+        <button className="button" onClick={uploadFile}>
           Upload File
         </button>
-        <button style={styles.button} onClick={addHyperParameter}>
+        <button className="button" onClick={addHyperParameter}>
           Add Hyper Parameters
         </button>
       </div>
 
       {isModalOpen && (
-        <div style={styles.modalOverlay}>
-          <div style={styles.modalContent}>
+        <div className="modalOverlay">
+          <div className="modalContent">
             <h3>Add Hyper Parameters</h3>
-            <div style={styles.gridContainer}>
+            <div className="gridContainer">
               {hyperParams.map((param, index) => (
-                <div key={index} style={styles.inputField}>
+                <div key={index} className="inputField">
                   <input
                     type="text"
                     value={param}
@@ -122,7 +123,7 @@ function ModelUploader() {
                     placeholder={`Hyperparameter ${index + 1}`}
                   />
                   <button
-                    style={styles.removeButton}
+                    className="removeButton"
                     onClick={() => removeHyperParam(index)}
                   >
                     -
@@ -130,15 +131,15 @@ function ModelUploader() {
                 </div>
               ))}
             </div>
-            <div style={styles.buttonContainer}>
+            <div className="buttonContainer">
               <button
-                style={styles.button}
+                className="button"
                 onClick={() => setHyperParams([...hyperParams, ""])}
               >
-                Add Another Hyperparameter
+                Add Hyperparameter
               </button>
-              <button style={styles.button} onClick={closeModal}>
-                Close
+              <button className="button" onClick={closeModal}>
+                Done
               </button>
             </div>
           </div>
@@ -146,113 +147,20 @@ function ModelUploader() {
       )}
 
       <div>
-        <label style={styles.modelLabel}>Model Type</label>
+        <label className="modelLabel">Model Type</label>
         <select
-          style={styles.dropdown}
+          className="dropdown"
           value={modelType}
           onChange={(e) => setModelType(e.target.value)}
         >
-          <option value="Scikit">Scikit</option>
-          <option value="PyTorch">PyTorch</option>
+          <option value="SCIKIT">Scikit</option>
+          <option value="PYTORCH">PyTorch</option>
         </select>
       </div>
 
-      {uploadProgress && <div style={styles.progress}>{uploadProgress}</div>}
+      {uploadProgress && <div className="progress">{uploadProgress}</div>}
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    marginTop: "20px",
-  },
-  dropArea: {
-    width: "80%",
-    margin: "50px auto",
-    padding: "20px",
-    border: "2px dashed #007BFF",
-    borderRadius: "8px",
-    textAlign: "center",
-    backgroundColor: "#f9f9f9",
-    color: "#333",
-    cursor: "pointer",
-  },
-  buttonContainer: {
-    display: "flex",
-    justifyContent: "center",
-    gap: "10px",
-    marginTop: "20px",
-  },
-  button: {
-    padding: "10px 20px",
-    fontSize: "16px",
-    backgroundColor: "#007BFF",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-  progress: {
-    marginTop: "10px",
-    color: "#007BFF",
-    fontSize: "16px",
-  },
-  modalOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    padding: "20px",
-    borderRadius: "8px",
-    width: "80%",
-    maxWidth: "800px", // To limit the width of the modal
-    textAlign: "center",
-  },
-  modalLabel: {
-    fontSize: "20px",
-    marginBottom: "10px",
-  },
-  inputField: {
-    display: "flex",
-    alignItems: "center",
-    marginBottom: "10px",
-  },
-  gridContainer: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", // Responsive grid layout
-    gap: "10px",
-    marginBottom: "20px",
-  },
-  modelLabel: {
-    marginTop: "10px",
-    fontSize: "16px",
-  },
-  dropdown: {
-    padding: "8px",
-    fontSize: "14px",
-    marginTop: "5px",
-  },
-  removeButton: {
-    marginLeft: "10px",
-    padding: "5px 10px",
-    fontSize: "16px",
-    backgroundColor: "#FF4D4D",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-};
 
 export default ModelUploader;

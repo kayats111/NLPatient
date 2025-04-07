@@ -14,7 +14,6 @@ export const DoctorMenuProvider = ({ children }) => {
     { name: "Patient Records", path: "/records-viewer" },
     { name: "Add Patient Data", path: "/add-patient-data" },
     { name: "Predict", path: "/train-page" },
-    {name:"Role Page", path:"/choicepage"},
   ]);
 
   return (
@@ -34,10 +33,10 @@ export const useResearcherLinks = () => useContext(ResearcherMenu);
 export const ResearcherMenuProvider = ({ children }) => {
   const [links] = useState([
     { name: "Researcher Dashboard", path: "/researcher-main" },
+    {name: "Add New Model",path:"/model_uploader"},
     { name: "View Models", path: "/model-viewer" },
     { name: "Trained Models", path: "/train-page" },
     { name: "Patient Records", path: "/records-viewer" },
-    {name:"Role Page", path:"/choicepage"},
   ]);
 
   return (
@@ -59,8 +58,10 @@ export const ResearcherMenuProvider = ({ children }) => {
       { name: "Patient Records", path: "/records-viewer" },
       { name: "Add Patient Data", path: "/add-patient-data" },
       { name: "Researcher Dashboard", path: "/researcher-main" },
+      {name: "Add New Model",path:"/model_uploader"},
       { name: "View Models", path: "/model-viewer" },
       { name: "Trained Models", path: "/train-page" },
+      {name: "Approval Page", path:"/approval-page"},
       {name:"Role Page", path:"/choicepage"},
     ]);
   

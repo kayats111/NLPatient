@@ -1,0 +1,103 @@
+/* Container for the whole form */
+.container {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Page title */
+  .container h2 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+  
+  /* Form itself */
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Each input + label group */
+  .input-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Labels for inputs */
+  .input-group label {
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  
+  /* Text and password input fields */
+  .input-group input {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.2s;
+  }
+  
+  .input-group input:focus {
+    border-color: #2563eb;
+    outline: none;
+  }
+  
+  /* Role label */
+  .role-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Buttons container - stack buttons vertically */
+  .role-container .button-container {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px; /* Space between buttons */
+  }
+  
+  /* Button style when selected */
+  .button {
+    padding: 10px 16px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .button:hover {
+    background-color: #2563eb;
+  }
+  
+  /* Default button style (unselected) */
+  .default-style {
+    padding: 10px 16px;
+    background-color: #e5e7eb;
+    color: #1f2937;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .default-style:hover {
+    background-color: #d1d5db;
+  }
+  
+  /* Submit button full width */
+  .form > button[type="submit"] {
+    width: 100%;
+    margin-top: 10px;
+  }
+  

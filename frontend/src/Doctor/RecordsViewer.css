@@ -1,32 +1,99 @@
-#records {
-  list-style: none;
-  padding: 0;
+/* Parent container for table */
+.records-container {
+  position: relative;
+  top:130px;
+  z-index: 1; /* Ensure it's below the overlay */
 }
 
-.record {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f9f9f9;
-  margin: 10px 0;
+/* Table styling */
+.records-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+  overflow-x: auto; /* Allow horizontal scrolling if the table is too wide */
+}
+
+.records-table thead th {
+  background-color: #007bff;
+  color: white;
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.record-buttons {
-  display: flex;
-  gap: 20px;
-}
-
-.record-buttons button {
-  padding: 6px 10px;
+  text-align: center;
   font-size: 15px;
+}
+
+.records-table tbody td {
+  background: #f9f9f9;
+  padding: 10px 8px;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.records-table tbody tr:hover td {
+  background-color: #eef4ff;
+  cursor: pointer;
+}
+
+.records-table td:last-child {
+  text-align: center;
+}
+
+/* ERROR MESSAGE */
+.error-message {
+  color: red;
+  margin-top: 15px;
+}
+
+/* PAGINATION */
+.pagination-buttons {
+  position: fixed;
+  right: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pagination-buttons button {
+  padding: 6px 12px;
+  font-size: 14px;
   border: 1px solid #ddd;
   border-radius: 5px;
   background: #007bff;
   color: #fff;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.pagination-buttons button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* BUTTONS: Fixed position on the right side of the screen */
+.record-buttons {
+  position: fixed;
+  right: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+  margin-top: 200px;
+}
+
+/* Consistent styling for buttons */
+.record-buttons button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .record-buttons button:hover {
@@ -37,28 +104,103 @@
   background: #00408a;
 }
 
-.error-message {
-  color: red;
+.clickable-row.selected {
+  font-weight: bold;
 }
 
-.pagination-buttons {
+.center-container {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 10px;
+  flex-direction: column; /* Align items in a column */
+  justify-content: space-between; /* Distribute items with space between them */
+  align-items: center; /* Center the items horizontally */
+  position: fixed; /* Fix the container in place */
+  left: 50%; /* Center the container horizontally */
+  transform: translateX(-50%); /* Center the container exactly */
+  z-index: 1000; /* Ensure it's above other elements */
+  margin-bottom: 20px; /* Optional: Add some space below the container */
 }
 
-.pagination-buttons button {
-  padding: 8px 12px;
-  font-size: 14px;
+.filter-button{
+  padding: 6px 12px;
+  font-size: 18px;
   border: 1px solid #ddd;
   border-radius: 5px;
   background: #007bff;
   color: #fff;
   cursor: pointer;
 }
+.filter-button:hover {
+  background: #0056b3;
+}
+/* Overlay */
+.filter-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000; /* Ensure the overlay is above everything else */
+}
 
-.pagination-buttons button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+/* Modal Content */
+.filter-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 80%;
+  max-width: 500px;
+  z-index: 10001; /* Ensure the modal content is above the overlay */
+  position: relative; /* To make sure modal content stays on top of overlay */
+}
+
+.field-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.field-buttons button {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.selectedF {
+  background-color: #0056b3;
+  color: white;
+}
+
+.overlay-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap:30px
+}
+
+.overlay-buttons button {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #007bff;
+  color: #fff;
+}
+.overlay-buttons button:hover {
+  background: #0056b3
+}
+.overlay-buttons button.exit {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #cc4d3a;;
+  color: #fff;
+}
+.overlay-buttons button.exit:hover {
+background: #b53c2a ;
 }

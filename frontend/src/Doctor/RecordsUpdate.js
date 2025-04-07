@@ -50,7 +50,7 @@ const RecordsUpdate = () => {
               value={value}
               onChange={(e) => handleInputChange(key, e.target.value)}
               className="update-input"
-              disabled={role === "researcher"} // Disable input for researcher role
+              disabled={role === "Researcher"} // Disable input for researcher role
             />
           </div>
         ))}

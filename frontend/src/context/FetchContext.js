@@ -9,11 +9,11 @@ export const useRoleLinks = () => {
   
     // Determine which links to return based on the role
     switch (role) {
-      case 'admin':
+      case 'Admin':
         return {links:adminLinks};
-      case 'researcher':
+      case 'Researcher':
         return {links:researcherLinks};
-      case 'doctor':
+      case 'Doctor':
         return {links:doctorLinks};
       default:
         return [];

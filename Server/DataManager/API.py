@@ -22,7 +22,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{user}:{password}@{hos
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
-CORS(app)
+CORS(app,expose_headers=["Content-Disposition"])
 
 from MedicalRecord import LABELS, TRAIN_ATTRIBUTES, MedicalRecord, ATTRIBUTES, BASE_ATTRIBUTES
 

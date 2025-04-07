@@ -102,7 +102,7 @@ function ViewModels() {
     // Start loading
     setLoading(true);
 
-    let dataToSend = { 
+    const dataToSend = { 
       "model name": selectedModel,
       "trainRelativeSize":trainSize,
       "testRelativeSize":testSize,
@@ -111,7 +111,6 @@ function ViewModels() {
       "sampleLimit":sampleLimit,
       "hyperParameters" : hyperParams,
     };
-    console.log(dataToSend)
     // Add fields and labels if they are selected
     if (selectedFields.length > 0 && selectedLabels.length > 0) {
       dataToSend.fields = selectedFields;
@@ -200,6 +199,8 @@ function ViewModels() {
   };
 
   const handleModalClose = () => {
+    setSelectedFields([])
+    setSelectedLabels([])
     setShowModal(false);
   };
 
@@ -207,15 +208,24 @@ function ViewModels() {
     if (!selectedModel) return;
 
     try {
-      const response = await axios.get(
-        `http://localhost:3001/api/model_trainer/get_model?model name=${selectedModel}`,
-        { responseType: "blob" }
+      // const response = await axios.get(
+      //   `http://localhost:3001/api/model_trainer/get_model?model name=${selectedModel}`,
+      //   { responseType: "blob" }
+      // );
+      const response = await axios.post(
+        "http://localhost:3001/api/model_trainer/get_model",
+        { "model name": selectedModel },
+        { responseType: "blob" } // 👈 This tells Axios to treat response as binary
       );
-
+      
+      const blob = new Blob([response.data], { type: "text/x-python" });
       const link = document.createElement("a");
-      link.href = URL.createObjectURL(response.data);
+      
+      link.href = URL.createObjectURL(blob);
       link.download = `${selectedModel}.py`;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     } catch (error) {
       console.error("Error downloading the model:", error);
       alert("An error occurred while downloading the model.");
@@ -240,7 +250,7 @@ function ViewModels() {
       setModalStep(2);
       await fetchRecordCount();
     }
-    if (modalStep == 2){
+    if (modalStep === 2){
       setModalStep(3);
     }
   };
@@ -370,7 +380,7 @@ function ViewModels() {
                   <span>{`Sample Limit: ${sampleLimit}`}</span>
                 </div>
 
-                {modelType === "PyTorch" && (
+                {modelType === "PYTORCH" && (
                   <div className="input-fields">
                     <div className="input-field">
                       <label htmlFor="epoch">Epoch</label>
@@ -433,12 +443,12 @@ function ViewModels() {
                     Exit
                   </button>
                 </div>
+                {loading && <div className="loading-spinner">Loading...</div>}
               </div>
 )}
           </div>
         </div>
       )}
-      {loading && <div className="loading-spinner">Loading...</div>}
     </div>
   );
 }

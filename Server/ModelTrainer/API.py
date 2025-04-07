@@ -13,7 +13,7 @@ port = int(env_vars["api_port"])
 
 
 app: Flask = Flask(__name__)
-CORS(app)
+CORS(app,expose_headers=["Content-Disposition"])
 bp = Blueprint('ModelTrainer', __name__, url_prefix="/api/model_trainer")
 
 service: Service = Service()
@@ -53,7 +53,6 @@ def add_model_hyper_parameters():
         return jsonify(Response(error=True, message="bad request body").toDict()), 400
     
     response: Response[bool]
-    print(data)
     try:
         service.add_model_parameters(model_name=data["modelName"], hyper_parameters=data["hyperParameters"],
                                      model_type=data["modelType"])
@@ -65,7 +64,7 @@ def add_model_hyper_parameters():
     return jsonify(response.toDict())
 
 
-@bp.route("/get_model", methods=["GET"])
+@bp.route("/get_model", methods=["POST"])
 def getModel():
     data: dict = request.get_json()
     
@@ -116,7 +115,11 @@ def deleteModelFile():
 def runModel():
     data: dict = request.get_json()
     schema: Set[str] = {"model name", "trainRelativeSize", "testRelativeSize", "epochs", "batchSize", "sampleLimit", "hyperParameters"}
-
+    if "fields" in data:
+        schema.add("fields")
+    if "labels" in data:
+        schema.add("labels")
+    
     if not validateRequestSchema(request=data, schema=schema):
         return jsonify(Response(error=True, message="bad request body").toDict()), 400
     

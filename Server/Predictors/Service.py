@@ -62,6 +62,7 @@ class Service:
     def predict(self, predictorName: str, sample: List[float]) -> List[float]:
         metaData: dict = self.getMetaData(predictorName)
 
+        print(metaData)
         if metaData is None:
             raise Exception(f"no predictor named {predictorName}")
         
@@ -72,7 +73,7 @@ class Service:
 
         if metaData["model type"] == "SCIKIT":
             prediction = self.predictScikit(predictorName=predictorName, sample=sample)
-        elif metaData["model tpye"] == "PYTORCH":
+        elif metaData["model type"] == "PYTORCH":
             prediction = self.predictPyTorch(predictorName=predictorName, sample=sample)
 
         return prediction
