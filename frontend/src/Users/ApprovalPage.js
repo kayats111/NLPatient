@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './ApprovalPage.css'; // Don't forget to import your CSS
+import { useRole } from "../context/roleContext";
+import { useRoleLinks } from "../context/FetchContext";
+import DrawerMenu from '../DrawerMenu'; 
+
 
 function ApprovalPage() {
   const [approvals, setApprovals] = useState([]);
   const url = "http://localhost:3004";
-
+  const { links } = useRoleLinks();
+  
   useEffect(() => {
     fetchApprovals();
   }, []);
-
+  
   const fetchApprovals = async () => {
     try {
       const response = await axios.get(`${url}/api/user/approvals`);
@@ -33,6 +38,7 @@ function ApprovalPage() {
 
   return (
     <div className="approval-page-container">
+      <DrawerMenu links = {links} />
       <h2 className="approval-page-title">Pending Approvals</h2>
       {approvals.length === 0 ? (
         <p className="approval-page-no-approvals">No approvals pending.</p>

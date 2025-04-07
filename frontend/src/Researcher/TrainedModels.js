@@ -160,7 +160,7 @@ const TrainedModels = () => {
         {modelNames.map((modelName) => (
           <button
             key={modelName}
-            className={`list-item ${modelName === selectedModel ? 'active' : ''}`}
+            className={`tlist-item ${modelName === selectedModel ? 'active' : ''}`}
             onClick={() => handleModelClick(modelName)}
           >
             {modelName}
@@ -168,18 +168,18 @@ const TrainedModels = () => {
         ))}
       </div>
 
-      <div className="action-buttons">
-        {role !== 'doctor' && (
+      <div className="taction-buttons">
+        {role !== 'Doctor' && (
           <>
             <button
-              className={`action-button ${selectedModel ? 'enabled' : 'disabled'}`}
+              className={`taction-button ${selectedModel ? 'enabled' : 'disabled'}`}
               onClick={handleMetaDataClick}
               disabled={!selectedModel}
             >
               MetaData
             </button>
             <button
-              className={`action-button delete-button ${selectedModel ? 'enabled' : 'disabled'}`}
+              className={`taction-button delete-button ${selectedModel ? 'enabled' : 'disabled'}`}
               onClick={handleDeleteClick}
               disabled={!selectedModel}
             >
@@ -188,7 +188,7 @@ const TrainedModels = () => {
           </>
         )}
         <button
-          className={`action-button predict-button ${selectedModel ? 'enabled' : 'disabled'}`}
+          className={`taction-button tpredict-button ${selectedModel ? 'enabled' : 'disabled'}`}
           onClick={handlePredictClick}
           disabled={!selectedModel}
         >
@@ -196,7 +196,7 @@ const TrainedModels = () => {
         </button>
         {role !== 'doctor' && (
           <button
-            className={`action-button download-button ${selectedModel ? 'enabled' : 'disabled'}`}
+            className={`taction-button download-button ${selectedModel ? 'enabled' : 'disabled'}`}
             onClick={handleDownloadClick}
             disabled={!selectedModel}
           >

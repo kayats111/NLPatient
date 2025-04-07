@@ -1,14 +1,15 @@
 /* Container for the whole form */
   .container {
-    max-width: 500px;
+    max-width: 400px;
     margin: 20px auto;
+    margin-top: 140px; /* or any value you want */
     padding: 20px;
     background-color: #f9fafb;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
-  
+
   /* Page title */
   .container h2 {
     text-align: center;
@@ -57,42 +58,49 @@
   }
   
   /* Buttons container - stack buttons vertically */
-  .role-container .button-container {
+  .choice-role-container .choice-button-container {
     display: flex;
+    margin-top: 20px;
+    align-items:center;
     flex-direction: column; /* Stack buttons vertically */
     gap: 10px; /* Space between buttons */
   }
-  
+  .top-buttons{
+    display: flex;
+    gap: 20px; /* Space between the buttons */
+  }
   /* Button style when selected */
-  .button {
-    padding: 10px 16px;
+  .choice-button {
+    padding: 10px 40px;
     background-color: #3b82f6;
     color: white;
     border: none;
     border-radius: 6px;
-    font-weight: 500;
+    font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
   }
   
-  .button:hover {
+  .choice-button:hover {
     background-color: #2563eb;
+    transition: background-color 0.2s ease-in-out;
   }
   
   /* Default button style (unselected) */
-  .default-style {
-    padding: 10px 16px;
+  .choice-default-style {
+    padding: 10px 40px;
     background-color: #e5e7eb;
     color: #1f2937;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 550;
     transition: background-color 0.2s ease-in-out;
   }
   
-  .default-style:hover {
+  .choice-default-style:hover {
     background-color: #d1d5db;
+    transition: background-color 0.2s ease-in-out;
   }
   
   /* Submit button full width */
@@ -100,4 +108,12 @@
     width: 100%;
     margin-top: 10px;
   }
+
+  .choice-label {
+    font-weight: bold;
+    margin-bottom: 15px;
+    margin-left:185px;
+    text-align: center;
+    width: 100%;
+}
   

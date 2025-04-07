@@ -2,6 +2,7 @@
 .trainedCont {
   text-align: center;
   padding: 20px;
+  margin-top: 150px;
 }
 
 .error {
@@ -12,12 +13,13 @@
 .model-list {
   display: flex;
   flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: column; /* Items are stacked vertically */
+  justify-content: center; /* Vertically center the content */
+  align-items: center; /* Horizontally center the content */
   margin: 20px 0;
 }
 
-.list-item {
+.tlist-item {
   padding: 10px 20px;
   margin: 10px;
   border: 1px solid #ccc;
@@ -28,32 +30,32 @@
   text-align: center;
 }
 
-.list-item.active {
+.tlist-item.active {
   background-color: #4caf50;
   color: white;
 }
 
-.action-buttons {
+.taction-buttons {
   display: flex;
   justify-content: center;
   gap: 20px;
   margin-top: 20px;
 }
 
-.action-button {
+.taction-button {
   padding: 10px 20px;
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
 }
 
-.action-button.enabled {
+.taction-button.enabled {
   background-color: #007BFF;
   color: white;
   border: none;
 }
 
-.action-button.disabled {
+.taction-button.disabled {
   background-color: lightgray;
   color: gray;
   border: none;
@@ -65,17 +67,17 @@
   color: white;
 }
 
-.delete-button:hover {
+.delete-button.enabled:hover {
   background-color: #cc4d3a;
 }
 
-.predict-button {
-  background-color: #FFD700;
+.tpredict-button {
+  background-color: #4caf50;
   color: black;
 }
 
-.predict-button:hover {
-  background-color: #e6c200;
+.tpredict-button.enabled:hover {
+  background-color: #4caf50;
 }
 
 .selection-message {
