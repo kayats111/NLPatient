@@ -1,5 +1,5 @@
 /* Container for the update form */
-.predictor .container {
+.predictor-container {
   padding: 20px;
   max-height: 90vh;
   overflow-y: auto;
@@ -9,13 +9,13 @@
   justify-content: flex-start;
 }
 
-.predictor .container h1 {
+.predictor-container h1 {
   margin-bottom: 20px;
   text-align: center;
 }
 
 /* Grid layout for the form fields */
-.predictor .input-container {
+.predictor-container .input-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Auto adjust columns */
   gap: 20px;
@@ -23,7 +23,7 @@
 }
 
 /* Each field in the form */
-.input-item {
+.predictor-container .input-item {
   display: flex;
   flex-direction: column; /* Stack the label and input vertically */
   gap: 10px;
@@ -32,7 +32,7 @@
 }
 
 /* Label styling */
-.label {
+.predictor-container .label {
   font-weight: bold;
   margin-bottom: 5px;
   text-align: center; /* Center the label text */
@@ -40,7 +40,7 @@
 }
 
 /* Input field styling */
-.input {
+.predictor-container .input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -51,7 +51,7 @@
   text-align: center; /* Center the text inside the input box */
 }
 
-.input:disabled {
+.predictor-container .input:disabled {
   background-color: #f0f0f0; /* Light background color for disabled inputs */
 }
 
@@ -83,7 +83,7 @@
 }
 
 /* Modal styling */
-.modal-overlay {
+.predictor-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -96,22 +96,42 @@
   z-index: 1000;
 }
 
-.modal-content {
+.predictor-modal-content {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  max-width: 500px;
-  width: 100%;
+  width: 60%;
+  max-width: 800px;
   text-align: center;
 }
-
-.modal-content h2 {
+.predictor-metadata-table {
+  margin-bottom: 20px;
+}
+.predictor-metadata-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+.predictor-metadata-table th, .predictor-metadata-table td {
+  padding: 12px;
+  border-radius: 6px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+.predictor-metadata-table th {
+  background-color: rgb(216, 210, 210);
+  font-weight: 600;
+}
+.predictor-metadata-table td {
+  background-color: #fafafa;
+}
+.predictor-modal-content h2 {
   margin-bottom: 20px;
 }
 
 .close-modal {
-  padding: 8px 16px;
-  background-color: #007BFF;
+  padding: 10px 20px;
+  background-color: #FF6347;
   color: white;
   border: none;
   border-radius: 4px;
@@ -119,7 +139,7 @@
 }
 
 .close-modal:hover {
-  background-color: #0056b3;
+  background-color: #cc4d3a;
 }
 
 /* Error message styling */

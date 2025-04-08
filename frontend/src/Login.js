@@ -20,6 +20,7 @@ function Login() {
     try {
       // 1. Check if user is pending approval
       if(email ==="admin@admin.com"){
+        setRole("Admin")
         navigate("/choicepage")
       }
       const approvalRes = await axios.post("http://localhost:3004/api/user/check_approval", { email });
@@ -39,9 +40,18 @@ function Login() {
       setRole(loginRes.data.value.role);
   
       const role = loginRes.data.value.role;
-      if (role === "Admin") navigate("/choicepage");
-      else if (role === "Researcher") navigate("/researcher-main");
-      else if (role === "Doctor") navigate("/doctor-main");
+      if (role === "Admin") {
+        setRole("Admin")
+        navigate("/choicepage");
+      }
+      else if (role === "Researcher") {
+        setRole("Researcher")
+        navigate("/researcher-main");
+      }
+      else if (role === "Doctor") {
+        setRole("Doctor")
+        navigate("/doctor-main");
+      }
     } catch (error) {
       console.error("Error logging in:", error);
       setError("Invalid email or password");

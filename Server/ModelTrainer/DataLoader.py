@@ -12,8 +12,8 @@ class DataLoader:
     def __init__(self, fields: List[str] = None, labels: List[str] = None,
                  train_relative_size: int = 0, test_relative_size: int = 0, epochs: int = 0,
                  batches_size: int = 0, sample_limit: int = 0):
-        self.train_relative_size: int = train_relative_size
-        self.test_relative_size: int = test_relative_size
+        self.train_relative_size: int = int(train_relative_size)
+        self.test_relative_size: int = int(test_relative_size)
         self.epochs: int = epochs
         self.batch_size: int = batches_size
         self.fields: List[str] = fields
@@ -106,7 +106,7 @@ class DataLoader:
         return batches
 
     def __validate_requirements(self) -> None:
-        if self.train_relative_size + self.test_relative_size != 100:
+        if int(self.train_relative_size) + int(self.test_relative_size) != 100:
             raise Exception("the train + test relative sizes should be 100 percent")
         
         if self.epochs < 1:

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import './Predictor.css'; // Importing the new CSS file
 import axios from "axios";
 import DrawerMenu from '../DrawerMenu';
@@ -9,7 +10,7 @@ const Predictor = () => {
   const location = useLocation();
   const { links } = useRoleLinks();
   const { modelName, modelMetadata, labels } = location.state || {};
-
+  const navigate = useNavigate();
   const [inputs, setInputs] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -67,6 +68,10 @@ const Predictor = () => {
       setPrediction(null);
     }
   };
+  const handleModalClose=()=>{
+    setPrediction(null);
+    navigate('/train-page')
+  }
 
   useEffect(() => {
     if (prediction) {
@@ -85,7 +90,7 @@ const Predictor = () => {
   }
 
   return (
-    <div className="predictor container">
+    <div className="predictor-container">
       <DrawerMenu links={links} />
       <h1 className="heading">Predict for {modelName}</h1>
       <div className="input-container">
@@ -114,10 +119,10 @@ const Predictor = () => {
       </div>
 
       {prediction && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className="predictor-modal-overlay">
+          <div className="predictor-modal-content">
             <h2>Prediction Result</h2>
-            <div className="metadata-table">
+            <div className="predictor-metadata-table">
               <table>
                 <thead>
                   <tr>
@@ -135,7 +140,7 @@ const Predictor = () => {
                 </tbody>
               </table>
             </div>
-            <button className="close-modal" onClick={() => setPrediction(null)}>Close</button>
+            <button className="close-modal" onClick={() => handleModalClose()}>Close</button>
           </div>
         </div>
       )}

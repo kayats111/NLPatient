@@ -48,7 +48,7 @@
 }
 
 .list-item.active {
-  background-color: #007BFF;
+  background-color: #0ed812;
   color: white;
 }
 
@@ -81,7 +81,10 @@
   background-color: #007BFF;
   color: white;
 }
-
+.action-button.enabled:hover {
+  background-color: #0572e6;
+  color: white;
+}
 .action-button:disabled {
   cursor: not-allowed;
 }

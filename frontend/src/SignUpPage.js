@@ -81,9 +81,9 @@ function SignUpPage() {
     setClickedLabel(label);
   };
 
-  const buttonClass1 = isDClicked ? 'button' : 'default-style';
-  const buttonClass2 = isRClicked ? 'button' : 'default-style';
-  const buttonClass3 = isAdminClicked ? 'button' : 'default-style';
+  const buttonClass1 = isDClicked ? 'choice-button' : 'choice-default-style';
+  const buttonClass2 = isRClicked ? 'choice-button' : 'choice-default-style';
+  const buttonClass3 = isAdminClicked ? 'choice-button' : 'choice-default-style';
 
   return (
     <div className='container'>
@@ -107,9 +107,9 @@ function SignUpPage() {
             required
           />
         </div>
-        <div className="role-container">
-            <span className="label">Role:</span>
-            <div className="button-container">
+        <div className="choice-role-container">
+            <span className="choice-label">Role:</span>
+            <div className="choice-button-container">
                 <div className="top-buttons">
                 <button type="button" className={buttonClass2} onClick={() => handleRClick("Researcher")}>
                     Researcher
