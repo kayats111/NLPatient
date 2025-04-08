@@ -51,7 +51,7 @@ function ViewModels() {
   useEffect(() => {
     const fetchModelNames = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/api/model_trainer/get_names_parameters");
+        const response = await axios.get("/model_trainer/api/model_trainer/get_names_parameters");
         const modelNamesData = response.data.value.map(item => item.model_name);
         const modelTypesData = response.data.value.map(item => item.model_type);  // Assuming model_type exists
         const hyperParametersData = response.data.value.map(item => item.parameters);  // Extract the hyperParameters field
@@ -123,7 +123,7 @@ function ViewModels() {
 
     try {
       // Send the request to the backend
-      const response = await axios.post("http://localhost:3001/api/model_trainer/run_model", dataToSend);
+      const response = await axios.post("/model_trainer/api/model_trainer/run_model", dataToSend);
       alert(`Model Name: ${selectedModel} has been trained successfully!`);
       handleModalClose();
     } catch (error) {
@@ -143,7 +143,7 @@ function ViewModels() {
 
     try {
       if (action === "Train") {
-        const response = await axios.get("http://localhost:3000/api/data/fields_labels");
+        const response = await axios.get("/data_manager/api/data/fields_labels");
         const { fields, labels } = response.data.value;
 
         // Sort fields and labels alphabetically
@@ -154,7 +154,7 @@ function ViewModels() {
         setShowModal(true);
         setModalStep(1); // Start with the fields/labels step
       } else if (action === "Delete") {
-        const response = await axios.delete("http://localhost:3001/api/model_trainer/delete_model", {
+        const response = await axios.delete("/model_trainer/api/model_trainer/delete_model", {
           data: { "model name": selectedModel },
         });
 
@@ -209,11 +209,11 @@ function ViewModels() {
 
     try {
       // const response = await axios.get(
-      //   `http://localhost:3001/api/model_trainer/get_model?model name=${selectedModel}`,
+      //   `/model_trainer/api/model_trainer/get_model?model name=${selectedModel}`,
       //   { responseType: "blob" }
       // );
       const response = await axios.post(
-        "http://localhost:3001/api/model_trainer/get_model",
+        "/model_trainer/api/model_trainer/get_model",
         { "model name": selectedModel },
         { responseType: "blob" } // 👈 This tells Axios to treat response as binary
       );
@@ -235,7 +235,7 @@ function ViewModels() {
   // Fetch the total number of records from the API
   const fetchRecordCount = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/data/read/records/all");
+      const response = await axios.get("/data_manager/api/data/read/records/all");
       setRecordCount(response.data.length); // Assuming the response is an array
       // console.log(response.data.value)
       setSampleLimit(response.data.length);

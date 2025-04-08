@@ -27,7 +27,7 @@ const RecordsUpdate = () => {
 
   const handleSaveChanges = async () => {
     try {
-      await axios.patch("http://localhost:3000/api/data/update", updatedRecord);
+      await axios.patch("/data_manager/api/data/update", updatedRecord);
       alert("Changes Saved!");
       navigate("/doctor-main");
     } catch (error) {

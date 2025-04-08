@@ -5,7 +5,7 @@ import { useRoleLinks } from "../context/FetchContext";
 import { useRole } from "../context/roleContext";
 import "./RecordsViewer.css";
 
-const server_url = "http://localhost:3000/api/data";
+const server_url = "/data_manager/api/data";
 
 const RecordsViewer = () => {
   const navigate = useNavigate(); 

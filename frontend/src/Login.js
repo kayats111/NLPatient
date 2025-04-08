@@ -22,7 +22,7 @@ function Login() {
       if(email ==="admin@admin.com"){
         navigate("/choicepage")
       }
-      const approvalRes = await axios.post("http://localhost:3004/api/user/check_approval", { email });
+      const approvalRes = await axios.post("/users/api/user/check_approval", { email });
   
       if (approvalRes.data.value.pending) {
         // 👇 Your custom logic here
@@ -33,7 +33,7 @@ function Login() {
       }
   
       // 2. If not pending, proceed with login
-      const loginRes = await axios.post("http://localhost:3004/api/user/login", { email, password });
+      const loginRes = await axios.post("/users/api/user/login", { email, password });
   
       login(loginRes.data.value);
       setRole(loginRes.data.value.role);

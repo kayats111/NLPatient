@@ -38,7 +38,7 @@ const Predictor = () => {
     setError(""); 
     try {
       const response = await axios.post(
-        "http://localhost:3002/api/predictors/predict", 
+        "/predictors/api/predictors/predict", 
         {
           "model name": modelName,  
           "sample": inputList.map((x) => Number(x)),        

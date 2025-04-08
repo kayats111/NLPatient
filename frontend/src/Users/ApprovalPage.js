@@ -4,7 +4,7 @@ import './ApprovalPage.css'; // Don't forget to import your CSS
 
 function ApprovalPage() {
   const [approvals, setApprovals] = useState([]);
-  const url = "http://localhost:3004";
+  const url = "/users";
 
   useEffect(() => {
     fetchApprovals();
