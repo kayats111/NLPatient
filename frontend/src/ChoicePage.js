@@ -9,7 +9,7 @@ function ChoicePage() {
   const { links } = useRoleLinks();
   const { setRole } = useRole();
   const [adminMessage, setAdminMessage] = useState("");
-
+  
   const handleChoice = (choice) => {
     if (choice === "Researcher") {
       setRole("Researcher");
