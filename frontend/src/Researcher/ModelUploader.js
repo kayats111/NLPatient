@@ -42,7 +42,7 @@ function ModelUploader() {
 
     try {
       setUploadProgress("Uploading...");
-      await axios.post("http://localhost:3001/api/model_trainer/add/model", formData, {
+      await axios.post("/model_trainer/api/model_trainer/add/model", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -58,7 +58,7 @@ function ModelUploader() {
         "hyperParameters": hyperParams,
         "modelType": modelType,
       };
-      await axios.post("http://localhost:3001/api/model_trainer/add/parameters",dataToSend );
+      await axios.post("/model_trainer/api/model_trainer/add/parameters",dataToSend );
 
       setUploadProgress("Upload successful!");
     } catch (error) {

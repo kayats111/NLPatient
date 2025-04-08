@@ -15,7 +15,7 @@ function SignUpPage() {
 
   const checkIfUserExists = async (email) => {
     try {
-      const response = await axios.post("http://localhost:3004/api/user/check_approval", { "email":email });
+      const response = await axios.post("/users/api/user/check_approval", { "email":email });
       if (response.data.value["pending"]) {
         setErrorMessage("This email is currently pending approval.");
         return true;
@@ -44,7 +44,7 @@ function SignUpPage() {
         return;
     }
     try {
-      const response = await axios.post("http://localhost:3004/api/user/register", payload);
+      const response = await axios.post("/users/api/user/register", payload);
       const data = response.data.value;
 
       if (!response.data.error) {

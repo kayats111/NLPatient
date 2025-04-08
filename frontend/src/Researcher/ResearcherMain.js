@@ -13,7 +13,7 @@ function ResearcherMain() {
   };
   const handleDownload = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/model_trainer/template");
+      const response = await fetch("/model_trainer/api/model_trainer/template");
       if (!response.ok) {
         throw new Error("Failed to download the file");
       }

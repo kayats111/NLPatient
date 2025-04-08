@@ -19,7 +19,7 @@ const TrainedModels = () => {
   useEffect(() => {
     const fetchModelNames = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/api/predictors/names');
+        const response = await axios.get('/predictors/api/predictors/names');
         const data = response.data;
         if (data.error) {
           setError(data.message);
@@ -45,10 +45,10 @@ const TrainedModels = () => {
     }
 
     try {
-      // const response = await axios.get('http://localhost:3002/api/predictors/meta_data', {
+      // const response = await axios.get('/predictors/api/predictors/meta_data', {
       //   params: { "model name": selectedModel }
       // });
-      const response = await axios.post('http://localhost:3002/api/predictors/meta_data',{
+      const response = await axios.post('/predictors/api/predictors/meta_data',{
         "model name": selectedModel
       });
       if (response.data.error) {
@@ -69,7 +69,7 @@ const TrainedModels = () => {
     }
 
     try {
-      const response = await axios.delete('http://localhost:3002/api/predictors/delete', {
+      const response = await axios.delete('/predictors/api/predictors/delete', {
         data: { "model name": selectedModel }
       });
 
@@ -93,7 +93,7 @@ const TrainedModels = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:3002/api/predictors/get_predictor',
+        '/predictors/api/predictors/get_predictor',
         { "model name": selectedModel }, // POST data goes in the body
         { responseType: 'blob' } // Set response type to blob for file downloads
       );
@@ -132,7 +132,7 @@ const TrainedModels = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3002/api/predictors/meta_data',{
+      const response = await axios.post('/predictors/api/predictors/meta_data',{
         "model name": selectedModel
       });
 
