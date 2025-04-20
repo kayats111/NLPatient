@@ -43,14 +43,6 @@ class LearnModel:
             predicted = outputs.detach().int()
             labels = labels.int()
 
-            print("---------------------")
-            print(labels[0])
-            print(predicted[0])
-            print(outputs.detach())
-            print(outputs.detach()[0])
-            print(outputs[0])
-            print("---------------------")
-
             self.total += labels.size(0)
 
             correct_per_sample = (predicted == labels).all(dim=1)
