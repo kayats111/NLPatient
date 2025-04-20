@@ -20,6 +20,9 @@ class LearnModel:
         self.total = 0
 
     def train(self, vectors: NDArray, labels: NDArray) -> None:
+        vectors = torch.from_numpy(vectors).float()
+        labels = torch.from_numpy(labels).float()
+
         outputs = self.model(vectors)
         
         loss = self.criterion(outputs, labels)
@@ -29,14 +32,29 @@ class LearnModel:
         self.optimizer.step()
 
     def test(self, vectors: NDArray, labels: NDArray) -> None:
+        vectors = torch.from_numpy(vectors).float()
+        labels = torch.from_numpy(labels).float()
+
         with torch.no_grad():
             outputs = self.model(vectors)
 
             self.meta_data["loss"] = self.criterion(outputs, labels).item()
 
-            _, predicted = torch.max(outputs.data, 1)
+            predicted = outputs.detach().int()
+            labels = labels.int()
+
+            print("---------------------")
+            print(labels[0])
+            print(predicted[0])
+            print(outputs.detach())
+            print(outputs.detach()[0])
+            print(outputs[0])
+            print("---------------------")
+
             self.total += labels.size(0)
-            self.correct += (predicted == labels).sum().item()
+
+            correct_per_sample = (predicted == labels).all(dim=1)
+            self.correct += correct_per_sample.sum().item()
 
             self.meta_data["accuracy"] = 100 * self.correct / self.total
 
@@ -44,14 +62,14 @@ class LearnModel:
 
 
 
-class fc():
+class fc(nn.Module):
 
     def __init__(self, hyper_parameters: dict):
         super(fc, self).__init__()
 
         self.fc1 = nn.Linear(hyper_parameters["input_size"], hyper_parameters["hidden_size"])
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hyper_parameters["hidden_size"], hyper_parameters["classes"])
+        self.fc2 = nn.Linear(hyper_parameters["hidden_size"], hyper_parameters["output_size"])
 
         if "seed" in hyper_parameters:
             torch.manual_seed(hyper_parameters["seed"])
