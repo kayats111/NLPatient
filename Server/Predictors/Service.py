@@ -88,8 +88,9 @@ class Service:
     def predictPyTorch(self, predictorName: str, sample: List[float]) -> List[float]:
         predictor = self.loadPyTorch(predictorName=predictorName)
 
-        output = predictor(np.array(sample))
-        predictedLabel = torch.argmax(output, dim=1).item()
+        _input = torch.from_numpy(np.array(sample)).float()
+        output = predictor(_input)
+        predictedLabel = output.detach().int().numpy().tolist()
 
         return predictedLabel
 
@@ -117,7 +118,7 @@ class Service:
         learn_model_class = getattr(module, "LearnModel")
         learn_model = learn_model_class(hyper_parameters=hyper_parameters)
 
-        path = os.path.join(TRAINED_FOLDER, predictorName + ".pth")
+        path = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, predictorName + ".pth")
 
         predictor = learn_model.model
         predictor.load_state_dict(torch.load(path))
