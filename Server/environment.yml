@@ -18,3 +18,4 @@ dependencies:
   - pymongo
   - transformers
   - datasets
+  - accelerate
