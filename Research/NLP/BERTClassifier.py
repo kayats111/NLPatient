@@ -54,7 +54,7 @@ class NLPTemplate:
             args=training_args,
             train_dataset=train_dataset,
             eval_dataset=test_dataset,
-            data_collator=DataCollatorWithPadding(lambda example: self.tokenize(example)),
+            data_collator=DataCollatorWithPadding(self.tokenizer),
             compute_metrics=lambda pred: self.compute_metrics(pred)
         )
 
@@ -73,7 +73,7 @@ class NLPTemplate:
         self.tokenizer = BertTokenizer.from_pretrained(save_dir)
 
     def infer(self, text: str) -> List[float]:
-        inputs = self.tokenizer(text, return_tensor="pt", padding=True, trunction=True, max_length=128)
+        inputs = self.tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=128)
 
         with torch.no_grad():
             logits = self.model(**inputs).logits
@@ -102,4 +102,72 @@ class NLPTemplate:
             "recall": recall,
             "f1": f1
         }
+
+
+
+
+
+
+data = {
+    'text': [
+        "The team won the match",
+        "The economy is shrinking",
+        "Election results are in",
+        "A new player was signed",
+        "Stock prices are down",
+        "The government passed a new bill",
+        "Bitcoin hits new all-time high",
+        "The tennis champion retired today",
+        "Tech companies are launching AI products",
+        "The central bank raised interest rates",
+        "Football season is starting soon",
+        "Major layoffs in the tech industry",
+        "New tax laws affect small businesses",
+        "Olympic games delayed due to weather",
+        "Senate debates climate change policy"
+    ],
+    'label': [
+        [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
+        [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
+        [0.0, 0.0, 1.0, 0.0, 0.0],  # Politics
+        [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
+        [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
+        [0.0, 0.0, 1.0, 0.0, 0.0],  # Politics
+        [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
+        [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
+        [0.0, 0.0, 0.0, 1.0, 0.0],  # Tech
+        [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
+        [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
+        [0.0, 1.0, 0.0, 1.0, 0.0],  # Economics + Tech
+        [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
+        [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
+        [0.0, 0.0, 1.0, 0.0, 0.0]   # Politics
+    ]
+}
+
+hyper_parameters = {
+    "test_size": 0.2,
+    "seed": 42,
+    "batch_size": 2,
+    "epochs": 3
+}
+
+save_dir: str = "./saved/BERTClassifier"
+text = "AI is transforming basketball strategies"
+
+bert = NLPTemplate(hyper_parameters=hyper_parameters)
+
+bert.run_model(data=data)
+bert.save_model(save_dir=save_dir)
+
+bert.load_model(save_dir=save_dir)
+ans: List[float] = bert.infer(text=text)
+
+print(ans)
+
+
+print("done")
+
+
+
 
