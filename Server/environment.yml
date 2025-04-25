@@ -16,3 +16,6 @@ dependencies:
   - numpy
   - requests
   - pymongo
+  - transformers
+  - datasets
+  - accelerate
