@@ -11,4 +11,22 @@ class TextRepository:
         except Exception as e:
             db.session.rollback()
             raise Exception("cannot add text record")
-    
+
+    def get_record_by_id(self, id: int) -> MedicalRecordText:
+        try:
+            record: MedicalRecordText = MedicalRecordText.query.get(id)
+        except Exception as e:
+            raise Exception("cannot get text record")
+        
+        if record is None:
+            raise Exception("no such record")
+        
+        return record
+        
+
+
+
+
+
+
+
