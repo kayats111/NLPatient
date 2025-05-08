@@ -47,7 +47,7 @@ class TextService:
                                                       text=record_dict["schizophreniaSpectr"])
         return record
     
-    def getTrainFieldsAndLabels(self) -> Dict[str, List[str]]:
+    def get_train_fields_and_labels(self) -> Dict[str, List[str]]:
         return {
             "fields": TRAIN_ATTRIBUTES,
             "labels": LABELS
