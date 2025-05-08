@@ -5,6 +5,7 @@ from Extensions import db
 import os
 from Response import Response
 from MedicalRecordService import MedicalRecordService
+from TextService import TextService
 
 
 
@@ -25,10 +26,12 @@ db.init_app(app)
 CORS(app,expose_headers=["Content-Disposition"])
 
 from MedicalRecord import LABELS, TRAIN_ATTRIBUTES, MedicalRecord, ATTRIBUTES, BASE_ATTRIBUTES
+from MedicalRecordText import MedicalRecordText, TRAIN_ATTRIBUTES as TEXT_TRAIN, LABELS as TEXT_LABELS, ATTRIBUTES as TEXT_ATTRIBUTES, BASE_ATTRIBUTES as TEXT_BASE
 
 bp = Blueprint('DataManager', __name__, url_prefix="/api/data")
 
 service: MedicalRecordService = MedicalRecordService()
+text_service: TextService = TextService()
 
 
 
@@ -186,6 +189,110 @@ def getAllIds():
     response: Response[List[int]] = Response(value=service.getAllIds())
 
     return jsonify(response.toDict())
+
+
+@bp.route("/text/add", methods=["POST"])
+def add_text():
+    data: dict = request.get_json()
+
+    schema: Set[str] = set(TEXT_BASE)
+
+    if not validateRequestSchema(data, schema):
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
+    
+    response: Response[bool]
+
+    try:
+        text_service.add_record(data)
+        response = Response()
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+
+    return jsonify(response.toDict()), 200
+
+
+@bp.route("/text/read/<int:id>", methods=["GET"])
+def read_text_record(id: int):
+    response: Response[MedicalRecordText]
+
+    try:
+        record: MedicalRecordText = text_service.get_record_by_id(id)
+        response = Response(value=record.toDict())
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+
+    return jsonify(response.toDict()), 200
+
+
+@bp.route("/text/delete/<int:id>", methods=["DELETE"])
+def delete_text_record(id: int):
+    response: Response[MedicalRecordText]
+
+    try:
+        text_service.delete_record(id)
+        response = Response()
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+
+    return jsonify(response.toDict()), 200
+
+
+@bp.route("/text/update", methods=["PATCH"])
+def update_text_record():
+    data: dict = request.get_json()
+
+    schema: Set[str] = set(TEXT_ATTRIBUTES)
+
+    if not validateRequestSchema(data, schema):
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
+
+    response: Response[bool]
+
+    try:
+        text_service.update_record(data)
+        response = Response()
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+
+    return jsonify(response.toDict()), 200
+ 
+
+@bp.route("/text/read/records/all", methods=["GET"])
+def get_all_text_records():
+    dicts: List[dict] = [record.toDict() for record in text_service.get_all_records_read()]
+
+    return jsonify(dicts), 200
+
+
+@bp.route("/text/read/train", methods=["GET"])
+def get_train_text_records():
+    data: dict = request.get_json()
+
+    schema: Set[str] = {"labels"}
+
+    if not validateRequestSchema(data, schema):
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
+    
+    response: Response[Dict[str, list]]
+
+    try:
+        text_data: Dict[str, list] = text_service.get_all_records_train(labels=data["labels"])
+        response = Response(value=text_data)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+
+    return jsonify(response.toDict()), 200
+
+
+@bp.route("/text/fields_labels", methods=["GET"])
+def get_text_fields_and_labels():
+    response: Response[Dict[str, List[str]]] = Response(value=text_service.get_train_fields_and_labels())
+
+    return jsonify(response.toDict())
+
 
 
 
