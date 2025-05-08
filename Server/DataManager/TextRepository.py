@@ -4,7 +4,7 @@ from Extensions import db
 
 class TextRepository:
 
-    def addRecord(self, record: MedicalRecordText) -> None:
+    def add_record(self, record: MedicalRecordText) -> None:
         try:
             db.session.add(record)
             db.session.commit()
