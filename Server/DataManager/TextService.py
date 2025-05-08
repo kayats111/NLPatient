@@ -17,7 +17,11 @@ class TextService:
     def delete_record(self, id: int) -> None:
         self.repository.delete_record(id)
 
+    def update_record(self, data: dict) -> None:
+        record: MedicalRecordText = self.record_from_dict(record_dict=data)
+        record.id = data["id"]
 
+        self.repository.update_record(record)
 
 
 
