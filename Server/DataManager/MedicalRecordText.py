@@ -30,8 +30,19 @@ class MedicalRecordText(db.Model):
             if field_name != "id":
                 setattr(self, field_name, getattr(other, field_name, None))
 
-    def get_label(self) -> List[float]:
-        return [self.any, self.affective, self.bipolar, self.schizophreniaSpectr]
+    def get_label(self, labels: List[str]) -> List[float]:
+        label: List[float] = []
+
+        if "any" in labels:
+            label.append(self.any)
+        if "affective" in labels:
+            label.append(self.affective)
+        if "bipolar" in labels:
+            label.append(self.bipolar)
+        if "schizophreniaSpectr" in labels:
+            label.append(self.schizophreniaSpectr)
+
+        return label
 
 
 
