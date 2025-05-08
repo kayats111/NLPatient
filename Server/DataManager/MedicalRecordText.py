@@ -38,7 +38,7 @@ class MedicalRecordText(db.Model):
 ATTRIBUTES: List[str] = [column.name for column in MedicalRecordText.__table__.columns]
 BASE_ATTRIBUTES: List[str] = [column.name for column in MedicalRecordText.__table__.columns if column.name != "id"]
 LABELS: List[str] = ["any", "affective", "bipolar", "schizophreniaSpectr"]
-
+TRAIN_ATTRIBUTEs: List[str] = ["text"]
 
 
 
