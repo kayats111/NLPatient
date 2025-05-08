@@ -14,7 +14,8 @@ class TextService:
     def get_record_by_id(self, id: int) -> MedicalRecordText:
         return self.repository.get_record_by_id(id)
 
-
+    def delete_record(self, id: int) -> None:
+        self.repository.delete_record(id)
 
 
 
