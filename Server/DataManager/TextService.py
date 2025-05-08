@@ -26,7 +26,7 @@ class TextService:
     def get_all_records_read(self) -> List[MedicalRecordText]:
         return self.repository.get_all_records()
 
-    def get_all_records_train(self) -> Dict[str, list]:
+    def get_all_records_train(self, labels: List[str]) -> Dict[str, list]:
         records: List[MedicalRecordText] = self.repository.get_all_records()
 
         data: Dict[str, list] = {}
@@ -35,11 +35,23 @@ class TextService:
 
         for record in records:
             data["text"].append(record.text)
-            data["label"].append(record.get_label())
+            data["label"].append(record.get_label(labels=labels))
 
         return data
 
-
+    def record_from_dict(self, record_dict: dict) -> MedicalRecordText:
+        record: MedicalRecordText = MedicalRecordText(text=record_dict["text"],
+                                                      text=record_dict["any"],
+                                                      text=record_dict["affective"],
+                                                      text=record_dict["bipolar"],
+                                                      text=record_dict["schizophreniaSpectr"])
+        return record
+    
+    def getTrainFieldsAndLabels(self) -> Dict[str, List[str]]:
+        return {
+            "fields": TRAIN_ATTRIBUTES,
+            "labels": LABELS
+        }
 
 
 
