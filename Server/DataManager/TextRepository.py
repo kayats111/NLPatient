@@ -46,7 +46,7 @@ class TextRepository:
 
         db.session.commit()   
 
-    def getAllRecords(self) -> List[MedicalRecordText]:
+    def get_all_records(self) -> List[MedicalRecordText]:
         try:
             return MedicalRecordText.query.all()
         except Exception as e:
