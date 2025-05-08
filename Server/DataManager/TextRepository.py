@@ -52,4 +52,15 @@ class TextRepository:
         except Exception as e:
             raise Exception("cannot get records")
 
+    
+
+
+
+
+
+
+
+
+
+
 
