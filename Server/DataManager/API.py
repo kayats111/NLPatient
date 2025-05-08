@@ -266,7 +266,7 @@ def get_all_text_records():
     return jsonify(dicts), 200
 
 
-@bp.route("/text/read/train", methods=["GET"])
+@bp.route("/text/read/train", methods=["POST"])
 def get_train_text_records():
     data: dict = request.get_json()
 

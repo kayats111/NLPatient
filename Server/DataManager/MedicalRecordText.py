@@ -4,7 +4,7 @@ from Extensions import db
 class MedicalRecordText(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
 
-    text: str = db.Column(db.String, unique=False, nullable=False)
+    text: str = db.Column(db.Text, unique=False, nullable=False)
 
     # LABLES
     any: float = db.Column(db.Float, unique=False, nullable=False)

@@ -41,10 +41,10 @@ class TextService:
 
     def record_from_dict(self, record_dict: dict) -> MedicalRecordText:
         record: MedicalRecordText = MedicalRecordText(text=record_dict["text"],
-                                                      text=record_dict["any"],
-                                                      text=record_dict["affective"],
-                                                      text=record_dict["bipolar"],
-                                                      text=record_dict["schizophreniaSpectr"])
+                                                      _any=record_dict["any"],
+                                                      affective=record_dict["affective"],
+                                                      bipolar=record_dict["bipolar"],
+                                                      schizophreniaSpectr=record_dict["schizophreniaSpectr"])
         return record
     
     def get_train_fields_and_labels(self) -> Dict[str, List[str]]:
