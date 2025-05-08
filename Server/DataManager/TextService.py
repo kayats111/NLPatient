@@ -11,7 +11,8 @@ class TextService:
         record: MedicalRecordText = self.record_from_dict(record_dict=record_dict)
         self.repository.add_record(record)
 
-    
+    def get_record_by_id(self, id: int) -> MedicalRecordText:
+        return self.repository.get_record_by_id(id)
 
 
 
