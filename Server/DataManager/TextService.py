@@ -23,8 +23,21 @@ class TextService:
 
         self.repository.update_record(record)
 
+    def get_all_records_read(self) -> List[MedicalRecordText]:
+        return self.repository.get_all_records()
 
+    def get_all_records_train(self) -> Dict[str, list]:
+        records: List[MedicalRecordText] = self.repository.get_all_records()
 
+        data: Dict[str, list] = {}
+        data["text"] = []
+        data["label"] = []
+
+        for record in records:
+            data["text"].append(record.text)
+            data["label"].append(record.get_label())
+
+        return data
 
 
 
