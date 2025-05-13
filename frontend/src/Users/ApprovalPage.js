@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import axios from 'axios';
 import './ApprovalPage.css'; // Don't forget to import your CSS
 import { useRole } from "../context/roleContext";
 import { useRoleLinks } from "../context/FetchContext";
 import DrawerMenu from '../DrawerMenu'; 
+import URLContext from '../context/URLContext';
+
 
 
 function ApprovalPage() {
   const [approvals, setApprovals] = useState([]);
-  const url = "/users";
+  const url = useContext(URLContext).Users;
   const { links } = useRoleLinks();
   
   useEffect(() => {

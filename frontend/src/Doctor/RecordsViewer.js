@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import DrawerMenu from '../DrawerMenu'; 
 import { useRoleLinks } from "../context/FetchContext";
 import { useRole } from "../context/roleContext";
 import "./RecordsViewer.css";
-
-const server_url = "/data_manager/api/data";
+import URLContext from '../context/URLContext';
 
 const RecordsViewer = () => {
   const navigate = useNavigate(); 
@@ -17,6 +16,9 @@ const RecordsViewer = () => {
   const { links } = useRoleLinks();
   const { role } = useRole();
   const [selectedRecordId, setSelectedRecordId] = useState(null);
+  const tempUrl = useContext(URLContext).DataManager;
+  const server_url = tempUrl+"/api/data";
+
 
   // Filter overlay state
   const [overlayVisible, setOverlayVisible] = useState(false);

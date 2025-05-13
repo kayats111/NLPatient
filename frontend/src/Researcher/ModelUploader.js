@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import axios from "axios";
 import DrawerMenu from '../DrawerMenu'; 
 import { useRoleLinks } from "../context/FetchContext";
 import "./ModelUploader.css";  // Import the CSS file
+import URLContext from '../context/URLContext';
+
 
 function ModelUploader() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(null);
   const { links } = useRoleLinks();
-
   const [hyperParams, setHyperParams] = useState([]);
   const [modelType, setModelType] = useState("SCIKIT");
-
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
-
+  const url = useContext(URLContext).ModelTrainer;
   // Handle file drop
   const handleDrop = (event) => {
     event.preventDefault();
@@ -42,7 +42,7 @@ function ModelUploader() {
 
     try {
       setUploadProgress("Uploading...");
-      await axios.post("/model_trainer/api/model_trainer/add/model", formData, {
+      await axios.post(url+"/api/model_trainer/add/model", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -58,7 +58,7 @@ function ModelUploader() {
         "hyperParameters": hyperParams,
         "modelType": modelType,
       };
-      await axios.post("/model_trainer/api/model_trainer/add/parameters",dataToSend );
+      await axios.post(url+"/api/model_trainer/add/parameters",dataToSend );
 
       setUploadProgress("Upload successful!");
     } catch (error) {

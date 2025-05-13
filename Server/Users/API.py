@@ -108,7 +108,7 @@ def approveUser(id: int):
 @bp_user.route("/login", methods=["POST"])
 def loginUser():
     data = request.get_json()
-    print(data)
+    # print(data)
     schema: Set[str] = {"email", "password"}
 
     if not validateRequestSchema(data, schema):
@@ -116,9 +116,6 @@ def loginUser():
 
     try:
         user = user_service.login(data["email"], data["password"])
-
-
-
         return jsonify(Response(value=user.toDict()).toDict()), 200
     except Exception as e:
         return jsonify(Response(error=True, message=str(e)).toDict()), 401

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './TrainedModels.css';
 import DrawerMenu from '../DrawerMenu';
 import { useRoleLinks } from "../context/FetchContext";
 import { useRole } from '../context/roleContext';
+import URLContext from '../context/URLContext';
 
 const TrainedModels = () => {
   const [modelNames, setModelNames] = useState([]);
@@ -15,11 +16,12 @@ const TrainedModels = () => {
   const navigate = useNavigate();
   const { links } = useRoleLinks();
   const { role } = useRole();
+  const url = useContext(URLContext).Predictors
 
   useEffect(() => {
     const fetchModelNames = async () => {
       try {
-        const response = await axios.get('/predictors/api/predictors/names');
+        const response = await axios.get(url+'/api/predictors/names');
         const data = response.data;
         if (data.error) {
           setError(data.message);
@@ -48,7 +50,7 @@ const TrainedModels = () => {
       // const response = await axios.get('/predictors/api/predictors/meta_data', {
       //   params: { "model name": selectedModel }
       // });
-      const response = await axios.post('/predictors/api/predictors/meta_data',{
+      const response = await axios.post(url+'/api/predictors/meta_data',{
         "model name": selectedModel
       });
       if (response.data.error) {
@@ -69,7 +71,7 @@ const TrainedModels = () => {
     }
 
     try {
-      const response = await axios.delete('/predictors/api/predictors/delete', {
+      const response = await axios.delete(url+'/api/predictors/delete', {
         data: { "model name": selectedModel }
       });
 
@@ -93,7 +95,7 @@ const TrainedModels = () => {
 
     try {
       const response = await axios.post(
-        '/predictors/api/predictors/get_predictor',
+        url+'/api/predictors/get_predictor',
         { "model name": selectedModel }, // POST data goes in the body
         { responseType: 'blob' } // Set response type to blob for file downloads
       );
@@ -132,7 +134,7 @@ const TrainedModels = () => {
     }
 
     try {
-      const response = await axios.post('/predictors/api/predictors/meta_data',{
+      const response = await axios.post(url+'/api/predictors/meta_data',{
         "model name": selectedModel
       });
 

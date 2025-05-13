@@ -18,41 +18,44 @@ import ApprovalPage from './Users/ApprovalPage.js';
 import WaitingApproval from './WaitingApproval.js';
 import { RoleProvider } from './context/roleContext.js';
 import { UserProvider } from './context/UserContext';
+import URLProvider from './context/URLProvider';
 
 
 function App() {
   return (
-  <UserProvider>
-    <RoleProvider>
-      <DoctorMenuProvider>
-        <ResearcherMenuProvider>
-          <AdminMenuProvider>
-            <Router>
-              <div>
-                <DrawerMenu /> {/* DrawerMenu will be accessible on all pages */}
-                <Routes>
-                  <Route path="/" element={<Login />} />
-                  <Route path="/train-page" element={<TrainedModels />} />
-                  <Route path="/add-patient-data" element={<AddPatientData />} />
-                  <Route path="/choicepage" element={<ChoicePage />} />
-                  <Route path="/researcher-main" element={<ResearcherMain />} />
-                  <Route path="/doctor-main" element={<DoctorMain />} />
-                  <Route path="/signup" element={<SignUpPage />} />
-                  <Route path="/records-viewer" element={<RecordsViewer />} />
-                  <Route path="/doctor-predict" element={<Predictor />} />
-                  <Route path="/update-medical-records" element={<RecordsUpdate />} />
-                  <Route path="/model_uploader" element={<ModelUploader />} />
-                  <Route path="/model-viewer" element={<ViewModels />} />
-                  <Route path="/approval-page" element={<ApprovalPage />} />
-                  <Route path="/pending_approval" element={<WaitingApproval />} />
-                </Routes>
-              </div>
-            </Router>
-          </AdminMenuProvider>
-        </ResearcherMenuProvider>
-      </DoctorMenuProvider>
-    </RoleProvider>
-  </UserProvider>
+  <URLProvider>
+    <UserProvider>
+      <RoleProvider>
+        <DoctorMenuProvider>
+          <ResearcherMenuProvider>
+            <AdminMenuProvider>
+              <Router>
+                <div>
+                  <DrawerMenu /> {/* DrawerMenu will be accessible on all pages */}
+                  <Routes>
+                    <Route path="/" element={<Login />} />
+                    <Route path="/train-page" element={<TrainedModels />} />
+                    <Route path="/add-patient-data" element={<AddPatientData />} />
+                    <Route path="/choicepage" element={<ChoicePage />} />
+                    <Route path="/researcher-main" element={<ResearcherMain />} />
+                    <Route path="/doctor-main" element={<DoctorMain />} />
+                    <Route path="/signup" element={<SignUpPage />} />
+                    <Route path="/records-viewer" element={<RecordsViewer />} />
+                    <Route path="/doctor-predict" element={<Predictor />} />
+                    <Route path="/update-medical-records" element={<RecordsUpdate />} />
+                    <Route path="/model_uploader" element={<ModelUploader />} />
+                    <Route path="/model-viewer" element={<ViewModels />} />
+                    <Route path="/approval-page" element={<ApprovalPage />} />
+                    <Route path="/pending_approval" element={<WaitingApproval />} />
+                  </Routes>
+                </div>
+              </Router>
+            </AdminMenuProvider>
+          </ResearcherMenuProvider>
+        </DoctorMenuProvider>
+      </RoleProvider>
+    </UserProvider>
+  </URLProvider>
   );
 }
 
