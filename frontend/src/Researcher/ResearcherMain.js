@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import DrawerMenu from '../DrawerMenu'; 
 // import { useResearcherLinks } from '../context/Context';
 import { useRoleLinks } from "../context/FetchContext";
+import URLContext from '../context/URLContext';
 
 
 function ResearcherMain() {
   const navigate = useNavigate(); // Use the hook for navigation
   const {links} = useRoleLinks();
+  const url = useContext(URLContext).ModelTrainer
   const fakehandleDownload = () => {
     alert('fake handle download');
   };
   const handleDownload = async () => {
     try {
-      const response = await fetch("/model_trainer/api/model_trainer/template");
+      const response = await fetch(url+"/api/model_trainer/template");
       if (!response.ok) {
         throw new Error("Failed to download the file");
       }

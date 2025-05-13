@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // For making API requests
 import { useRole } from "./context/roleContext";
 import { useUser } from './context/UserContext';
+import URLContext from './context/URLContext';
 
 
 function Login() {
@@ -12,6 +13,7 @@ function Login() {
   const navigate = useNavigate(); // Use the hook for navigation
   const { setRole } = useRole(); // Assuming you have a context to handle user role
   const {login} = useUser();
+  const url = useContext(URLContext).Users
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -23,7 +25,7 @@ function Login() {
         setRole("Admin")
         navigate("/choicepage")
       }
-      const approvalRes = await axios.post("/users/api/user/check_approval", { email });
+      const approvalRes = await axios.post(url+"/api/user/check_approval", { email });
   
       if (approvalRes.data.value.pending) {
         // 👇 Your custom logic here
@@ -34,7 +36,7 @@ function Login() {
       }
   
       // 2. If not pending, proceed with login
-      const loginRes = await axios.post("/users/api/user/login", { email, password });
+      const loginRes = await axios.post(url+"/api/user/login", { email, password });
   
       login(loginRes.data.value);
       setRole(loginRes.data.value.role);

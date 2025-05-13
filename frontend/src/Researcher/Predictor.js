@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import { useLocation} from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import './Predictor.css'; // Importing the new CSS file
 import axios from "axios";
 import DrawerMenu from '../DrawerMenu';
 import { useRoleLinks } from "../context/FetchContext";
+import URLContext from '../context/URLContext';
+
 
 const Predictor = () => {
   const location = useLocation();
@@ -15,6 +17,7 @@ const Predictor = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [prediction, setPrediction] = useState(null);
+  const url = useContext(URLContext).Predictors
 
   useEffect(() => {
     if (modelMetadata) {
@@ -39,7 +42,7 @@ const Predictor = () => {
     setError(""); 
     try {
       const response = await axios.post(
-        "/predictors/api/predictors/predict", 
+        url+"/api/predictors/predict", 
         {
           "model name": modelName,  
           "sample": inputList.map((x) => Number(x)),        

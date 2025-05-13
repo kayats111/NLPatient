@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import * as XLSX from "xlsx";
 import DrawerMenu from '../DrawerMenu'; 
 // import { useDoctorLinks } from '../context/Context';
 import { useRoleLinks } from "../context/FetchContext";
 import axios from "axios"; // For sending HTTP requests
+import URLContext from '../context/URLContext';
 
 function AddPatientData() {
   const [data, setData] = useState([]);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(null); // For tracking upload progress
   const {links} = useRoleLinks();
-  
+  const url = useContext(URLContext).DataManager
   // Handle file drop
   const handleDrop = (event) => {
     event.preventDefault();
@@ -65,7 +66,7 @@ function AddPatientData() {
 
       try {
         // console.log(rowData)
-        await axios.post("/data_manager/api/data/add", rowData); // Adjust the backend URL if needed
+        await axios.post(url+"/api/data/add", rowData); // Adjust the backend URL if needed
         setUploadProgress((prev) => ({ ...prev, uploaded: prev.uploaded + 1 }));
       } catch (error) {
         console.error("Error uploading row:", rowData, error);
