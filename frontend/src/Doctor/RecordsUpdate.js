@@ -38,8 +38,7 @@ const RecordsUpdate = () => {
     }
   };
 
-  const isEditable = role === "doctor" || role === "admin";
-
+  const isEditable = role === "Doctor" || role === "Admin";
   return (
     <div className="update-container">
       <DrawerMenu links = {links} />

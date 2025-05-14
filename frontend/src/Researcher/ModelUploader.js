@@ -73,8 +73,20 @@ function ModelUploader() {
   };
 
   const handleHyperParamChange = (index, value) => {
+    let parsedValue;
+
+    if (value === "true") {
+      parsedValue = true;
+    } else if (value === "false") {
+      parsedValue = false;
+    } else if (!isNaN(value) && value.trim() !== "") {
+      parsedValue = Number(value); // allow integers/floats
+    } else {
+      parsedValue = value; // leave as string
+    }
+
     const updatedParams = [...hyperParams];
-    updatedParams[index] = value;
+    updatedParams[index] = parsedValue;
     setHyperParams(updatedParams);
   };
 

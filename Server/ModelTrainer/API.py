@@ -155,6 +155,7 @@ def runModel():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()),400
 
     return jsonify(response.toDict())
 
