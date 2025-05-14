@@ -25,34 +25,36 @@ function Login() {
         setRole("Admin")
         navigate("/choicepage")
       }
-      const approvalRes = await axios.post(url+"/api/user/check_approval", { email });
-  
-      if (approvalRes.data.value.pending) {
-        // 👇 Your custom logic here
-        // navigate("/approval-page")
-        navigate("/pending_approval")
-        // maybe navigate("/waiting-approval") or do something else
-        return;
-      }
-  
-      // 2. If not pending, proceed with login
-      const loginRes = await axios.post(url+"/api/user/login", { email, password });
-  
-      login(loginRes.data.value);
-      setRole(loginRes.data.value.role);
-  
-      const role = loginRes.data.value.role;
-      if (role === "Admin") {
-        setRole("Admin")
-        navigate("/choicepage");
-      }
-      else if (role === "Researcher") {
-        setRole("Researcher")
-        navigate("/researcher-main");
-      }
-      else if (role === "Doctor") {
-        setRole("Doctor")
-        navigate("/doctor-main");
+      else{
+        const approvalRes = await axios.post(url+"/api/user/check_approval", { email });
+    
+        if (approvalRes.data.value.pending) {
+          // 👇 Your custom logic here
+          // navigate("/approval-page")
+          navigate("/pending_approval")
+          // maybe navigate("/waiting-approval") or do something else
+          return;
+        }
+    
+        // 2. If not pending, proceed with login
+        const loginRes = await axios.post(url+"/api/user/login", { email, password });
+    
+        login(loginRes.data.value);
+        setRole(loginRes.data.value.role);
+    
+        const role = loginRes.data.value.role;
+        if (role === "Admin") {
+          setRole("Admin")
+          navigate("/choicepage");
+        }
+        else if (role === "Researcher") {
+          setRole("Researcher")
+          navigate("/researcher-main");
+        }
+        else if (role === "Doctor") {
+          setRole("Doctor")
+          navigate("/doctor-main");
+        }
       }
     } catch (error) {
       console.error("Error logging in:", error);
