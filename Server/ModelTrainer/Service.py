@@ -44,8 +44,6 @@ class Service:
 
         self.validate_new_model_file(file_name=file.filename)
 
-        # TODO: change to save in something destributed
-
     def add_model_parameters(self, model_name: str, hyper_parameters: List[str], model_type: str) -> None:
         if hyper_parameters is None:
             raise Exception("the hyper parameters list cannot be null")
@@ -106,6 +104,8 @@ class Service:
             fields_labels = self.run_scikit_model(learn_model=learn_model, data_loader=data_loader)
         elif model_type == "PYTORCH":
             fields_labels = self.run_pytorch_model(learn_model=learn_model, data_loader=data_loader)
+        else:
+            raise Exception("cannot run NLP models as a ML or DL model")
 
         fields = fields_labels["fields"]
         labels = fields_labels["labels"]       
@@ -275,7 +275,11 @@ class Service:
                 raise Exception(f"no {f} field in LearnModel class")
         
 
-        
+
+
+
+    # NLP Special Functionality
+    def runNLPModel(self)  
 
 
 
