@@ -112,8 +112,7 @@ class Service:
         fields = fields_labels["fields"]
         labels = fields_labels["labels"]       
 
-        self.addTrainedModel(model=learn_model.model, modelName=model_name,
-                             isScikit=model_type=="SCIKIT", isPyTorch=model_type=="PYTORCH")
+        self.addTrainedModel(model=learn_model.model, modelName=model_name, model_type=model_type)
         
         metaData: dict = self.addMetaData(modelName=model_name, meta_data=learn_model.meta_data,
                                           fields=fields, labels=labels, hyper_parameters=hyper_parameters,
@@ -194,16 +193,20 @@ class Service:
                 raise Exception(f"the provided parameter {param} is not a {model_name} hyper parameter")
 
     # NOTE: not for API use, but after training the model (lambda?)
-    # TODO: check after model training
-    def addTrainedModel(self, model, modelName: str, isScikit: bool=False, isPyTorch: bool=False) -> None:
-        if isScikit:
+    def addTrainedModel(self, model, modelName: str, model_type: str) -> None:
+        if model_type == "SCIKIT":
             with open(os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, modelName + ".pkl"),'wb') as f:
                 pickle.dump(model, f)
             return
         
-        if isPyTorch:
+        if model_type == "PYTORCH":
             save(model.state_dict(), os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, modelName + ".pth"))
             return
+        
+        if model_type == "BERT":
+            save_path = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER)
+            model.save_model(save_dir=save_path)
+
 
     # NOTE: not for API use, but after training the model (lambda?)
     # TODO: check after model training    
@@ -281,17 +284,45 @@ class Service:
 
 
     # NLP Special Functionality
-    def runNLPModel(self, model_name: str, labels: List[str], train_relative_size: int = 80,
+    def run_nlp_model(self, model_name: str, labels: List[str], train_relative_size: int = 80,
                     test_relative_size: int = 20, epochs: int = 1, batch_size: int = 1,
                     hyper_parameters: dict = {}):
         self.validate_hyper_parameters(model_name=model_name, hyper_parameters=hyper_parameters)
 
+        hyper_parameters["train_size"] = train_relative_size
+        hyper_parameters["test_size"] = test_relative_size
+        hyper_parameters["epochs"] = epochs
+        hyper_parameters["batch_size"] = batch_size
+
         learn_model = self.load_nlp_model(model_name=model_name, hyper_parameters=hyper_parameters)
 
-        # load data
+        data = self.load_text_records(labels=labels)
 
+        model_type: str = self.parameter_repository.read_type(model_name=model_name)
 
+        if model_type == "BERT":
+            self.run_bert(learn_model=learn_model, data=data)
+        else:
+            raise Exception("cannot run ML\DL models as NLP models")
+        
+        self.addTrainedModel(model=learn_model, modelName=model_name, model_type=model_type)
 
+        hyper_parameters.pop("train_size")
+        hyper_parameters.pop("test_size")
+        hyper_parameters.pop("epochs")
+        hyper_parameters.pop("batch_zise")
+
+        train_size: int = int(len(data["text"]) * train_relative_size)
+        test_size: int = int(len(data["text"]) * test_relative_size)
+
+        metadata: dict = self.addMetaData(modelName=model_name, meta_data=metadata, fields=["text"],
+                                          labels=labels, hyper_parameters=hyper_parameters,
+                                          model_type=model_type, train_relative_size=train_relative_size,
+                                          test_relative_size=test_relative_size, train_size=train_size,
+                                          test_size=test_size)
+        
+        return metadata
+        
     def load_nlp_model(self, model_name: str, hyper_parameters: dict):
         file_path = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, model_name + ".py")
 
@@ -327,9 +358,10 @@ class Service:
         if response.error:
             raise Exception(response.message)
         
-        return response
+        return response.value
 
-
+    def run_bert(self, learn_model, data: Dict[str, list]) -> Dict[str, List[str]]:
+        learn_model.run_model(data=data)
 
 
 
