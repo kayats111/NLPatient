@@ -1,5 +1,7 @@
 from pymongo import MongoClient
 import os
+import os
+os.environ.setdefault("mongo_url", "mongodb://localhost:27017")
 
 
 env_vars: dict = os.environ

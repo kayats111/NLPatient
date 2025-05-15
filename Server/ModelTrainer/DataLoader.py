@@ -1,5 +1,5 @@
 from typing import Dict, List, Tuple
-from Response import Response
+from Server.ModelTrainer.Response import Response
 import requests
 import random
 from numpy.typing import NDArray

@@ -7,11 +7,14 @@ from typing import Dict, List, Set
 from importlib import import_module
 import inspect
 
-from MetaDataRepository import MetaDataRepository
-from HyperParameterRepository import HyperParametersRepository
-from DataLoader import DataLoader
+from Server.ModelTrainer.MetaDataRepository import MetaDataRepository
+from Server.ModelTrainer.HyperParameterRepository import HyperParametersRepository
+from Server.ModelTrainer.DataLoader import DataLoader
 from numpy.typing import NDArray
 import numpy as np
+import os
+
+os.environ.setdefault("nfs_dir", "D:/default/nfs/path")
 
 NFS_DIRECTORY: str = os.environ["nfs_dir"]
 
