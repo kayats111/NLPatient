@@ -1,6 +1,7 @@
 from typing import List
-from MedicalRecord import MedicalRecord
-from Extensions import db
+from Server.DataManager.MedicalRecord import MedicalRecord
+from Server.DataManager.Extensions import db
+
 
 
 class Repository:

@@ -1,5 +1,5 @@
 from typing import List
-from Extensions import db
+from Server.DataManager.Extensions import db
 
 class MedicalRecord(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)

@@ -1,6 +1,7 @@
 from typing import Dict, List, Set
-from Repository import Repository
-from MedicalRecord import ATTRIBUTES, LABELS, TRAIN_ATTRIBUTES, MedicalRecord
+from Server.DataManager.Repository import Repository
+from Server.DataManager.MedicalRecord import ATTRIBUTES, LABELS, TRAIN_ATTRIBUTES, MedicalRecord
+
 
 
 class MedicalRecordService:
