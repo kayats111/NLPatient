@@ -1,9 +1,17 @@
 
+import sys
+import os
 import unittest
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from Server.Users.UserService import UserService
 from Server.DataManager.MedicalRecordService import MedicalRecordService
 from Server.ModelTrainer.Service import Service as ModelTrainerService
 from unittest.mock import patch
+from Server.DataManager.Repository import Repository
+
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 class TestUnitUserActions(unittest.TestCase):
     def setUp(self):
