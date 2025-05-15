@@ -22,6 +22,7 @@ sys.path.append(NFS_DIRECTORY)
 SAVED_FOLDER: str = "SavedModels"
 TRAINED_FOLDER: str = "TrainedModels"
 TEMPLATE_PATH: str = "LearnModel.py"
+NLP_TEMPLATE_PATH:str = "NLPTemplate.py"
 
 class Service:
 
@@ -207,7 +208,6 @@ class Service:
             save_path = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER)
             model.save_model(save_dir=save_path)
 
-
     # NOTE: not for API use, but after training the model (lambda?)
     # TODO: check after model training    
     def addMetaData(self, modelName: str, meta_data: dict, fields: List[str], labels: List[str],
@@ -253,14 +253,19 @@ class Service:
         return TEMPLATE_PATH
     
     def validate_new_model_file(self, file_name: str) -> None:
-        filePath = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, file_name + ".py")
-        
-
+        file_path = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, file_name)        
         module = import_module(SAVED_FOLDER + "." + file_name[:-3])
 
+        e_ml_dl = self.validate_ml_dl(module=module, file_path=file_path, file_name=file_name)
+        e_nlp = self.validate_nlp(module=module, file_path=file_path, file_name=file_name)
+
+        if e_ml_dl is not None and e_nlp is not None:
+            os.remove(file_path)
+            raise Exception(f"{e_ml_dl} or {e_nlp}")
+            
+    def validate_ml_dl(self, module, file_path, file_name) -> str:
         if not hasattr(module, "LearnModel") or not inspect.isclass(getattr(module, "LearnModel")):
-            os.remove(filePath)
-            raise Exception(f"no LearnModel class in {file_name}")
+            return f"no LearnModel class in {file_name}"
         
         learn_model_class = getattr(module, "LearnModel", None)
 
@@ -269,16 +274,36 @@ class Service:
 
         for c in callables:
             if not hasattr(learn_model_class, c) or not callable(getattr(learn_model_class, c)):
-                os.remove(filePath)
-                raise Exception(f"no {c} method in LearnModel class")
+                return f"no {c} method in LearnModel class"
             
         learn_model = learn_model_class(hyper_parameters=defaultdict(lambda: 0))
 
         for f in fields:
             if not hasattr(learn_model, f):
-                os.remove(filePath)
-                raise Exception(f"no {f} field in LearnModel class")
+                return f"no {f} field in LearnModel class"
+            
+        return None
         
+    def validate_nlp(self, module, file_path, file_name) -> str:
+        if not hasattr(module, "NLPTemplate") or not inspect.isclass(getattr(module, "NLPTemplate")):
+            return f"no NLPTemplate class in {file_name}"
+        
+        learn_model_class = getattr(module, "NLPTemplate", None)
+
+        callables: List[str] = ["run_model", "save_model", "__init__", "load_model", "infer"]
+        fields: List[str] = ["model", "hyper_parameters", "metadata"]
+
+        for c in callables:
+            if not hasattr(learn_model_class, c) or not callable(getattr(learn_model_class, c)):
+                return f"no {c} method in NLPTemplate class"
+            
+        learn_model = learn_model_class(hyper_parameters=defaultdict(lambda: 0))
+
+        for f in fields:
+            if not hasattr(learn_model, f):
+                return f"no {f} field in NLPTemplate class"
+            
+        return None
 
 
 
@@ -289,8 +314,8 @@ class Service:
                     hyper_parameters: dict = {}):
         self.validate_hyper_parameters(model_name=model_name, hyper_parameters=hyper_parameters)
 
-        hyper_parameters["train_size"] = train_relative_size
-        hyper_parameters["test_size"] = test_relative_size
+        hyper_parameters["train_size"] = train_relative_size / 100
+        hyper_parameters["test_size"] = test_relative_size / 100
         hyper_parameters["epochs"] = epochs
         hyper_parameters["batch_size"] = batch_size
 
@@ -310,12 +335,12 @@ class Service:
         hyper_parameters.pop("train_size")
         hyper_parameters.pop("test_size")
         hyper_parameters.pop("epochs")
-        hyper_parameters.pop("batch_zise")
+        hyper_parameters.pop("batch_size")
 
-        train_size: int = int(len(data["text"]) * train_relative_size)
-        test_size: int = int(len(data["text"]) * test_relative_size)
+        train_size: int = int(len(data["text"]) * (train_relative_size / 100))
+        test_size: int = int(len(data["text"]) * (test_relative_size / 100))
 
-        metadata: dict = self.addMetaData(modelName=model_name, meta_data=metadata, fields=["text"],
+        metadata: dict = self.addMetaData(modelName=model_name, meta_data=learn_model.metadata, fields=["text"],
                                           labels=labels, hyper_parameters=hyper_parameters,
                                           model_type=model_type, train_relative_size=train_relative_size,
                                           test_relative_size=test_relative_size, train_size=train_size,
@@ -363,7 +388,8 @@ class Service:
     def run_bert(self, learn_model, data: Dict[str, list]) -> Dict[str, List[str]]:
         learn_model.run_model(data=data)
 
-
+    def get_nlp_template(self) -> str:
+        return NLP_TEMPLATE_PATH
 
 
 
