@@ -1,4 +1,4 @@
-from DataManager.Extensions import db
+from Server.DataManager.Extensions import db
 
 class User(db.Model):
     __tablename__ = "users"

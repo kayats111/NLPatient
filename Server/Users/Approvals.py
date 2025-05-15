@@ -1,4 +1,4 @@
-from DataManager.Extensions import db
+from Server.DataManager.Extensions import db
 from datetime import datetime
 
 class Approval(db.Model):

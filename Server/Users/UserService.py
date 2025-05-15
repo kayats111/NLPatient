@@ -1,7 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from DataManager.Extensions import db
-from User import User
-from Approvals import Approval
+from Server.DataManager.Extensions import db
+from Server.Users.User import User
+from Server.Users.Approvals import Approval
+
 
 class UserService:
     def register(self, username: str, email: str, password: str, role : str) -> User:
