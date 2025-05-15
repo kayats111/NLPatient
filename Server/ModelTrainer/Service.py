@@ -6,9 +6,11 @@ from torch import save
 from typing import Dict, List, Set
 from importlib import import_module
 import inspect
+import requests
 
 from MetaDataRepository import MetaDataRepository
 from HyperParameterRepository import HyperParametersRepository
+from Response import Response
 from DataLoader import DataLoader
 from numpy.typing import NDArray
 import numpy as np
@@ -286,6 +288,10 @@ class Service:
 
         learn_model = self.load_nlp_model(model_name=model_name, hyper_parameters=hyper_parameters)
 
+        # load data
+
+
+
     def load_nlp_model(self, model_name: str, hyper_parameters: dict):
         file_path = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, model_name + ".py")
 
@@ -301,6 +307,30 @@ class Service:
         learn_model = learn_model_class(hyper_parameters=hyper_parameters)
 
         return learn_model
+
+    def load_text_records(self, labels: List[str]) -> Dict[str, list]:
+        data_manager: str = os.environ["data_manager"]
+        url: str = f"http://{data_manager}:3000/api/data/text/read/train"
+        headers: dict = {"Content_type": "application/json"}
+        body: dict = {"labels": labels}
+        
+        response: Response[dict]
+
+        api_response = requests.post(url=url, headers=headers, json=body)
+
+        if api_response.status_code != 200:
+            raise Exception("cannot fetch data")
+        
+        jj = api_response.json()
+        response = Response(value=jj["value"], error=jj["error"], message=jj["message"])
+
+        if response.error:
+            raise Exception(response.message)
+        
+        return response
+
+
+
 
 
 
