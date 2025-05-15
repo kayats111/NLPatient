@@ -279,7 +279,28 @@ class Service:
 
 
     # NLP Special Functionality
-    def runNLPModel(self)  
+    def runNLPModel(self, model_name: str, labels: List[str], train_relative_size: int = 80,
+                    test_relative_size: int = 20, epochs: int = 1, batch_size: int = 1,
+                    hyper_parameters: dict = {}):
+        self.validate_hyper_parameters(model_name=model_name, hyper_parameters=hyper_parameters)
+
+        learn_model = self.load_nlp_model(model_name=model_name, hyper_parameters=hyper_parameters)
+
+    def load_nlp_model(self, model_name: str, hyper_parameters: dict):
+        file_path = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, model_name + ".py")
+
+        if not os.path.isfile(file_path):
+            raise Exception(f"the model {model_name} does not exist")
+
+        module_name: str = SAVED_FOLDER + "." + model_name
+
+        module = import_module(module_name)
+
+        learn_model_class = getattr(module, "NLPTemplate", None)
+        
+        learn_model = learn_model_class(hyper_parameters=hyper_parameters)
+
+        return learn_model
 
 
 
