@@ -1,60 +1,60 @@
 
 import unittest
-from Server.Users.user_controller import UserController
+from Server.Users.UserService import UserService
 from Server.DataManager.MedicalRecordService import MedicalRecordService
 from Server.ModelTrainer.Service import Service as ModelTrainerService
 from unittest.mock import patch
 
 class TestUnitUserActions(unittest.TestCase):
     def setUp(self):
-        self.user_controller = UserController()
+        self.UserService = UserService()
 
     def test_register_user_valid(self):
         email = "mikiaho@example.com"
         password = "mikiaho123"
         role = "Researcher"
-        result = self.user_controller.register_user(email, password, role)
+        result = self.UserService.register(email, password, role)
         self.assertEqual(result["status"], "pending")
 
     def test_register_user_duplicate_email(self):
         email = "mikiaho@example.com"
         password = "password123"
         role = "Doctor"
-        self.user_controller.register_user(email, password, role)
-        result = self.user_controller.register_user(email, password, role)
+        self.UserService.register(email, password, role)
+        result = self.UserService.register(email, password, role)
         self.assertIn("already exists", result["error"])
 
     def test_register_user_invalid_password(self):
         email = "sagi@example.com"
         password = "123"
         role = "Researcher"
-        result = self.user_controller.register_user(email, password, role)
+        result = self.UserService.register(email, password, role)
         self.assertIn("Password does not meet", result["error"])
 
     def test_register_user_no_approval(self):
         email = "sagiaho@example.com"
         password = "ValidPass123"
         role = "Doctor"
-        self.user_controller.register_user(email, password, role)
-        login_result = self.user_controller.login(email, password)
+        self.UserService.register(email, password, role)
+        login_result = self.UserService.login(email, password)
         self.assertIn("approval", login_result["error"])
 
     def test_login_valid_user(self):
         email = "mikiaho@example.com"
         password = "ValidPass1234"
         role = "Doctor"
-        self.user_controller.register_user(email, password, role)
-        self.user_controller.approve_user(email, approve=True)
-        result = self.user_controller.login(email, password)
+        self.UserService.register(email, password, role)
+        self.UserService.isPendingApproval(email, approve=True)
+        result = self.UserService.login(email, password)
         self.assertTrue(result["success"])
 
     def test_login_invalid_credentials(self):
-        result = self.user_controller.login("nonexistent@example.com", "wrongpass")
+        result = self.UserService.login("nonexistent@example.com", "wrongpass")
         self.assertFalse(result["success"])
 
     def test_logout_user(self):
         # Assume logout clears session, here mocked as always successful
-        result = self.user_controller.logout()
+        result = self.UserService.logout()
         self.assertTrue(result["success"])
 
 
@@ -144,16 +144,16 @@ class TestUnitMedicalRecords(unittest.TestCase):
 
 class TestAcceptanceNLPatient(unittest.TestCase):
     def setUp(self):
-        self.user_controller = UserController()
+        self.UserService = UserService()
         self.medical_service = MedicalRecordService()
         self.model_service = ModelTrainerService()
 
     def test_acceptance_register_login(self):
         email = "acceptuser@example.com"
         password = "StrongPass1!"
-        self.user_controller.register_user(email, password, "Researcher")
-        self.user_controller.approve_user(email, approve=True)
-        result = self.user_controller.login(email, password)
+        self.UserService.register(email, password, "Researcher")
+        self.UserService.isPendingApproval(email, approve=True)
+        result = self.UserService.login(email, password)
         self.assertTrue(result["success"])
 
     def test_acceptance_add_and_read_record(self):
@@ -204,6 +204,6 @@ class TestAcceptanceNLPatient(unittest.TestCase):
                 self.medical_service.deleteRecord(1)
 
     def test_acceptance_system_load_handling(self):
-        with patch.object(self.user_controller, "login", return_value={"success": True}):
-            results = [self.user_controller.login(f"user{i}@ex.com", "password") for i in range(100)]
+        with patch.object(self.UserService, "login", return_value={"success": True}):
+            results = [self.UserService.login(f"user{i}@ex.com", "password") for i in range(100)]
             self.assertEqual(sum(r["success"] for r in results), 100)
