@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './TrainedModels.css';
@@ -13,15 +13,19 @@ const TrainedModels = () => {
   const [error, setError] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [modelMetadata, setModelMetadata] = useState(null);
+  const [compareModalVisible, setCompareModalVisible] = useState(false);
+  const [secondModel, setSecondModel] = useState(null);
+  const [secondModelMetadata, setSecondModelMetadata] = useState(null);
+
   const navigate = useNavigate();
   const { links } = useRoleLinks();
   const { role } = useRole();
-  const url = useContext(URLContext).Predictors
+  const url = useContext(URLContext).Predictors;
 
   useEffect(() => {
     const fetchModelNames = async () => {
       try {
-        const response = await axios.get(url+'/api/predictors/names');
+        const response = await axios.get(url + '/api/predictors/names');
         const data = response.data;
         if (data.error) {
           setError(data.message);
@@ -47,10 +51,7 @@ const TrainedModels = () => {
     }
 
     try {
-      // const response = await axios.get('/predictors/api/predictors/meta_data', {
-      //   params: { "model name": selectedModel }
-      // });
-      const response = await axios.post(url+'/api/predictors/meta_data',{
+      const response = await axios.post(url + '/api/predictors/meta_data', {
         "model name": selectedModel
       });
       if (response.data.error) {
@@ -71,7 +72,7 @@ const TrainedModels = () => {
     }
 
     try {
-      const response = await axios.delete(url+'/api/predictors/delete', {
+      const response = await axios.delete(url + '/api/predictors/delete', {
         data: { "model name": selectedModel }
       });
 
@@ -79,7 +80,7 @@ const TrainedModels = () => {
         setError(response.data.message);
       } else {
         setModelNames(modelNames.filter((modelName) => modelName !== selectedModel));
-        setSelectedModel(null); 
+        setSelectedModel(null);
         setError('Model deleted successfully');
       }
     } catch (err) {
@@ -95,28 +96,20 @@ const TrainedModels = () => {
 
     try {
       const response = await axios.post(
-        url+'/api/predictors/get_predictor',
-        { "model name": selectedModel }, // POST data goes in the body
-        { responseType: 'blob' } // Set response type to blob for file downloads
+        url + '/api/predictors/get_predictor',
+        { "model name": selectedModel },
+        { responseType: 'blob' }
       );
-      const disposition = response.headers['content-disposition']
+      const disposition = response.headers['content-disposition'];
       const filename = disposition.split('filename=')[1].replace(/"/g, '').trim();
-      console.log(filename)     
-      // if (contentDisposition) {
-      //   const match = contentDisposition.match(/filename="?([^"]+)"?/);
-      //   if (match && match[1]) {
-      //     filename = match[1]; // Use the filename provided by the server
-      //   }
-      // }
-      
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${filename}`); // Use the extracted filename
+      link.href = downloadUrl;
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
     } catch (err) {
       setError('Failed to download the model');
     }
@@ -125,6 +118,13 @@ const TrainedModels = () => {
   const handleModalClose = () => {
     setModalVisible(false);
     setModelMetadata(null);
+    setCompareModalVisible(false);
+    setSecondModel(null);
+    setSecondModelMetadata(null);
+  };
+
+  const handleCompareModels = () => {
+    setCompareModalVisible(true);
   };
 
   const handlePredictClick = async () => {
@@ -134,7 +134,7 @@ const TrainedModels = () => {
     }
 
     try {
-      const response = await axios.post(url+'/api/predictors/meta_data',{
+      const response = await axios.post(url + '/api/predictors/meta_data', {
         "model name": selectedModel
       });
 
@@ -149,6 +149,22 @@ const TrainedModels = () => {
       }
     } catch (err) {
       setError('Failed to fetch model metadata for prediction');
+    }
+  };
+
+  const handleSecondModelSelect = async (modelName) => {
+    setSecondModel(modelName);
+    try {
+      const response = await axios.post(url + '/api/predictors/meta_data', {
+        "model name": modelName
+      });
+      if (response.data.error) {
+        setError(response.data.message);
+      } else {
+        setSecondModelMetadata(response.data.value);
+      }
+    } catch (err) {
+      setError('Failed to fetch second model metadata');
     }
   };
 
@@ -213,34 +229,84 @@ const TrainedModels = () => {
         </div>
       )}
 
-      {modalVisible && (
+      {(modalVisible || compareModalVisible) && (
         <div className="overlay">
-          <div className="modal-content">
-            <h2>Model Metadata</h2>
-            <div className="metadata-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Field</th>
-                    <th>Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {modelMetadata && Object.entries(modelMetadata).map(([key, value]) => (
-                    <tr key={key}>
-                      <th>{key}</th>
-                      <td>{JSON.stringify(value, null, 2)}</td>
+          {modalVisible && (
+            <div className="modal-content main-modal">
+              <h2>{selectedModel} Metadata</h2>
+              <div className="metadata-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Field</th>
+                      <th>Value</th>
                     </tr>
+                  </thead>
+                  <tbody>
+                    {modelMetadata &&
+                      Object.entries(modelMetadata).map(([key, value]) => (
+                        <tr key={key}>
+                          <th>{key}</th>
+                          <td>{JSON.stringify(value, null, 2)}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="modal-actions">
+                <button className="close-modal" onClick={handleModalClose}>
+                  Exit
+                </button>
+                <button className="close-modal" onClick={handleCompareModels}>
+                  Compare
+                </button>
+              </div>
+            </div>
+          )}
+
+          {compareModalVisible && (
+            <div className="modals-content compare-modal">
+              <h2>Compare With Another Model</h2>
+              <div className="model-list">
+                {modelNames
+                  .filter((name) => name !== selectedModel)
+                  .map((name) => (
+                    <button
+                      key={name}
+                      className={`tlist-item ${secondModel === name ? 'active' : ''}`}
+                      onClick={() => handleSecondModelSelect(name)}
+                    >
+                      {name}
+                    </button>
                   ))}
-                </tbody>
-              </table>
+              </div>
+              {secondModelMetadata && (
+                <div className="metadata-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(secondModelMetadata).map(([key, value]) => (
+                        <tr key={key}>
+                          <th>{key}</th>
+                          <td>{JSON.stringify(value, null, 2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {/* <div className="modal-actions">
+                <button className="close-modal" onClick={() => setCompareModalVisible(false)}>
+                  Close Compare
+                </button>
+              </div> */}
             </div>
-            <div className="modal-actions">
-              <button className="close-modal" onClick={handleModalClose}>
-                Exit
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       )}
     </div>

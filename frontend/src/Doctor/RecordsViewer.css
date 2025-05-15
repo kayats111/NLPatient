@@ -41,7 +41,15 @@
 .records-table td:last-child {
   text-align: center;
 }
-
+button {
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+}
 /* ERROR MESSAGE */
 .error-message {
   color: red;
@@ -169,9 +177,17 @@
   border-radius: 5px;
   cursor: pointer;
 }
-
+.notSelected {
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    border: none;
+    background-color: #e3e1e1;
+    color: rgb(0, 0, 0);
+}
 .selectedF {
-  background-color: #0056b3;
+  background-color: rgb(24, 107, 195);
   color: white;
 }
 

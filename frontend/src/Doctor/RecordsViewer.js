@@ -1,15 +1,14 @@
-import React, { useEffect, useState,useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
-import DrawerMenu from '../DrawerMenu'; 
+import DrawerMenu from '../DrawerMenu';
 import { useRoleLinks } from "../context/FetchContext";
 import { useRole } from "../context/roleContext";
 import "./RecordsViewer.css";
 import URLContext from '../context/URLContext';
 
 const RecordsViewer = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [records, setRecords] = useState([]);
-  const [filteredRecords, setFilteredRecords] = useState([]); // This holds the filtered records
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const recordsPerPage = 10;
@@ -17,29 +16,28 @@ const RecordsViewer = () => {
   const { role } = useRole();
   const [selectedRecordId, setSelectedRecordId] = useState(null);
   const tempUrl = useContext(URLContext).DataManager;
-  const server_url = tempUrl+"/api/data";
-
+  const server_url = tempUrl + "/api/data";
 
   // Filter overlay state
   const [overlayVisible, setOverlayVisible] = useState(false);
-  const [selectedFields, setSelectedFields] = useState([]); // Tracks the fields selected by the user
-  const [temporaryFields, setTemporaryFields] = useState(["codingNum","id"]); // Temporary state for selected fields before Apply
+  const [selectedFields, setSelectedFields] = useState([]); // Fields to show
+  const [temporaryFields, setTemporaryFields] = useState(["codingNum", "id"]);
   const [allFields, setAllFields] = useState([]);
 
   useEffect(() => {
     const fetchRecords = async () => {
       try {
         const response = await fetch(server_url + "/read/records/all");
-        if (!response.ok) {
-          throw new Error(`Failed to fetch records: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Failed to fetch records: ${response.status}`);
         const data = await response.json();
-        setRecords(data);
-        setFilteredRecords(data); // Initialize filteredRecords with all records
 
-        // Set all fields for the filter overlay
+        setRecords(data);
+
         if (data.length > 0) {
-          setAllFields(Object.keys(data[0]));
+          const all = Object.keys(data[0]);
+          const userVisible = all.filter(k => k !== "id" && k !== "codingNum");
+          setAllFields(all);
+          setSelectedFields(["codingNum", ...userVisible]); // ✅ init fields to show
         }
       } catch (err) {
         setError(err.message);
@@ -48,9 +46,9 @@ const RecordsViewer = () => {
     fetchRecords();
   }, []);
 
-  // Calculate the current records to display
+  // Pagination
   const startIndex = currentPage * recordsPerPage;
-  const currentRecords = filteredRecords.slice(startIndex, startIndex + recordsPerPage);
+  const currentRecords = records.slice(startIndex, startIndex + recordsPerPage);
 
   const handlePrevious = () => {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
@@ -58,7 +56,7 @@ const RecordsViewer = () => {
 
   const handleNext = () => {
     setCurrentPage((prevPage) =>
-      prevPage < Math.ceil(filteredRecords.length / recordsPerPage) - 1 ? prevPage + 1 : prevPage
+      prevPage < Math.ceil(records.length / recordsPerPage) - 1 ? prevPage + 1 : prevPage
     );
   };
 
@@ -67,13 +65,11 @@ const RecordsViewer = () => {
   };
 
   const handleDelete = async (record) => {
-    let id = record.id;
+    const id = record.id;
     try {
-      const response = await fetch(server_url + `/delete/${id}`, {
+      await fetch(server_url + `/delete/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
       });
       alert(`Record ID: ${record.codingNum}, Deleted Successfully`);
       window.location.reload();
@@ -86,12 +82,11 @@ const RecordsViewer = () => {
     navigate("/doctor-predict");
   };
 
-  // Handle the filter overlay logic
+  // Filter Overlay
   const toggleFieldSelection = (field) => {
-    setTemporaryFields((prevTemporaryFields) =>
-      prevTemporaryFields.includes(field)
-        ? prevTemporaryFields.filter((item) => item !== field)
-        : [...prevTemporaryFields, field]
+    if (field === "codingNum" || field === "id") return;
+    setTemporaryFields((prev) =>
+      prev.includes(field) ? prev.filter(f => f !== field) : [...prev, field]
     );
   };
 
@@ -100,20 +95,11 @@ const RecordsViewer = () => {
   };
 
   const handleApplyFilter = () => {
-    // Apply the filter by selecting only the fields that are in temporaryFields
-    const filtered = records.map((record) => {
-      const filteredRecord = {};
-      Object.keys(record).forEach((key) => {
-        if (temporaryFields.includes(key) || temporaryFields.length === 0) {
-          filteredRecord[key] = record[key];
-        }
-      });
-      return filteredRecord;
-    });
-    setFilteredRecords(filtered); // Update filtered records
-    setSelectedFields(temporaryFields); // Save the selected fields
-    setTemporaryFields([])
-    setOverlayVisible(false); // Hide the overlay
+    const guaranteedFields = ["id", "codingNum", ...temporaryFields.filter(f => f !== "id" && f !== "codingNum")];
+    setSelectedFields(guaranteedFields);
+    setOverlayVisible(false);
+    setTemporaryFields(["codingNum", "id"]);
+    setCurrentPage(0);
   };
 
   const handleExitOverlay = () => {
@@ -124,26 +110,25 @@ const RecordsViewer = () => {
     <div>
       <DrawerMenu links={links} />
       <div className="center-container">
-      <h1>Patient Records</h1>
-        <button className="filter-button" onClick={() => setOverlayVisible(true)}>
-          Filter
-        </button>
+        <h1>Patient Records</h1>
+        <button className="filter-button" onClick={() => setOverlayVisible(true)}>Filter</button>
       </div>
+
       {overlayVisible && (
         <div className="filter-overlay">
           <div className="filter-container">
             <div className="field-buttons">
-            {allFields.map((field) => (
-              field !== "codingNum" && field !=="id" && (  // Check if the field is not "codingNum"
-                <button
-                  key={field}
-                  onClick={() => toggleFieldSelection(field)}
-                  className={temporaryFields.includes(field) ? "selectedF" : ""}
-                >
-                  {field}
-                </button>
+              {allFields.map((field) =>
+                field !== "codingNum" && field !== "id" && (
+                  <button
+                    key={field}
+                    onClick={() => toggleFieldSelection(field)}
+                    className={temporaryFields.includes(field) ? "selectedF" : "notSelected"}
+                  >
+                    {field}
+                  </button>
                 )
-            ))}
+              )}
             </div>
             <div className="overlay-buttons">
               <button onClick={handleApplyFilter}>Apply</button>
@@ -164,13 +149,12 @@ const RecordsViewer = () => {
                 <th>codingNum</th>
                 {currentRecords.length > 0 &&
                   Object.keys(currentRecords[0])
-                    .filter((key) => key !== "codingNum")
-                    .map((key) => {
-                      if (selectedFields.length === 0 || selectedFields.includes(key)) {
-                        return <th key={key}>{key}</th>;
-                      }
-                      return null;
-                    })}
+                    .filter((key) => key !== "codingNum" && key !== "id")
+                    .map((key) =>
+                      selectedFields.includes(key)
+                        ? <th key={key}>{key}</th>
+                        : null
+                    )}
               </tr>
             </thead>
             <tbody>
@@ -182,25 +166,26 @@ const RecordsViewer = () => {
                 >
                   <td>{record.codingNum}</td>
                   {Object.keys(record)
-                    .filter((key) => key !== "codingNum")
-                    .map((key) => {
-                      if (selectedFields.length === 0 || selectedFields.includes(key)) {
-                        return <td key={key}>{String(record[key])}</td>;
-                      }
-                      return null;
-                    })}
+                    .filter((key) => key !== "codingNum" && key !== "id")
+                    .map((key) =>
+                      selectedFields.includes(key) ? (
+                        <td key={key}>
+                          {typeof record[key] === 'object'
+                            ? JSON.stringify(record[key])
+                            : String(record[key])}
+                        </td>
+                      ) : null
+                    )}
                 </tr>
               ))}
             </tbody>
           </table>
 
           <div className="pagination-buttons">
-            <button onClick={handlePrevious} disabled={currentPage === 0}>
-              Previous
-            </button>
+            <button onClick={handlePrevious} disabled={currentPage === 0}>Previous</button>
             <button
               onClick={handleNext}
-              disabled={startIndex + recordsPerPage >= filteredRecords.length}
+              disabled={startIndex + recordsPerPage >= records.length}
             >
               Next
             </button>

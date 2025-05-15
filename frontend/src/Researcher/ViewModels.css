@@ -44,11 +44,11 @@
 }
 
 .list-item:hover {
-  background-color: #f1f1f1;
+  background-color: #bbbbbb;
 }
 
 .list-item.active {
-  background-color: #0ed812;
+  background-color:  #4caf50;;
   color: white;
 }
 

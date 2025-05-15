@@ -19,7 +19,6 @@ class DataLoader:
         self.fields: List[str] = fields
         self.labels: List[str] = labels
         self.sample_limit: int = sample_limit
-        
         self.train_batches: List[List[int]] = None
         self.test_batches: List[List[int]] = None
         self.curr_train_batch: int = -1

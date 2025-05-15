@@ -19,6 +19,8 @@ import WaitingApproval from './WaitingApproval.js';
 import { RoleProvider } from './context/roleContext.js';
 import { UserProvider } from './context/UserContext';
 import URLProvider from './context/URLProvider';
+import TextualPatientUpload from './Doctor/TextualPatientUpload.js';
+import TextualPatientRecords from './Doctor/TextualPatientRecords.js';
 
 
 function App() {
@@ -47,6 +49,8 @@ function App() {
                     <Route path="/model-viewer" element={<ViewModels />} />
                     <Route path="/approval-page" element={<ApprovalPage />} />
                     <Route path="/pending_approval" element={<WaitingApproval />} />
+                    <Route path="/textual-upload" element={<TextualPatientUpload />} />
+                    <Route path="/view-textual-records" element={<TextualPatientRecords />} />
                   </Routes>
                 </div>
               </Router>

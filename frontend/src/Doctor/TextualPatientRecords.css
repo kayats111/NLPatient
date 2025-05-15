@@ -1,0 +1,168 @@
+.textual-records-page {
+  max-width: 1000px;
+  margin: 80px auto;
+  padding: 20px;
+  text-align: center;
+  font-family: sans-serif;
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+}
+
+.records-table th,
+.records-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.records-table th {
+  background-color: #f4f4f4;
+}
+
+.records-table tr {
+  transition: background-color 0.2s ease, border-left 0.2s ease;
+}
+
+.selected {
+  background-color: #e0f0ff;
+  font-weight: bold;
+  border-left: 4px solid #007BFF;
+}
+
+.action-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: none;
+  background-color: #007BFF;
+  color: white;
+}
+
+button:hover {
+  background-color: #005dc0;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error {
+  color: red;
+  margin-top: 20px;
+}
+
+/* Modal Styling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center; /* center content vertically */
+  z-index: 9999;
+  padding: 40px 20px; /* fallback spacing */
+  box-sizing: border-box;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 25px 30px;
+  border-radius: 8px;
+  width: 60%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+/* Input fields inside modal */
+.input-field {
+  margin-bottom: 20px;
+  text-align: left;
+}
+.inputs-field {
+  margin-bottom: 20px;
+  text-align: left;
+}
+.inputs-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+.input-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+.input-field input,
+.input-field textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  resize: vertical;
+}
+.inputs-field input,
+.inputs-field textarea {
+  width: 100%;
+  height: 136px;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 25px;
+}
+
+.save-button {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.save-button:hover {
+  background-color: #0056b3;
+}
+
+.close-modal {
+  padding: 10px 20px;
+  background-color: #FF6347;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  background-color: #cc4d3a;
+}

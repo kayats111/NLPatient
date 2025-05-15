@@ -107,11 +107,11 @@ function ViewModels() {
 
     const dataToSend = { 
       "model name": selectedModel,
-      "trainRelativeSize":trainSize,
+      "trainRelativeSize":Number(trainSize),
       "testRelativeSize":testSize,
       "epochs":epoch,
       "batchSize":numOfBatches,
-      "sampleLimit":sampleLimit,
+      "sampleLimit":Number(sampleLimit),
       "hyperParameters" : hyperParams,
     };
     // Add fields and labels if they are selected
@@ -126,6 +126,9 @@ function ViewModels() {
 
     try {
       // Send the request to the backend
+      // for (const [key, value] of Object.entries(dataToSend)) {
+      //   console.log(`${key}: ${typeof value}`);
+      // }
       const response = await axios.post(urls.ModelTrainer+"/api/model_trainer/run_model", dataToSend);
       alert(`Model Name: ${selectedModel} has been trained successfully!`);
       handleModalClose();
@@ -321,7 +324,7 @@ function ViewModels() {
       {/* Modal for fields, labels, and train/test size */}
       {showModal && fieldsAndLabels && (
         <div className="overlay">
-          <div className="modal-content" ref={modalRef}>  {/* Add ref here */}
+          <div className="modal-content" ref={modalRef}>  {}
             {modalStep === 1 && (
               <>
                 <h2>Select Fields and Labels</h2>
@@ -425,12 +428,16 @@ function ViewModels() {
                       <div key={index} className="hyperparam-field">
                         <label htmlFor={param}>{param}</label>
                         <input
-                          type="number"
                           id={param}
                           onChange={(e) => {
+                            const value = e.target.value;
+
+                            // Check if the value is a valid number (ignores NaN, empty, mixed alphanumeric)
+                            const isValidNumber = !isNaN(value) && value.trim() !== "" && /^\d+(\.\d+)?$/.test(value);
+
                             setHyperParams((prevParams) => ({
                               ...prevParams,
-                              [param]: Number(e.target.value),
+                              [param]: isValidNumber ? Number(value) : value,
                             }));
                           }}
                         />

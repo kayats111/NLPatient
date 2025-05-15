@@ -13,6 +13,8 @@ export const DoctorMenuProvider = ({ children }) => {
     { name: "Doctor Dashboard", path: "/doctor-main" },
     { name: "Patient Records", path: "/records-viewer" },
     { name: "Add Patient Data", path: "/add-patient-data" },
+    { name: "View Textual Patient Records", path: "/view-textual-records"},
+    { name: "Add Textual Data", path: "/textual-upload" },
     { name: "Predict", path: "/train-page" },
   ]);
 
@@ -57,6 +59,8 @@ export const ResearcherMenuProvider = ({ children }) => {
       { name: "Doctor Dashboard", path: "/doctor-main" },
       { name: "Patient Records", path: "/records-viewer" },
       { name: "Add Patient Data", path: "/add-patient-data" },
+      { name: "View Textual Patient Records", path: "/view-textual-records"},
+      { name: "Add Textual Data", path: "/textual-upload" },
       { name: "Researcher Dashboard", path: "/researcher-main" },
       {name: "Add New Model",path:"/model_uploader"},
       { name: "View Models", path: "/model-viewer" },
