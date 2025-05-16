@@ -1,3 +1,4 @@
+from collections import defaultdict
 import os
 import sys
 from typing import List
@@ -13,6 +14,7 @@ sys.path.append(NFS_DIRECTORY)
 
 SAVED_FOLDER: str = "SavedModels"
 TRAINED_FOLDER: str = "TrainedModels"
+
 
 
 class Service:
@@ -62,7 +64,6 @@ class Service:
     def predict(self, predictorName: str, sample: List[float]) -> List[float]:
         metaData: dict = self.getMetaData(predictorName)
 
-        print(metaData)
         if metaData is None:
             raise Exception(f"no predictor named {predictorName}")
         
@@ -75,6 +76,8 @@ class Service:
             prediction = self.predictScikit(predictorName=predictorName, sample=sample)
         elif metaData["model type"] == "PYTORCH":
             prediction = self.predictPyTorch(predictorName=predictorName, sample=sample)
+        else:
+            raise Exception("NLP nodels cannot be run as ML/DL models")
 
         return prediction
         
@@ -126,7 +129,51 @@ class Service:
 
         return predictor
 
+    def nlp_infer(self, predictor_name: str, sample: str) -> List[float]:
+        metadata: dict = self.getMetaData(predictor_name)
 
+        if metadata is None:
+            raise Exception(f"no predictor named {predictor_name}")
+        
+        prediction: List[float] = []
+
+        if metadata["model type"] == "BERT":
+            prediction = self.infer_bert(predictor_name=predictor_name, sample=sample)
+        else:
+            raise Exception("ML/DL models cannot be run as NLP models")
+        
+        return prediction
+    
+    def infer_bert(self, predictor_name: str, sample: str) -> List[float]:
+        predictor = self.load_bert(predictor_name=predictor_name)
+
+        prediction: List[float] = predictor.infer(text=sample)
+
+        return prediction
+
+    def load_bert(self, predictor_name: str):
+        dir_path = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, predictor_name)
+        module_path = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, predictor_name + ".py")
+
+        if not os.path.isdir(dir_path):
+            raise Exception(f"the predictor {predictor_name} does not exist")
+        if not os.path.isfile(module_path):
+            raise Exception(f"the model {predictor_name} does not exist")
+        
+        module_name: str = SAVED_FOLDER + "." + module_name
+
+        module = import_module(module_name)
+
+        learn_model_class = getattr(module, "NLPTemplate", None)
+
+        predictor = learn_model_class(hyper_parameters=defaultdict(lambda: 0))
+
+        predictor.load_model(save_dir=dir_path)
+
+        return predictor
+        
+
+    
 
 
 
