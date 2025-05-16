@@ -33,7 +33,6 @@ def getPredictorNames() -> List[str]:
 
 @bp.route("/get_predictor", methods=["POST"])
 def getPredictor():
-
     data: dict = request.get_json()
 
     # data: dict = {"model name" : request.args.get("model name")}
@@ -45,7 +44,7 @@ def getPredictor():
     response: Response
     try:
         path = service.getPredictorPath(data["model name"])
-        return send_file(path,download_name=path.split("\\")[-1], as_attachment=True)
+        return send_file(path, download_name=path.split("\\")[-1], as_attachment=True)
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
@@ -72,7 +71,6 @@ def deletePredictor():
         app.log_exception(e)
 
     return jsonify(response.toDict())
-
 
 
 @bp.route("/meta_data", methods=["POST"])
@@ -111,6 +109,26 @@ def predict():
 
     try:
         prediction: List[float] = service.predict(predictorName=data["model name"], sample=data["sample"])
+        response = Response(value=prediction)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+    
+    return jsonify(response.toDict())
+
+
+@bp.route("/text/infer", methods=["POST"])
+def nlp_infer():
+    data: dict = request.get_json()
+    schema: Set[str] = {"model name", "sample"}
+
+    if not validateRequestSchema(data, schema):
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
+    
+    response: Response[List[float]]
+
+    try:
+        prediction: List[float] = service.nlp_infer(predictor_name=data["model name"], sample=data["sample"])
         response = Response(value=prediction)
     except Exception as e:
         response = Response(error=True, message=str(e))
