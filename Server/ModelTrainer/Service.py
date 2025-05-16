@@ -205,7 +205,7 @@ class Service:
             return
         
         if model_type == "BERT":
-            save_path = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER)
+            save_path = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, modelName)
             model.save_model(save_dir=save_path)
 
     # NOTE: not for API use, but after training the model (lambda?)
