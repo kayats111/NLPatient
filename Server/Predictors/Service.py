@@ -7,6 +7,8 @@ from MetaDataRepository import MetaDataRepository
 from importlib import import_module
 import torch
 import numpy as np
+import zipfile
+import tempfile
 
 NFS_DIRECTORY: str = os.environ["nfs_dir"]
 
@@ -20,8 +22,8 @@ TRAINED_FOLDER: str = "TrainedModels"
 class Service:
 
     def __init__(self):
-        os.makedirs(SAVED_FOLDER, exist_ok=True)
-        os.makedirs(TRAINED_FOLDER, exist_ok=True)
+        os.makedirs(NFS_DIRECTORY + "/" + SAVED_FOLDER, exist_ok=True)
+        os.makedirs(NFS_DIRECTORY + "/" + TRAINED_FOLDER, exist_ok=True)
         
         self.repository: MetaDataRepository = MetaDataRepository()
 
@@ -36,14 +38,19 @@ class Service:
             raise Exception(f"the predictor {name} does not exist")
         
         metaData: dict = self.getMetaData(name)
+
+        if metaData["model type"] == "SCIKIT" or metaData["model type"] == "PYTORCH":
+            filename: str = name
+            filename += ".pkl" if metaData["model type"] == "SCIKIT" else ".pth"
+
+            filePath = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, filename)
+
+            return filePath
+        elif metaData["model type"] == "BERT":
+            raise Exception("cannot download BERT models")
+        else:
+            raise Exception("the model type is not recognized")
         
-        filename: str = name
-        filename += ".pkl" if metaData["model type"] == "SCIKIT" else ".pth"
-
-        filePath = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, filename)
-
-        return filePath
-    
     def deletePredictor(self, name: str) -> None:
         if not self.isPredictorExists(name):
             raise Exception(f"the predictor {name} does not exist")

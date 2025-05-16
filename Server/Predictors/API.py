@@ -33,7 +33,6 @@ def getPredictorNames() -> List[str]:
 
 @bp.route("/get_predictor", methods=["POST"])
 def getPredictor():
-
     data: dict = request.get_json()
 
     # data: dict = {"model name" : request.args.get("model name")}
@@ -45,7 +44,7 @@ def getPredictor():
     response: Response
     try:
         path = service.getPredictorPath(data["model name"])
-        return send_file(path,download_name=path.split("\\")[-1], as_attachment=True)
+        return send_file(path, download_name=path.split("\\")[-1], as_attachment=True)
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
@@ -72,7 +71,6 @@ def deletePredictor():
         app.log_exception(e)
 
     return jsonify(response.toDict())
-
 
 
 @bp.route("/meta_data", methods=["POST"])
