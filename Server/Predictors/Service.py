@@ -160,7 +160,7 @@ class Service:
         if not os.path.isfile(module_path):
             raise Exception(f"the model {predictor_name} does not exist")
         
-        module_name: str = SAVED_FOLDER + "." + module_name
+        module_name: str = SAVED_FOLDER + "." + predictor_name
 
         module = import_module(module_name)
 

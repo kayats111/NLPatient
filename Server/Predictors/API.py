@@ -119,6 +119,26 @@ def predict():
     return jsonify(response.toDict())
 
 
+@bp.route("/text/infer", methods=["POST"])
+def nlp_infer():
+    data: dict = request.get_json()
+    schema: Set[str] = {"model name", "sample"}
+
+    if not validateRequestSchema(data, schema):
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400
+    
+    response: Response[List[float]]
+
+    try:
+        prediction: List[float] = service.nlp_infer(predictor_name=data["model name"], sample=data["sample"])
+        response = Response(value=prediction)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+    
+    return jsonify(response.toDict())
+
+
 def validateRequestSchema(request: dict, schema: Set[str]) -> bool:
     for field in schema:
         if field not in request:
