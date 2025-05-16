@@ -7,8 +7,7 @@ from MetaDataRepository import MetaDataRepository
 from importlib import import_module
 import torch
 import numpy as np
-import zipfile
-import tempfile
+import shutil
 
 NFS_DIRECTORY: str = os.environ["nfs_dir"]
 
@@ -57,12 +56,22 @@ class Service:
         
         metaData: dict = self.getMetaData(name)
 
-        filename: str = name
-        filename += ".pkl" if metaData["model type"] == "SCIKIT" else ".pth"
+        file_dir_name: str = name
+
+        if metaData["model type"] == "SCIKIT":
+            file_dir_name += ".pkl"
+            path = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, file_dir_name)
+            os.remove(path)
+        elif metaData["model type"] == "PYTORCH":
+            file_dir_name += ".pth"
+            path = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, file_dir_name)
+            os.remove(path)
+        elif metaData["model type"] == "BERT":
+            path = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, file_dir_name)
+            shutil.rmtree(path)
+        else:
+            raise Exception("unsupported model type")
         
-        filePath = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, filename)
-        
-        os.remove(filePath)
         self.repository.removeMetaData(name)
         
     def getMetaData(self, name: str) -> dict:
