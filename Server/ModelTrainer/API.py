@@ -40,8 +40,10 @@ def addModel():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
+        
 
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 @bp.route("/add/parameters", methods=["POST"])
@@ -60,8 +62,9 @@ def add_model_hyper_parameters():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
 
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 @bp.route("/get_model", methods=["POST"])
@@ -77,17 +80,17 @@ def getModel():
 
     try:
         path = service.getModelPath(data["model name"])
-        return send_file(path, as_attachment=True)
+        return send_file(path, as_attachment=True), 200
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
-        return jsonify(response.toDict())
+        return jsonify(response.toDict()), 400
     
 
 @bp.route("/get_names_parameters", methods=["GET"])
 def getModelNamesAndParameters():
     names_parameters: List[dict] = service.get_names_and_parameters()
-    return jsonify(Response(value=names_parameters).toDict())
+    return jsonify(Response(value=names_parameters).toDict()), 200
 
 
 @bp.route("/delete_model", methods=["DELETE"])
@@ -107,8 +110,9 @@ def deleteModelFile():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
     
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 @bp.route("/run_model", methods=["POST"])  # Change to POST since we're sending data
@@ -157,7 +161,7 @@ def runModel():
         app.log_exception(e)
         return jsonify(response.toDict()), 400
 
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 @bp.route("/template", methods=["GET"])
@@ -166,11 +170,11 @@ def getTemplate():
 
     try:
         path = service.getTemplatePath()
-        return send_file(path, as_attachment=True)
+        return send_file(path, as_attachment=True), 200
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
-        return jsonify(response.toDict())
+        return jsonify(response.toDict()), 400
 
 
 @bp.route("/text/run", methods=["POST"])
@@ -195,7 +199,7 @@ def run_nlp_model():
         app.log_exception(e)
         return jsonify(response.toDict()), 400
     
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 @bp.route("/text/template", methods=["GET"])
@@ -204,11 +208,11 @@ def get_nlp_template():
 
     try:
         path = service.get_nlp_template()
-        return send_file(path, as_attachment=True)
+        return send_file(path, as_attachment=True), 200
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
-        return jsonify(response.toDict())
+        return jsonify(response.toDict()), 400
 
 
 
