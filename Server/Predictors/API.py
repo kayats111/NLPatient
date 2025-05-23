@@ -28,7 +28,7 @@ def welcome() -> str:
 
 @bp.route("/names", methods=["GET"])
 def getPredictorNames() -> List[str]:
-    return jsonify(Response(value=service.getPredictorNames()).toDict())
+    return jsonify(Response(value=service.getPredictorNames()).toDict()), 200
 
 
 @bp.route("/get_predictor", methods=["POST"])
@@ -44,11 +44,11 @@ def getPredictor():
     response: Response
     try:
         path = service.getPredictorPath(data["model name"])
-        return send_file(path, download_name=path.split("\\")[-1], as_attachment=True)
+        return send_file(path, download_name=path.split("\\")[-1], as_attachment=True), 200
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
-        return jsonify(response.toDict())
+        return jsonify(response.toDict()), 400
     
 
 @bp.route("/delete", methods=["DELETE"])
@@ -69,8 +69,9 @@ def deletePredictor():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
 
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 @bp.route("/meta_data", methods=["POST"])
@@ -91,10 +92,11 @@ def getMetaData():
 
     if metaData is None:
         response = Response(error=True, message=f"the predictor {data['model name']} does not exists")
+        return jsonify(response.toDict()), 400
     else:
         response = Response(value=metaData)
 
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 @bp.route("/predict", methods=["POST"])
@@ -113,8 +115,9 @@ def predict():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
     
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 @bp.route("/text/infer", methods=["POST"])
@@ -133,8 +136,9 @@ def nlp_infer():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
     
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 def validateRequestSchema(request: dict, schema: Set[str]) -> bool:
