@@ -43,11 +43,6 @@ for record in records:
     record.pop("noconhospi")
     record.pop("futurediag")
     record.pop("psychotic2nd")
-    record.pop("any")
-    record.pop("affective")
-    record.pop("bipolar")
-    record.pop("schizophreniaSpectr")
-    record.pop("codingNum")
 
 
 for index, record in enumerate(records):
@@ -55,6 +50,12 @@ for index, record in enumerate(records):
 
     for key, val in record.items():
         print(f"{key}: {val}")
+
+    print("\nLabels:")
+    print(f"any: {record["any"]}")
+    print(f"affective: {record["affective"]}")
+    print(f"bipolar: {record["bipolar"]}")
+    print(f"schizophreniaSpectr: {record["schizophreniaSpectr"]}")
 
     print(f"---------------------{index}---------------------\n\n")
 
