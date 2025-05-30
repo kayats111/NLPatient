@@ -52,15 +52,22 @@ for index, record in enumerate(records):
         print(f"{key}: {val}")
 
     print("\nLabels:")
-    print(f"any: {record["any"]}")
-    print(f"affective: {record["affective"]}")
-    print(f"bipolar: {record["bipolar"]}")
-    print(f"schizophreniaSpectr: {record["schizophreniaSpectr"]}")
+    print(f"any: {record['any']}")
+    print(f"affective: {record['affective']}")
+    print(f"bipolar: {record['bipolar']}")
+    print(f"schizophreniaSpectr: {record['schizophreniaSpectr']}")
 
     print(f"---------------------{index}---------------------\n\n")
 
-    print("press enter for the next record")
-    input()
+    print("Insert the generated text:")
+    text:str = input()
     print("\n")
+
+    print(text)
+    print("\n")
+
+    input()
+
+    # send to DataManager
 
 
