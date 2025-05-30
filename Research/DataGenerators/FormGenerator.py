@@ -47,7 +47,19 @@ for record in records:
     record.pop("affective")
     record.pop("bipolar")
     record.pop("schizophreniaSpectr")
+    record.pop("codingNum")
 
-    print("-------------------------------------------------")
-    print(record)
-    print("-------------------------------------------------")
+
+for index, record in enumerate(records):
+    print(f"---------------------{index}---------------------")
+
+    for key, val in record.items():
+        print(f"{key}: {val}")
+
+    print(f"---------------------{index}---------------------\n\n")
+
+    print("press enter for the next record")
+    input()
+    print("\n")
+
+
