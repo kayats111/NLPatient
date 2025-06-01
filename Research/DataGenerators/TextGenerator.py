@@ -23,6 +23,8 @@ fields = ['codingNum', 'yearOfEvent', 'age',
 
 records = []
 
+labels: set = {"any", "affective", "bipolar", "schizophreniaSpectr", "codingNum"}
+
 
 # read records from db
 try:
@@ -49,18 +51,14 @@ for index, record in enumerate(records):
     print(f"---------------------{index}---------------------")
 
     for key, val in record.items():
-        print(f"{key}: {val}")
+        if key not in labels:
+            print(f"{key}: {val}")
 
     print(f"---------------------{index}---------------------\n\n")
 
     print("Insert the generated text:")
     text:str = input()
     print("\n")
-
-    # print(text)
-    # print("\n")
-
-    # input()
 
     # send to DataManager
     response: Response[dict]  # fetch
