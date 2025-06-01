@@ -108,65 +108,65 @@ class NLPTemplate:
 
 
 
-data = {
-    'text': [
-        "The team won the match",
-        "The economy is shrinking",
-        "Election results are in",
-        "A new player was signed",
-        "Stock prices are down",
-        "The government passed a new bill",
-        "Bitcoin hits new all-time high",
-        "The tennis champion retired today",
-        "Tech companies are launching AI products",
-        "The central bank raised interest rates",
-        "Football season is starting soon",
-        "Major layoffs in the tech industry",
-        "New tax laws affect small businesses",
-        "Olympic games delayed due to weather",
-        "Senate debates climate change policy"
-    ],
-    'label': [
-        [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
-        [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
-        [0.0, 0.0, 1.0, 0.0, 0.0],  # Politics
-        [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
-        [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
-        [0.0, 0.0, 1.0, 0.0, 0.0],  # Politics
-        [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
-        [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
-        [0.0, 0.0, 0.0, 1.0, 0.0],  # Tech
-        [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
-        [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
-        [0.0, 1.0, 0.0, 1.0, 0.0],  # Economics + Tech
-        [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
-        [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
-        [0.0, 0.0, 1.0, 0.0, 0.0]   # Politics
-    ]
-}
+# data = {
+#     'text': [
+#         "The team won the match",
+#         "The economy is shrinking",
+#         "Election results are in",
+#         "A new player was signed",
+#         "Stock prices are down",
+#         "The government passed a new bill",
+#         "Bitcoin hits new all-time high",
+#         "The tennis champion retired today",
+#         "Tech companies are launching AI products",
+#         "The central bank raised interest rates",
+#         "Football season is starting soon",
+#         "Major layoffs in the tech industry",
+#         "New tax laws affect small businesses",
+#         "Olympic games delayed due to weather",
+#         "Senate debates climate change policy"
+#     ],
+#     'label': [
+#         [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
+#         [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
+#         [0.0, 0.0, 1.0, 0.0, 0.0],  # Politics
+#         [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
+#         [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
+#         [0.0, 0.0, 1.0, 0.0, 0.0],  # Politics
+#         [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
+#         [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
+#         [0.0, 0.0, 0.0, 1.0, 0.0],  # Tech
+#         [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
+#         [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
+#         [0.0, 1.0, 0.0, 1.0, 0.0],  # Economics + Tech
+#         [0.0, 1.0, 0.0, 0.0, 1.0],  # Economics + Finance
+#         [1.0, 0.0, 0.0, 0.0, 0.0],  # Sports
+#         [0.0, 0.0, 1.0, 0.0, 0.0]   # Politics
+#     ]
+# }
 
-hyper_parameters = {
-    "test_size": 0.2,
-    "seed": 42,
-    "batch_size": 2,
-    "epochs": 3
-}
+# hyper_parameters = {
+#     "test_size": 0.2,
+#     "seed": 42,
+#     "batch_size": 2,
+#     "epochs": 3
+# }
 
-save_dir: str = "./saved/BERTClassifier"
-text = "AI is transforming basketball strategies"
+# save_dir: str = "./saved/BERTClassifier"
+# text = "AI is transforming basketball strategies"
 
-bert = NLPTemplate(hyper_parameters=hyper_parameters)
+# bert = NLPTemplate(hyper_parameters=hyper_parameters)
 
-bert.run_model(data=data)
-bert.save_model(save_dir=save_dir)
+# bert.run_model(data=data)
+# bert.save_model(save_dir=save_dir)
 
-bert.load_model(save_dir=save_dir)
-ans: List[float] = bert.infer(text=text)
+# bert.load_model(save_dir=save_dir)
+# ans: List[float] = bert.infer(text=text)
 
-print(ans)
+# print(ans)
 
 
-print("done")
+# print("done")
 
 
 

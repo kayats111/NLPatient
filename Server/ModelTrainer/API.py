@@ -40,8 +40,10 @@ def addModel():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
+        
 
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 @bp.route("/add/parameters", methods=["POST"])
@@ -60,8 +62,9 @@ def add_model_hyper_parameters():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
 
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 @bp.route("/get_model", methods=["POST"])
@@ -77,17 +80,17 @@ def getModel():
 
     try:
         path = service.getModelPath(data["model name"])
-        return send_file(path, as_attachment=True)
+        return send_file(path, as_attachment=True), 200
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
-        return jsonify(response.toDict())
+        return jsonify(response.toDict()), 400
     
 
 @bp.route("/get_names_parameters", methods=["GET"])
 def getModelNamesAndParameters():
     names_parameters: List[dict] = service.get_names_and_parameters()
-    return jsonify(Response(value=names_parameters).toDict())
+    return jsonify(Response(value=names_parameters).toDict()), 200
 
 
 @bp.route("/delete_model", methods=["DELETE"])
@@ -107,8 +110,9 @@ def deleteModelFile():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
     
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 @bp.route("/run_model", methods=["POST"])  # Change to POST since we're sending data
@@ -155,9 +159,9 @@ def runModel():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
-        return jsonify(response.toDict()),400
+        return jsonify(response.toDict()), 400
 
-    return jsonify(response.toDict())
+    return jsonify(response.toDict()), 200
 
 
 @bp.route("/template", methods=["GET"])
@@ -166,11 +170,49 @@ def getTemplate():
 
     try:
         path = service.getTemplatePath()
-        return send_file(path, as_attachment=True)
+        return send_file(path, as_attachment=True), 200
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
-        return jsonify(response.toDict())
+        return jsonify(response.toDict()), 400
+
+
+@bp.route("/text/run", methods=["POST"])
+def run_nlp_model():
+    data: dict = request.get_json()
+    schema: Set[str] = {"model name", "labels", "trainRelativeSize", "testRelativeSize", "epochs", "batchSize", "hyperParameters"}
+
+    if not validateRequestSchema(request=data, schema=schema):
+        return jsonify(Response(error=True, message="bad request body").toDict()), 400    
+
+    response: Response[dict]
+
+    try:
+        metadata: dict = service.run_nlp_model(model_name=data["model name"], labels=data["labels"],
+                                               train_relative_size=data["trainRelativeSize"],
+                                               test_relative_size=data["testRelativeSize"],
+                                               epochs=data["epochs"], batch_size=data["batchSize"],
+                                               hyper_parameters=data["hyperParameters"])
+        response = Response(value=metadata)
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+        return jsonify(response.toDict()), 400
+    
+    return jsonify(response.toDict()), 200
+
+
+@bp.route("/text/template", methods=["GET"])
+def get_nlp_template():
+    response: Response[bool]
+
+    try:
+        path = service.get_nlp_template()
+        return send_file(path, as_attachment=True), 200
+    except Exception as e:
+        response = Response(error=True, message=str(e))
+        app.log_exception(e)
+        return jsonify(response.toDict()), 400
 
 
 

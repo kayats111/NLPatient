@@ -6,9 +6,11 @@ from torch import save
 from typing import Dict, List, Set
 from importlib import import_module
 import inspect
+import requests
 
 from MetaDataRepository import MetaDataRepository
 from HyperParameterRepository import HyperParametersRepository
+from Response import Response
 from DataLoader import DataLoader
 from numpy.typing import NDArray
 import numpy as np
@@ -20,6 +22,7 @@ sys.path.append(NFS_DIRECTORY)
 SAVED_FOLDER: str = "SavedModels"
 TRAINED_FOLDER: str = "TrainedModels"
 TEMPLATE_PATH: str = "LearnModel.py"
+NLP_TEMPLATE_PATH:str = "NLPTemplate.py"
 
 class Service:
 
@@ -43,8 +46,6 @@ class Service:
             f.write(file.read().decode("utf-8"))
 
         self.validate_new_model_file(file_name=file.filename)
-
-        # TODO: change to save in something destributed
 
     def add_model_parameters(self, model_name: str, hyper_parameters: List[str], model_type: str) -> None:
         if hyper_parameters is None:
@@ -106,12 +107,13 @@ class Service:
             fields_labels = self.run_scikit_model(learn_model=learn_model, data_loader=data_loader)
         elif model_type == "PYTORCH":
             fields_labels = self.run_pytorch_model(learn_model=learn_model, data_loader=data_loader)
+        else:
+            raise Exception("cannot run NLP models as a ML or DL model")
 
         fields = fields_labels["fields"]
         labels = fields_labels["labels"]       
 
-        self.addTrainedModel(model=learn_model.model, modelName=model_name,
-                             isScikit=model_type=="SCIKIT", isPyTorch=model_type=="PYTORCH")
+        self.addTrainedModel(model=learn_model.model, modelName=model_name, model_type=model_type)
         
         metaData: dict = self.addMetaData(modelName=model_name, meta_data=learn_model.meta_data,
                                           fields=fields, labels=labels, hyper_parameters=hyper_parameters,
@@ -192,16 +194,19 @@ class Service:
                 raise Exception(f"the provided parameter {param} is not a {model_name} hyper parameter")
 
     # NOTE: not for API use, but after training the model (lambda?)
-    # TODO: check after model training
-    def addTrainedModel(self, model, modelName: str, isScikit: bool=False, isPyTorch: bool=False) -> None:
-        if isScikit:
+    def addTrainedModel(self, model, modelName: str, model_type: str) -> None:
+        if model_type == "SCIKIT":
             with open(os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, modelName + ".pkl"),'wb') as f:
                 pickle.dump(model, f)
             return
         
-        if isPyTorch:
+        if model_type == "PYTORCH":
             save(model.state_dict(), os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, modelName + ".pth"))
             return
+        
+        if model_type == "BERT":
+            save_path = os.path.join(NFS_DIRECTORY, TRAINED_FOLDER, modelName)
+            model.save_model(save_dir=save_path)
 
     # NOTE: not for API use, but after training the model (lambda?)
     # TODO: check after model training    
@@ -248,14 +253,19 @@ class Service:
         return TEMPLATE_PATH
     
     def validate_new_model_file(self, file_name: str) -> None:
-        filePath = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, file_name + ".py")
-        
-
+        file_path = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, file_name)        
         module = import_module(SAVED_FOLDER + "." + file_name[:-3])
 
+        e_ml_dl = self.validate_ml_dl(module=module, file_path=file_path, file_name=file_name)
+        e_nlp = self.validate_nlp(module=module, file_path=file_path, file_name=file_name)
+
+        if e_ml_dl is not None and e_nlp is not None:
+            os.remove(file_path)
+            raise Exception(f"{e_ml_dl} or {e_nlp}")
+            
+    def validate_ml_dl(self, module, file_path, file_name) -> str:
         if not hasattr(module, "LearnModel") or not inspect.isclass(getattr(module, "LearnModel")):
-            os.remove(filePath)
-            raise Exception(f"no LearnModel class in {file_name}")
+            return f"no LearnModel class in {file_name}"
         
         learn_model_class = getattr(module, "LearnModel", None)
 
@@ -264,19 +274,122 @@ class Service:
 
         for c in callables:
             if not hasattr(learn_model_class, c) or not callable(getattr(learn_model_class, c)):
-                os.remove(filePath)
-                raise Exception(f"no {c} method in LearnModel class")
+                return f"no {c} method in LearnModel class"
             
         learn_model = learn_model_class(hyper_parameters=defaultdict(lambda: 0))
 
         for f in fields:
             if not hasattr(learn_model, f):
-                os.remove(filePath)
-                raise Exception(f"no {f} field in LearnModel class")
+                return f"no {f} field in LearnModel class"
+            
+        return None
         
-
+    def validate_nlp(self, module, file_path, file_name) -> str:
+        if not hasattr(module, "NLPTemplate") or not inspect.isclass(getattr(module, "NLPTemplate")):
+            return f"no NLPTemplate class in {file_name}"
         
+        learn_model_class = getattr(module, "NLPTemplate", None)
 
+        callables: List[str] = ["run_model", "save_model", "__init__", "load_model", "infer"]
+        fields: List[str] = ["model", "hyper_parameters", "metadata"]
+
+        for c in callables:
+            if not hasattr(learn_model_class, c) or not callable(getattr(learn_model_class, c)):
+                return f"no {c} method in NLPTemplate class"
+            
+        learn_model = learn_model_class(hyper_parameters=defaultdict(lambda: 0))
+
+        for f in fields:
+            if not hasattr(learn_model, f):
+                return f"no {f} field in NLPTemplate class"
+            
+        return None
+
+
+
+
+    # NLP Special Functionality
+    def run_nlp_model(self, model_name: str, labels: List[str], train_relative_size: int = 80,
+                    test_relative_size: int = 20, epochs: int = 1, batch_size: int = 1,
+                    hyper_parameters: dict = {}):
+        self.validate_hyper_parameters(model_name=model_name, hyper_parameters=hyper_parameters)
+
+        hyper_parameters["train_size"] = train_relative_size / 100
+        hyper_parameters["test_size"] = test_relative_size / 100
+        hyper_parameters["epochs"] = epochs
+        hyper_parameters["batch_size"] = batch_size
+
+        learn_model = self.load_nlp_model(model_name=model_name, hyper_parameters=hyper_parameters)
+
+        data = self.load_text_records(labels=labels)
+
+        model_type: str = self.parameter_repository.read_type(model_name=model_name)
+
+        if model_type == "BERT":
+            self.run_bert(learn_model=learn_model, data=data)
+        else:
+            raise Exception("cannot run ML\DL models as NLP models")
+        
+        self.addTrainedModel(model=learn_model, modelName=model_name, model_type=model_type)
+
+        hyper_parameters.pop("train_size")
+        hyper_parameters.pop("test_size")
+        hyper_parameters.pop("epochs")
+        hyper_parameters.pop("batch_size")
+
+        train_size: int = int(len(data["text"]) * (train_relative_size / 100))
+        test_size: int = int(len(data["text"]) * (test_relative_size / 100))
+
+        metadata: dict = self.addMetaData(modelName=model_name, meta_data=learn_model.metadata, fields=["text"],
+                                          labels=labels, hyper_parameters=hyper_parameters,
+                                          model_type=model_type, train_relative_size=train_relative_size,
+                                          test_relative_size=test_relative_size, train_size=train_size,
+                                          test_size=test_size)
+        
+        return metadata
+        
+    def load_nlp_model(self, model_name: str, hyper_parameters: dict):
+        file_path = os.path.join(NFS_DIRECTORY, SAVED_FOLDER, model_name + ".py")
+
+        if not os.path.isfile(file_path):
+            raise Exception(f"the model {model_name} does not exist")
+
+        module_name: str = SAVED_FOLDER + "." + model_name
+
+        module = import_module(module_name)
+
+        learn_model_class = getattr(module, "NLPTemplate", None)
+        
+        learn_model = learn_model_class(hyper_parameters=hyper_parameters)
+
+        return learn_model
+
+    def load_text_records(self, labels: List[str]) -> Dict[str, list]:
+        data_manager: str = os.environ["data_manager"]
+        url: str = f"http://{data_manager}:3000/api/data/text/read/train"
+        headers: dict = {"Content_type": "application/json"}
+        body: dict = {"labels": labels}
+        
+        response: Response[dict]
+
+        api_response = requests.post(url=url, headers=headers, json=body)
+
+        if api_response.status_code != 200:
+            raise Exception("cannot fetch data")
+        
+        jj = api_response.json()
+        response = Response(value=jj["value"], error=jj["error"], message=jj["message"])
+
+        if response.error:
+            raise Exception(response.message)
+        
+        return response.value
+
+    def run_bert(self, learn_model, data: Dict[str, list]) -> Dict[str, List[str]]:
+        learn_model.run_model(data=data)
+
+    def get_nlp_template(self) -> str:
+        return NLP_TEMPLATE_PATH
 
 
 

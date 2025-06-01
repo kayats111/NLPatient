@@ -59,6 +59,7 @@ def addRecord():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
 
     return jsonify(response.toDict()), 200
 
@@ -72,6 +73,7 @@ def readRecord(id: int):
         response = Response(value=record.toDict())
     except Exception as e:
         response = Response(error=True, message=str(e))
+        return jsonify(response.toDict()), 400
 
     return jsonify(response.toDict()), 200
 
@@ -85,6 +87,7 @@ def deleteRecord(id: int):
         response = Response()
     except Exception as e:
         response = Response(error=True, message=str(e))
+        return jsonify(response.toDict()), 400
 
     return jsonify(response.toDict()), 200
 
@@ -106,6 +109,7 @@ def updateRecord():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
 
     return jsonify(response.toDict()), 200
     
@@ -135,6 +139,7 @@ def getWithFields():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
 
     return jsonify(response.toDict())
 
@@ -173,6 +178,7 @@ def getVectors():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
 
     return jsonify(response.toDict())
 
@@ -209,6 +215,7 @@ def add_text():
         response = Response(error=True, message=str(e))
         
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
 
     return jsonify(response.toDict()), 200
 
@@ -222,6 +229,7 @@ def read_text_record(id: int):
         response = Response(value=record.toDict())
     except Exception as e:
         response = Response(error=True, message=str(e))
+        return jsonify(response.toDict()), 400
 
     return jsonify(response.toDict()), 200
 
@@ -235,6 +243,7 @@ def delete_text_record(id: int):
         response = Response()
     except Exception as e:
         response = Response(error=True, message=str(e))
+        return jsonify(response.toDict()), 400
 
     return jsonify(response.toDict()), 200
 
@@ -256,6 +265,7 @@ def update_text_record():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
 
     return jsonify(response.toDict()), 200
  
@@ -284,6 +294,7 @@ def get_train_text_records():
     except Exception as e:
         response = Response(error=True, message=str(e))
         app.log_exception(e)
+        return jsonify(response.toDict()), 400
 
     return jsonify(response.toDict()), 200
 
