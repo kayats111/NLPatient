@@ -15,6 +15,10 @@ const TextualPatientRecords = () => {
   const url = useContext(URLContext).DataManager;
   const modalRef = useRef();
 
+  // ─────────────── Pagination State ───────────────
+  const [currentPage, setCurrentPage] = useState(0);
+  const recordsPerPage = 10;
+
   useEffect(() => {
     const fetchRecords = async () => {
       try {
@@ -28,6 +32,20 @@ const TextualPatientRecords = () => {
 
     fetchRecords();
   }, [url]);
+
+  // Compute indexes and slice
+  const startIndex = currentPage * recordsPerPage;
+  const currentRecords = records.slice(startIndex, startIndex + recordsPerPage);
+
+  const handlePrevious = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleNext = () => {
+    setCurrentPage((prev) =>
+      prev < Math.ceil(records.length / recordsPerPage) - 1 ? prev + 1 : prev
+    );
+  };
 
   const truncateText = (text, maxLength = 60) =>
     text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
@@ -64,9 +82,14 @@ const TextualPatientRecords = () => {
     }
   };
 
+  // Close modal on outside click
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (modalVisible && modalRef.current && !modalRef.current.contains(e.target)) {
+      if (
+        modalVisible &&
+        modalRef.current &&
+        !modalRef.current.contains(e.target)
+      ) {
         setModalVisible(false);
       }
     };
@@ -94,13 +117,13 @@ const TextualPatientRecords = () => {
           </tr>
         </thead>
         <tbody>
-          {records.map((record, index) => (
+          {currentRecords.map((record, index) => (
             <tr
               key={record.id}
               className={selectedRecord?.id === record.id ? 'selected' : ''}
               onClick={() => setSelectedRecord(record)}
             >
-              <td>{index + 1}</td>
+              <td>{startIndex + index + 1}</td>
               <td>{truncateText(record.text)}</td>
               <td>{record.affective}</td>
               <td>{record.any}</td>
@@ -111,9 +134,27 @@ const TextualPatientRecords = () => {
         </tbody>
       </table>
 
+      {/* Pagination Buttons */}
+      <div className="pagination-buttons">
+        
+      </div>
+
       <div className="action-buttons">
-        <button onClick={handleDelete} disabled={!selectedRecord}>Delete</button>
-        <button onClick={handleOpenModal} disabled={!selectedRecord}>View / Update</button>
+        <button onClick={handleDelete} disabled={!selectedRecord}>
+          Delete
+        </button>
+        <button onClick={handleOpenModal} disabled={!selectedRecord}>
+          View / Update
+        </button>
+        <button onClick={handlePrevious} disabled={currentPage === 0}>
+          Previous
+        </button>
+        <button
+          onClick={handleNext}
+          disabled={startIndex + recordsPerPage >= records.length}
+        >
+          Next
+        </button>
       </div>
 
       {modalVisible && (
@@ -168,8 +209,12 @@ const TextualPatientRecords = () => {
             </div>
 
             <div className="modal-actions">
-              <button className="save-button" onClick={handleUpdate}>Save</button>
-              <button className="close-modal" onClick={() => setModalVisible(false)}>Cancel</button>
+              <button className="save-button" onClick={handleUpdate}>
+                Save
+              </button>
+              <button className="close-modal" onClick={() => setModalVisible(false)}>
+                Cancel
+              </button>
             </div>
           </div>
         </div>

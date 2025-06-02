@@ -57,16 +57,16 @@ export const ResearcherMenuProvider = ({ children }) => {
   export const AdminMenuProvider = ({ children }) => {
     const [links] = useState([
       { name: "Doctor Dashboard", path: "/doctor-main" },
-      { name: "Patient Records", path: "/records-viewer" },
       { name: "Add Patient Data", path: "/add-patient-data" },
-      { name: "View Textual Patient Records", path: "/view-textual-records"},
+      { name: "View Patient Records", path: "/records-viewer" },
       { name: "Add Textual Data", path: "/textual-upload" },
+      { name: "View Textual Patient Records", path: "/view-textual-records"},
       { name: "Researcher Dashboard", path: "/researcher-main" },
-      {name: "Add New Model",path:"/model_uploader"},
+      { name: "Add New Model",path:"/model_uploader"},
       { name: "View Models", path: "/model-viewer" },
       { name: "Trained Models", path: "/train-page" },
-      {name: "Approval Page", path:"/approval-page"},
-      {name:"Role Page", path:"/choicepage"},
+      { name: "Approval Page", path:"/approval-page"},
+      { name:"Role Page", path:"/choicepage"},
     ]);
   
     return (

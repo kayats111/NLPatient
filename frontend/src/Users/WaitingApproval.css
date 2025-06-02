@@ -1,0 +1,66 @@
+.snake-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.snake-container {
+  background: #222;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.snake-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.snake-grid {
+  display: inline-block;
+  background: #000;
+}
+
+.snake-row {
+  display: flex;
+}
+
+.snake-cell {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #333;
+}
+
+.snake-head {
+  background: #0f0;
+}
+
+.snake-body {
+  background: #0a0;
+}
+
+.snake-food {
+  background: #f00;
+}
+
+.game-over {
+  color: #f00;
+  font-size: 24px;
+  margin-top: 8px;
+}
+.waiting-title {
+  color: white;
+}
+.snake-header > div button {
+  margin: 0 8px;
+}

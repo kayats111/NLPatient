@@ -38,10 +38,11 @@ const TrainedModels = () => {
     };
 
     fetchModelNames();
-  }, []);
+  }, [url]);
 
-  const handleModelClick = (modelName) => {
-    setSelectedModel(modelName);
+  const handleModelClick = (name) => {
+    setSelectedModel(name);
+    setError('');
   };
 
   const handleMetaDataClick = async () => {
@@ -60,7 +61,7 @@ const TrainedModels = () => {
         setModelMetadata(response.data.value);
         setModalVisible(true);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch model metadata');
     }
   };
@@ -79,11 +80,11 @@ const TrainedModels = () => {
       if (response.data.error) {
         setError(response.data.message);
       } else {
-        setModelNames(modelNames.filter((modelName) => modelName !== selectedModel));
+        setModelNames(modelNames.filter((name) => name !== selectedModel));
         setSelectedModel(null);
         setError('Model deleted successfully');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to delete the model');
     }
   };
@@ -101,7 +102,10 @@ const TrainedModels = () => {
         { responseType: 'blob' }
       );
       const disposition = response.headers['content-disposition'];
-      const filename = disposition.split('filename=')[1].replace(/"/g, '').trim();
+      const filename = disposition
+        .split('filename=')[1]
+        .replace(/"/g, '')
+        .trim();
 
       const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
@@ -109,8 +113,8 @@ const TrainedModels = () => {
       link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
-    } catch (err) {
+      link.remove();
+    } catch {
       setError('Failed to download the model');
     }
   };
@@ -142,28 +146,31 @@ const TrainedModels = () => {
         setError(response.data.message);
       } else {
         const metadata = response.data.value;
-
         navigate("/doctor-predict", {
-          state: { modelName: selectedModel, modelMetadata: metadata.fields, labels: metadata.labels }
+          state: {
+            modelName: selectedModel,
+            modelMetadata: metadata.fields,
+            labels: metadata.labels
+          }
         });
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch model metadata for prediction');
     }
   };
 
-  const handleSecondModelSelect = async (modelName) => {
-    setSecondModel(modelName);
+  const handleSecondModelSelect = async (name) => {
+    setSecondModel(name);
     try {
       const response = await axios.post(url + '/api/predictors/meta_data', {
-        "model name": modelName
+        "model name": name
       });
       if (response.data.error) {
         setError(response.data.message);
       } else {
         setSecondModelMetadata(response.data.value);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch second model metadata');
     }
   };
@@ -175,13 +182,13 @@ const TrainedModels = () => {
       {error && <div className="error">{error}</div>}
 
       <div className="model-list">
-        {modelNames.map((modelName) => (
+        {modelNames.map((name) => (
           <button
-            key={modelName}
-            className={`tlist-item ${modelName === selectedModel ? 'active' : ''}`}
-            onClick={() => handleModelClick(modelName)}
+            key={name}
+            className={`tlist-item ${name === selectedModel ? 'active' : ''}`}
+            onClick={() => handleModelClick(name)}
           >
-            {modelName}
+            {name}
           </button>
         ))}
       </div>
@@ -233,7 +240,7 @@ const TrainedModels = () => {
         <div className="overlay">
           {modalVisible && (
             <div className="modal-content main-modal">
-              <h2>{selectedModel} Metadata</h2>
+              <h2>{selectedModel} Meta Data</h2>
               <div className="metadata-table">
                 <table>
                   <thead>
@@ -265,9 +272,13 @@ const TrainedModels = () => {
           )}
 
           {compareModalVisible && (
-            <div className="modals-content compare-modal">
-              <h2>Compare With Another Model</h2>
-              <div className="model-list">
+            <div className="modal-content compare-modal">
+              {secondModel ? (
+                <h2>{secondModel} Meta Data</h2>
+              ) : (
+                <h2>Select a Model to Compare</h2>
+              )}
+              <div className="trained-model-list">
                 {modelNames
                   .filter((name) => name !== selectedModel)
                   .map((name) => (
@@ -280,6 +291,7 @@ const TrainedModels = () => {
                     </button>
                   ))}
               </div>
+
               {secondModelMetadata && (
                 <div className="metadata-table">
                   <table>
@@ -300,11 +312,8 @@ const TrainedModels = () => {
                   </table>
                 </div>
               )}
-              {/* <div className="modal-actions">
-                <button className="close-modal" onClick={() => setCompareModalVisible(false)}>
-                  Close Compare
-                </button>
-              </div> */}
+
+              
             </div>
           )}
         </div>

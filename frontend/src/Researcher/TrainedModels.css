@@ -10,7 +10,7 @@
   font-size: 16px;
 }
 
-.model-list {
+.trained-model-list {
   display: flex;
   flex-wrap: wrap;
   flex-direction: column; /* Items are stacked vertically */

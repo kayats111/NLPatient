@@ -176,6 +176,7 @@
 .field-button,
 .label-button {
   padding: 10px;
+  color:black;
   background-color: #f0f0f0;
   border: 1px solid #ddd;
   cursor: pointer;

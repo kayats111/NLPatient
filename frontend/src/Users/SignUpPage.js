@@ -2,7 +2,7 @@ import React, { useState,useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import './SignUpPage.css'; // Custom CSS for styling
-import URLContext from './context/URLContext';
+import URLContext from '../context/URLContext';
 
 function SignUpPage() {
   const [email, setEmail] = useState('');
