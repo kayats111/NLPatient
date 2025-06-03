@@ -47,43 +47,48 @@ for record in records:
     record.pop("psychotic2nd")
 
 # print records in a form and save text
-for index, record in enumerate(records):
-    print(f"---------------------{index}---------------------")
+# for index, record in enumerate(records):
+#     print(f"---------------------{index}---------------------")
 
-    for key, val in record.items():
-        if key not in labels:
-            print(f"{key}: {val}")
+#     for key, val in record.items():
+#         if key not in labels:
+#             print(f"{key}: {val}")
 
-    print(f"---------------------{index}---------------------\n\n")
+#     print(f"---------------------{index}---------------------\n\n")
 
-    print("Insert the generated text:")
-    text:str = input()
-    print("\n")
+#     print("Insert the generated text:")
+#     text:str = input()
+#     print("\n")
 
-    # send to DataManager
-    response: Response[dict]  # fetch
-    headers = {"Content-Type": "application/json"}
-    url = "http://localhost:3000/api/data/text/add"
+#     # send to DataManager
+#     response: Response[dict]  # fetch
+#     headers = {"Content-Type": "application/json"}
+#     url = "http://localhost:3000/api/data/text/add"
 
-    textRecord = {
-        "text": text,
-        "any": record['any'],
-        "affective": record['affective'],
-        "bipolar": record['bipolar'],
-        "schizophreniaSpectr": record['schizophreniaSpectr']
-    }
+#     textRecord = {
+#         "text": text,
+#         "any": record['any'],
+#         "affective": record['affective'],
+#         "bipolar": record['bipolar'],
+#         "schizophreniaSpectr": record['schizophreniaSpectr']
+#     }
 
-    apiResponse = requests.post(url=url, json=textRecord, headers=headers)
+#     apiResponse = requests.post(url=url, json=textRecord, headers=headers)
 
-    if apiResponse.status_code != 200:
-        raise Exception(f"cannot send data at index {index}")
+#     if apiResponse.status_code != 200:
+#         raise Exception(f"cannot send data at index {index}")
     
-    jj = apiResponse.json()
-    response = Response(value=jj["value"], error=jj["error"], message=jj["message"])
+#     jj = apiResponse.json()
+#     response = Response(value=jj["value"], error=jj["error"], message=jj["message"])
 
-    if response.error:
-        raise Exception(response.message)
+#     if response.error:
+#         raise Exception(response.message)
     
-    print(f"{index + 1} / {len(records)}")
+#     print(f"{index + 1} / {len(records)}")
 
+record = records[121]
+
+for key, val in record.items():
+    if key not in labels:
+        print(f"{key}: {val}")
 
