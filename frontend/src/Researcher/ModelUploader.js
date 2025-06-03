@@ -167,6 +167,7 @@ function ModelUploader() {
         >
           <option value="SCIKIT">Scikit</option>
           <option value="PYTORCH">PyTorch</option>
+          <option value="BERT">Bert</option>
         </select>
       </div>
 

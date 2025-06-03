@@ -213,6 +213,7 @@ def add_text():
         response = Response()
     except Exception as e:
         response = Response(error=True, message=str(e))
+        
         app.log_exception(e)
         return jsonify(response.toDict()), 400
 

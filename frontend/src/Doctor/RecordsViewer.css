@@ -41,7 +41,15 @@
 .records-table td:last-child {
   text-align: center;
 }
-
+button {
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+}
 /* ERROR MESSAGE */
 .error-message {
   color: red;
@@ -169,9 +177,17 @@
   border-radius: 5px;
   cursor: pointer;
 }
-
+.notSelected {
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    border: none;
+    background-color: #e3e1e1;
+    color: rgb(0, 0, 0);
+}
 .selectedF {
-  background-color: #0056b3;
+  background-color: rgb(24, 107, 195);
   color: white;
 }
 
@@ -203,4 +219,94 @@
 }
 .overlay-buttons button.exit:hover {
 background: #b53c2a ;
+}
+/* Predict Modal Overlay */
+.predict-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000; /* Above everything else */
+}
+
+/* Predict Modal Content */
+.predict-modal-content {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 10001;
+  text-align: center;
+}
+
+/* Heading inside Predict Modal */
+.predict-modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #007bff;
+}
+
+/* Model Buttons List */
+.model-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.model-button {
+  padding: 10px 15px;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: none;
+  background-color: #007bff;
+  color: #ffffff;
+  transition: background-color 0.2s;
+}
+
+.model-button:hover {
+  background-color: #0056b3;
+}
+
+.model-button:active {
+  background-color: #00408a;
+}
+
+/* Close/Cancel Button inside Predict Modal */
+.predict-modal-content .close-modal {
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: none;
+  background-color: #cc4d3a;
+  color: #ffffff;
+  transition: background-color 0.2s;
+}
+
+.predict-modal-content .close-modal:hover {
+  background-color: #b53c2a;
+}
+
+.predict-modal-content .close-modal:active {
+  background-color: #9e331f;
+}
+
+/* Error Message inside Predict Modal */
+.predict-modal-content .error-message {
+  color: red;
+  margin-bottom: 15px;
+  font-size: 14px;
 }

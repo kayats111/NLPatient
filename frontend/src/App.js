@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { DoctorMenuProvider, ResearcherMenuProvider,AdminMenuProvider} from "./context/Context.js";
 import './App.css';
-import Login from './Login';
+import Login from './Users/Login.js'
 import ResearcherMain from './Researcher/ResearcherMain';
 import DoctorMain from './Doctor/DoctorMain';
-import SignUpPage from './SignUpPage';
+import SignUpPage from './Users//SignUpPage';
 import ChoicePage from './ChoicePage';
 import AddPatientData from './Doctor/AddPatientData';
 import TrainedModels from './Researcher/TrainedModels';
@@ -15,10 +15,12 @@ import ModelUploader from './Researcher/ModelUploader.js';
 import ViewModels from './Researcher/ViewModels.js';
 import DrawerMenu from './DrawerMenu.js'; // Import the drawer menu
 import ApprovalPage from './Users/ApprovalPage.js';
-import WaitingApproval from './WaitingApproval.js';
+import WaitingApproval from './Users/WaitingApproval.js';
 import { RoleProvider } from './context/roleContext.js';
 import { UserProvider } from './context/UserContext';
 import URLProvider from './context/URLProvider';
+import TextualPatientUpload from './Doctor/TextualPatientUpload.js';
+import TextualPatientRecords from './Doctor/TextualPatientRecords.js';
 
 
 function App() {
@@ -47,6 +49,8 @@ function App() {
                     <Route path="/model-viewer" element={<ViewModels />} />
                     <Route path="/approval-page" element={<ApprovalPage />} />
                     <Route path="/pending_approval" element={<WaitingApproval />} />
+                    <Route path="/textual-upload" element={<TextualPatientUpload />} />
+                    <Route path="/view-textual-records" element={<TextualPatientRecords />} />
                   </Routes>
                 </div>
               </Router>

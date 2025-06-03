@@ -10,7 +10,7 @@
   font-size: 16px;
 }
 
-.model-list {
+.trained-model-list {
   display: flex;
   flex-wrap: wrap;
   flex-direction: column; /* Items are stacked vertically */
@@ -19,17 +19,36 @@
   margin: 20px 0;
 }
 
-.tlist-item {
+/* .tlist-item {
   padding: 10px 20px;
   margin: 10px;
   border: 1px solid #ccc;
   cursor: pointer;
+  background-color: #f9f9f9;
   transition: background-color 0.3s;
   font-size: 15px;
   width: 150px;
   text-align: center;
+  color: black;
+} */
+ .tlist-item {
+  padding: 10px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 5px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s;
+  display:block;
+  font-size: 15px;
+  width: 450px;
+  text-align: center;
+  color: black;
 }
-
+.tlist-item:hover{
+   background-color: #bbbbbb;
+}
 .tlist-item.active {
   background-color: #4caf50;
   color: white;
@@ -99,24 +118,47 @@
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  padding-top: 20px;
+  gap: 20px;
   z-index: 9999;
 }
 
-.modal-content {
+/* Unified modal style for both main and compare modals */
+.main-modal {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
   width: 60%;
   max-width: 800px;
   text-align: center;
+  /* max-height: 90vh; */
+  /* overflow: auto; */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
-
+.compare-modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 60%;
+  max-width: 800px;
+  text-align: center;
+  height: 90vh; /* Set full viewport height */
+  overflow-y: auto; /* Enable vertical scroll if needed */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
 .modal-actions {
   display: flex;
   justify-content: center;
   gap: 20px;
-  margin-top: 20px;
+  margin-top: auto; /* Pushes it to the bottom of the modal */
+  padding-top: 20px;
 }
 
 .close-modal {
@@ -148,3 +190,27 @@
 .metadata-table th {
   background-color: #f4f4f4;
 }
+
+/* Deprecated or unused */
+.modals-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 60%;
+  max-width: 800px;
+  text-align: center;
+}
+
+/* Optional animation - currently commented out */
+/*
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+*/

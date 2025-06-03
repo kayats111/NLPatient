@@ -181,7 +181,6 @@ def getTemplate():
 def run_nlp_model():
     data: dict = request.get_json()
     schema: Set[str] = {"model name", "labels", "trainRelativeSize", "testRelativeSize", "epochs", "batchSize", "hyperParameters"}
-
     if not validateRequestSchema(request=data, schema=schema):
         return jsonify(Response(error=True, message="bad request body").toDict()), 400    
 

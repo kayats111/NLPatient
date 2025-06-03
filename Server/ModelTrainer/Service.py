@@ -70,7 +70,7 @@ class Service:
         return self.parameter_repository.read_parameters(model_name=model_name)
 
     def getModelNames(self) -> List[str]:
-        print(NFS_DIRECTORY + "/" + SAVED_FOLDER)
+        # print(NFS_DIRECTORY + "/" + SAVED_FOLDER)
         models: List[str] = [file.split(".")[0] for file in os.listdir(NFS_DIRECTORY + "/" + SAVED_FOLDER)
                              if os.path.isfile(os.path.join(NFS_DIRECTORY, SAVED_FOLDER, file))]
 

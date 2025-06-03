@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './TrainedModels.css';
@@ -13,15 +13,19 @@ const TrainedModels = () => {
   const [error, setError] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [modelMetadata, setModelMetadata] = useState(null);
+  const [compareModalVisible, setCompareModalVisible] = useState(false);
+  const [secondModel, setSecondModel] = useState(null);
+  const [secondModelMetadata, setSecondModelMetadata] = useState(null);
+
   const navigate = useNavigate();
   const { links } = useRoleLinks();
   const { role } = useRole();
-  const url = useContext(URLContext).Predictors
+  const url = useContext(URLContext).Predictors;
 
   useEffect(() => {
     const fetchModelNames = async () => {
       try {
-        const response = await axios.get(url+'/api/predictors/names');
+        const response = await axios.get(url + '/api/predictors/names');
         const data = response.data;
         if (data.error) {
           setError(data.message);
@@ -34,10 +38,11 @@ const TrainedModels = () => {
     };
 
     fetchModelNames();
-  }, []);
+  }, [url]);
 
-  const handleModelClick = (modelName) => {
-    setSelectedModel(modelName);
+  const handleModelClick = (name) => {
+    setSelectedModel(name);
+    setError('');
   };
 
   const handleMetaDataClick = async () => {
@@ -47,10 +52,7 @@ const TrainedModels = () => {
     }
 
     try {
-      // const response = await axios.get('/predictors/api/predictors/meta_data', {
-      //   params: { "model name": selectedModel }
-      // });
-      const response = await axios.post(url+'/api/predictors/meta_data',{
+      const response = await axios.post(url + '/api/predictors/meta_data', {
         "model name": selectedModel
       });
       if (response.data.error) {
@@ -59,7 +61,7 @@ const TrainedModels = () => {
         setModelMetadata(response.data.value);
         setModalVisible(true);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch model metadata');
     }
   };
@@ -71,18 +73,18 @@ const TrainedModels = () => {
     }
 
     try {
-      const response = await axios.delete(url+'/api/predictors/delete', {
+      const response = await axios.delete(url + '/api/predictors/delete', {
         data: { "model name": selectedModel }
       });
 
       if (response.data.error) {
         setError(response.data.message);
       } else {
-        setModelNames(modelNames.filter((modelName) => modelName !== selectedModel));
-        setSelectedModel(null); 
+        setModelNames(modelNames.filter((name) => name !== selectedModel));
+        setSelectedModel(null);
         setError('Model deleted successfully');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to delete the model');
     }
   };
@@ -95,29 +97,24 @@ const TrainedModels = () => {
 
     try {
       const response = await axios.post(
-        url+'/api/predictors/get_predictor',
-        { "model name": selectedModel }, // POST data goes in the body
-        { responseType: 'blob' } // Set response type to blob for file downloads
+        url + '/api/predictors/get_predictor',
+        { "model name": selectedModel },
+        { responseType: 'blob' }
       );
-      const disposition = response.headers['content-disposition']
-      const filename = disposition.split('filename=')[1].replace(/"/g, '').trim();
-      console.log(filename)     
-      // if (contentDisposition) {
-      //   const match = contentDisposition.match(/filename="?([^"]+)"?/);
-      //   if (match && match[1]) {
-      //     filename = match[1]; // Use the filename provided by the server
-      //   }
-      // }
-      
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const disposition = response.headers['content-disposition'];
+      const filename = disposition
+        .split('filename=')[1]
+        .replace(/"/g, '')
+        .trim();
+
+      const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${filename}`); // Use the extracted filename
+      link.href = downloadUrl;
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
-      
-    } catch (err) {
+      link.remove();
+    } catch {
       setError('Failed to download the model');
     }
   };
@@ -125,6 +122,13 @@ const TrainedModels = () => {
   const handleModalClose = () => {
     setModalVisible(false);
     setModelMetadata(null);
+    setCompareModalVisible(false);
+    setSecondModel(null);
+    setSecondModelMetadata(null);
+  };
+
+  const handleCompareModels = () => {
+    setCompareModalVisible(true);
   };
 
   const handlePredictClick = async () => {
@@ -134,7 +138,7 @@ const TrainedModels = () => {
     }
 
     try {
-      const response = await axios.post(url+'/api/predictors/meta_data',{
+      const response = await axios.post(url + '/api/predictors/meta_data', {
         "model name": selectedModel
       });
 
@@ -142,13 +146,32 @@ const TrainedModels = () => {
         setError(response.data.message);
       } else {
         const metadata = response.data.value;
-
         navigate("/doctor-predict", {
-          state: { modelName: selectedModel, modelMetadata: metadata.fields, labels: metadata.labels }
+          state: {
+            modelName: selectedModel,
+            modelMetadata: metadata.fields,
+            labels: metadata.labels
+          }
         });
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch model metadata for prediction');
+    }
+  };
+
+  const handleSecondModelSelect = async (name) => {
+    setSecondModel(name);
+    try {
+      const response = await axios.post(url + '/api/predictors/meta_data', {
+        "model name": name
+      });
+      if (response.data.error) {
+        setError(response.data.message);
+      } else {
+        setSecondModelMetadata(response.data.value);
+      }
+    } catch {
+      setError('Failed to fetch second model metadata');
     }
   };
 
@@ -159,13 +182,13 @@ const TrainedModels = () => {
       {error && <div className="error">{error}</div>}
 
       <div className="model-list">
-        {modelNames.map((modelName) => (
+        {modelNames.map((name) => (
           <button
-            key={modelName}
-            className={`tlist-item ${modelName === selectedModel ? 'active' : ''}`}
-            onClick={() => handleModelClick(modelName)}
+            key={name}
+            className={`tlist-item ${name === selectedModel ? 'active' : ''}`}
+            onClick={() => handleModelClick(name)}
           >
-            {modelName}
+            {name}
           </button>
         ))}
       </div>
@@ -213,34 +236,86 @@ const TrainedModels = () => {
         </div>
       )}
 
-      {modalVisible && (
+      {(modalVisible || compareModalVisible) && (
         <div className="overlay">
-          <div className="modal-content">
-            <h2>Model Metadata</h2>
-            <div className="metadata-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Field</th>
-                    <th>Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {modelMetadata && Object.entries(modelMetadata).map(([key, value]) => (
-                    <tr key={key}>
-                      <th>{key}</th>
-                      <td>{JSON.stringify(value, null, 2)}</td>
+          {modalVisible && (
+            <div className="modal-content main-modal">
+              <h2>{selectedModel} Meta Data</h2>
+              <div className="metadata-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Field</th>
+                      <th>Value</th>
                     </tr>
+                  </thead>
+                  <tbody>
+                    {modelMetadata &&
+                      Object.entries(modelMetadata).map(([key, value]) => (
+                        <tr key={key}>
+                          <th>{key}</th>
+                          <td>{JSON.stringify(value, null, 2)}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="modal-actions">
+                <button className="close-modal" onClick={handleModalClose}>
+                  Exit
+                </button>
+                <button className="close-modal" onClick={handleCompareModels}>
+                  Compare
+                </button>
+              </div>
+            </div>
+          )}
+
+          {compareModalVisible && (
+            <div className="modal-content compare-modal">
+              {secondModel ? (
+                <h2>{secondModel} Meta Data</h2>
+              ) : (
+                <h2>Select a Model to Compare</h2>
+              )}
+              <div className="trained-model-list">
+                {modelNames
+                  .filter((name) => name !== selectedModel)
+                  .map((name) => (
+                    <button
+                      key={name}
+                      className={`tlist-item ${secondModel === name ? 'active' : ''}`}
+                      onClick={() => handleSecondModelSelect(name)}
+                    >
+                      {name}
+                    </button>
                   ))}
-                </tbody>
-              </table>
+              </div>
+
+              {secondModelMetadata && (
+                <div className="metadata-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(secondModelMetadata).map(([key, value]) => (
+                        <tr key={key}>
+                          <th>{key}</th>
+                          <td>{JSON.stringify(value, null, 2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              
             </div>
-            <div className="modal-actions">
-              <button className="close-modal" onClick={handleModalClose}>
-                Exit
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       )}
     </div>

@@ -44,11 +44,11 @@
 }
 
 .list-item:hover {
-  background-color: #f1f1f1;
+  background-color: #bbbbbb;
 }
 
 .list-item.active {
-  background-color: #0ed812;
+  background-color:  #4caf50;;
   color: white;
 }
 
@@ -176,6 +176,7 @@
 .field-button,
 .label-button {
   padding: 10px;
+  color:black;
   background-color: #f0f0f0;
   border: 1px solid #ddd;
   cursor: pointer;
