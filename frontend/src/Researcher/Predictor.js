@@ -21,6 +21,7 @@ const Predictor = () => {
     modelName,
     modelMetadata,
     labels,
+    model_type,
     sample: prefillSample, // array of numbers, if we came from RecordsViewer
   } = location.state || {};
 
@@ -71,38 +72,56 @@ const Predictor = () => {
   };
 
   const handlePredict = async () => {
-    console.log("isPrefilled:", isPrefilled);
-    console.log("prefillSample:", prefillSample);
-    console.log("inputs (raw):", inputs);
+    // console.log("isPrefilled:", isPrefilled);
+    // console.log("prefillSample:", prefillSample);
+    // console.log("inputs (raw):", inputs);
 
     let numericSample;
-
-    if (isPrefilled) {
+    let textualSample;
+    if (isPrefilled && model_type !=="BERT") {
       // Use the prefilled numeric array directly
       numericSample = prefillSample.slice();
-    } else {
+    }else if(isPrefilled && model_type ==="BERT") {
+      textualSample = prefillSample
+    }
+    else {
       // Manual entry: convert inputs[field] → Number(...)
       const inputList = modelMetadata.map((field) => inputs[field]?.trim() || "");
-      numericSample = inputList.map((x) => Number(x));
+      if(model_type!== "BERT"){
+        numericSample = inputList.map((x) => Number(x));
 
-      // Validate that every entry is a valid number
-      if (numericSample.some((n) => isNaN(n))) {
-        setError("All fields must be valid numbers.");
-        return;
+        // Validate that every entry is a valid number
+        if (numericSample.some((n) => isNaN(n))) {
+          setError("All fields must be valid numbers.");
+          return;
+        }
+      }else{
+        textualSample = inputList 
       }
     }
-
     setLoading(true);
     setError("");
+    let resp;
     try {
-      const resp = await axios.post(
-        baseUrl + "/api/predictors/predict",
-        {
-          "model name": modelName,
-          sample: numericSample,
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
+      if(model_type !== "BERT"){
+        resp = await axios.post(
+          baseUrl + "/api/predictors/predict",
+          {
+            "model name": modelName,
+            sample: numericSample,
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
+      }
+      else{
+        resp = await axios.post(baseUrl + "/api/predictors/text/infer",
+          {
+            "model name": modelName,
+            sample: textualSample,
+          },
+          {headers:{"Content-Type":"application/json"} }
+        );
+      }
 
       if (resp.status === 200) {
         setPrediction(resp.data.value);
@@ -145,8 +164,23 @@ const Predictor = () => {
   }, [prediction]);
 
   const isPredictButtonDisabled =
+    // console.log(model_type)
     !isPrefilled &&
-    Object.values(inputs).some((val) => val === "" || isNaN(Number(val)));
+    Object.values(inputs).some((val) => {
+      const s = String(val).trim();
+
+      // 1) empty is always invalid:
+      if (s === "") return true;
+
+      // 2) valid as a number?
+      const isNum = !isNaN(Number(s));
+
+      // 3) valid as "long text"?
+      const isLongText = s.length >= 5;
+
+      // disable (i.e. return true) if NEITHER rule holds:
+      return !(isNum || (model_type === "BERT" && isLongText));
+    });
 
   // If we don't have modelName or modelMetadata, show an error
   if (!modelName || !Array.isArray(modelMetadata)) {
@@ -187,7 +221,7 @@ const Predictor = () => {
               <input
                 type="text"
                 className="input"
-                value={inputs[field]}
+                value={inputs[field] ?? ""}
                 disabled
               />
             </div>

@@ -163,6 +163,7 @@ const RecordsViewer = () => {
           modelName,
           modelMetadata: metadata.fields,
           labels: metadata.labels,
+          model_type:metadata["model type"],
           sample,
         },
       });

@@ -37,6 +37,7 @@ export const ResearcherMenuProvider = ({ children }) => {
     { name: "Researcher Dashboard", path: "/researcher-main" },
     {name: "Add New Model",path:"/model_uploader"},
     { name: "View Models", path: "/model-viewer" },
+    { name: "View Textual Patient Records", path: "/view-textual-records"},
     { name: "Trained Models", path: "/train-page" },
     { name: "Patient Records", path: "/records-viewer" },
   ]);

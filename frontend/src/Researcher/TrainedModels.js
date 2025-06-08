@@ -150,7 +150,8 @@ const TrainedModels = () => {
           state: {
             modelName: selectedModel,
             modelMetadata: metadata.fields,
-            labels: metadata.labels
+            labels: metadata.labels,
+            model_type:metadata["model type"]
           }
         });
       }
