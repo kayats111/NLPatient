@@ -328,6 +328,7 @@ class Service:
         if model_type == "BERT":
             self.run_bert(learn_model=learn_model, data=data)
         else:
+            print(model_type)
             raise Exception("cannot run ML\DL models as NLP models")
         
         self.addTrainedModel(model=learn_model, modelName=model_name, model_type=model_type)

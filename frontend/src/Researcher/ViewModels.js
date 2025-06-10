@@ -160,7 +160,7 @@ function ViewModels() {
       trainRelativeSize: Number(trainSize),
       testRelativeSize: testSize,
       epochs: epoch,
-      batchSize: numOfBatches,
+      batchSize: Number(numOfBatches),
       hyperParameters: hyperParams,
     };
 
@@ -196,7 +196,7 @@ function ViewModels() {
       handleModalClose();
     } catch (error) {
       console.error("Error training the model:", error);
-      alert("An error occurred while training the model.");
+      alert("An error occurred while training the model.",error);
     } finally {
       setLoading(false);
     }
@@ -462,7 +462,7 @@ function ViewModels() {
                   <span>{`Sample Limit: ${sampleLimit}`}</span>
                 </div>
 
-                {modelType === "PYTORCH" && (
+                {(modelType === "PYTORCH" || modelType == "BERT") && (
                   <div className="input-fields">
                     <div className="input-field">
                       <label htmlFor="epoch">Epoch</label>
@@ -480,7 +480,7 @@ function ViewModels() {
                         type="number"
                         id="numBatches"
                         value={numOfBatches}
-                        onChange={(e) => setNumOfBatches(e.target.value)}
+                        onChange={(e) => setNumOfBatches(Number(e.target.value))}
                         min="1"
                       />
                     </div>

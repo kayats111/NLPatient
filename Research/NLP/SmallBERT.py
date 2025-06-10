@@ -92,7 +92,7 @@ class NLPTemplate:
         return predicted_labels
 
     def tokenize(self, example):
-        return self.tokenizer(example["text"], padding="max_length", trunction=True, max_length=128)
+        return self.tokenizer(example["text"], padding="max_length", truncation=True, max_length=128)
 
     def compute_metrics(self, pred):
         logits, labels = pred

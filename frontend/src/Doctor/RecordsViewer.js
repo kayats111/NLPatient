@@ -114,7 +114,18 @@ const RecordsViewer = () => {
         if (data.error) {
           setPredictError(data.message || "Failed to load models.");
         } else {
-          setModelNames(data.value || []);
+          let notNLP = []
+          for (const name of data.value){
+            try{
+              const meta = await fetchModelMetadata(name);
+              if(meta["model type"] !== "BERT"){
+                notNLP.push(name);
+              }
+            }catch{
+              //ignore fetching metadata errors here.
+            }
+          }
+          setModelNames(notNLP || []);
         }
       } catch (err) {
         setPredictError("Failed to fetch model names.");
@@ -129,7 +140,22 @@ const RecordsViewer = () => {
     setModelNames([]);
     setPredictError("");
   };
-
+  const fetchModelMetadata = async (modelName) => {
+    try {
+      const response = await axios.post(
+        `${predictorsUrl}/api/predictors/meta_data`,
+        { 'model name': modelName }
+      );
+      const data = response.data;
+      if (data.error) {
+        throw new Error(data.message);
+      }
+      return data.value;
+    } catch (err) {
+      console.error('Error fetching model metadata:', err);
+      throw err;
+    }
+  };
   // ─────────────── Choose a model, fetch its metadata, and navigate ───────────────
   const chooseModel = async (modelName) => {
     if (!selectedRecordId) {
@@ -137,17 +163,7 @@ const RecordsViewer = () => {
       return;
     }
     try {
-      const response = await axios.post(
-        predictorsUrl + "/api/predictors/meta_data",
-        { "model name": modelName }
-      );
-      const data = response.data;
-      if (data.error) {
-        setPredictError(data.message);
-        return;
-      }
-      const metadata = data.value; // { fields: [...], labels: [...] }
-
+      const metadata = await fetchModelMetadata(modelName);
       // Find selected record object
       const record = records.find((r) => r.id === selectedRecordId);
       if (!record) {
@@ -163,7 +179,9 @@ const RecordsViewer = () => {
           modelName,
           modelMetadata: metadata.fields,
           labels: metadata.labels,
+          model_type:metadata["model type"],
           sample,
+          returnLoc:"/records-viewer",
         },
       });
     } catch (err) {

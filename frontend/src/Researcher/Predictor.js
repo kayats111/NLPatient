@@ -21,7 +21,9 @@ const Predictor = () => {
     modelName,
     modelMetadata,
     labels,
-    sample: prefillSample, // array of numbers, if we came from RecordsViewer
+    model_type,
+    sample: prefillSample,
+    returnLoc: returnLocation
   } = location.state || {};
 
   // ─────────────── Local state ───────────────
@@ -36,15 +38,32 @@ const Predictor = () => {
   // Initialize "inputs" either from prefillSample or as empty strings
   useEffect(() => {
     if (!Array.isArray(modelMetadata)) return;
-
     if (isPrefilled) {
       // Build inputs object from prefillSample
       // modelMetadata[i] => prefillSample[i]
-      const initialInputs = modelMetadata.reduce((acc, field, idx) => {
-        acc[field] = Number(prefillSample[idx]);
-        return acc;
-      }, {});
+      let initialInputs;
+      if(model_type !=="BERT"){
+        initialInputs = modelMetadata.reduce((acc, field, idx) => {
+          acc[field] = Number(prefillSample[idx]);
+          return acc;
+        }, {});
+      }
+      else{
+        initialInputs = modelMetadata.reduce((acc, field, idx) => {
+          acc[field] = prefillSample[idx];
+          return acc;
+        }, {});
+      }
+      // console.log(initialInputs)
       setInputs(initialInputs);
+      if (isPrefilled && modelName && modelMetadata) {
+        const t = setTimeout(() => {
+          handlePredict();
+          }, 500);
+
+          return () => clearTimeout(t)
+        // handlePredict();
+      }
     } else {
       // No sample available: initialize as blank strings
       const initialInputs = modelMetadata.reduce((acc, field) => {
@@ -56,12 +75,13 @@ const Predictor = () => {
   }, [modelMetadata, prefillSample, isPrefilled]);
 
   // If there's a prefillSample, trigger predict on mount
-  useEffect(() => {
-    if (isPrefilled && modelName && modelMetadata) {
-      handlePredict();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPrefilled, modelName, modelMetadata]);
+  // useEffect(() => {
+  //   if (isPrefilled && modelName && modelMetadata) {
+  //     handlePredict();
+  //   }
+  //   // console.log(isPrefilled)
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [isPrefilled, modelName, modelMetadata]);
 
   const handleInputChange = (field, value) => {
     setInputs((prev) => ({
@@ -71,38 +91,58 @@ const Predictor = () => {
   };
 
   const handlePredict = async () => {
-    console.log("isPrefilled:", isPrefilled);
-    console.log("prefillSample:", prefillSample);
-    console.log("inputs (raw):", inputs);
+    // console.log("calling this once")
+    // console.log("isPrefilled:", isPrefilled);
+    // console.log("prefillSample:", prefillSample);
+    // console.log("inputs (raw):", inputs);
 
     let numericSample;
-
-    if (isPrefilled) {
+    let textualSample;
+    if (isPrefilled && model_type !=="BERT") {
       // Use the prefilled numeric array directly
       numericSample = prefillSample.slice();
-    } else {
+    }else if(isPrefilled && model_type ==="BERT") {
+      textualSample = prefillSample.slice();
+    }
+    else {
       // Manual entry: convert inputs[field] → Number(...)
       const inputList = modelMetadata.map((field) => inputs[field]?.trim() || "");
-      numericSample = inputList.map((x) => Number(x));
+      if(model_type!== "BERT"){
+        numericSample = inputList.map((x) => Number(x));
 
-      // Validate that every entry is a valid number
-      if (numericSample.some((n) => isNaN(n))) {
-        setError("All fields must be valid numbers.");
-        return;
+        // Validate that every entry is a valid number
+        if (numericSample.some((n) => isNaN(n))) {
+          setError("All fields must be valid numbers.");
+          return;
+        }
+      }else{
+        textualSample = inputList 
       }
     }
-
     setLoading(true);
     setError("");
+    let resp;
     try {
-      const resp = await axios.post(
-        baseUrl + "/api/predictors/predict",
-        {
-          "model name": modelName,
-          sample: numericSample,
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
+      if(model_type !== "BERT"){
+        resp = await axios.post(
+          baseUrl + "/api/predictors/predict",
+          {
+            "model name": modelName,
+            sample: numericSample,
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
+      }
+      else{
+        // console.log(textualSample)
+        resp = await axios.post(baseUrl + "/api/predictors/text/infer",
+          {
+            "model name": modelName,
+            sample: textualSample,
+          },
+          {headers:{"Content-Type":"application/json"} }
+        );
+      }
 
       if (resp.status === 200) {
         setPrediction(resp.data.value);
@@ -127,7 +167,7 @@ const Predictor = () => {
   const handleModalClose = () => {
     setPrediction(null);
     if(isPrefilled){
-      navigate("/records-viewer")
+      navigate(returnLocation)
     }
     else{
       navigate("/train-page");
@@ -145,8 +185,23 @@ const Predictor = () => {
   }, [prediction]);
 
   const isPredictButtonDisabled =
+    // console.log(model_type)
     !isPrefilled &&
-    Object.values(inputs).some((val) => val === "" || isNaN(Number(val)));
+    Object.values(inputs).some((val) => {
+      const s = String(val).trim();
+
+      // 1) empty is always invalid:
+      if (s === "") return true;
+
+      // 2) valid as a number?
+      const isNum = !isNaN(Number(s));
+
+      // 3) valid as "long text"?
+      const isLongText = s.length >= 5;
+
+      // disable (i.e. return true) if NEITHER rule holds:
+      return !(isNum || (model_type === "BERT" && isLongText));
+    });
 
   // If we don't have modelName or modelMetadata, show an error
   if (!modelName || !Array.isArray(modelMetadata)) {
@@ -187,7 +242,7 @@ const Predictor = () => {
               <input
                 type="text"
                 className="input"
-                value={inputs[field]}
+                value={inputs[field] ?? ""}
                 disabled
               />
             </div>
@@ -198,7 +253,7 @@ const Predictor = () => {
       <div className="predict-button-container">
         <button
           className="predict-button"
-          onClick={handlePredict}
+          onClick={()=>handlePredict()}
           disabled={isPredictButtonDisabled || loading}
         >
           {loading ? "Loading..." : "Predict"}
