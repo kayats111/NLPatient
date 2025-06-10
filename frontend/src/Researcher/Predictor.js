@@ -22,7 +22,8 @@ const Predictor = () => {
     modelMetadata,
     labels,
     model_type,
-    sample: prefillSample, // array of numbers, if we came from RecordsViewer
+    sample: prefillSample,
+    returnLoc: returnLocation
   } = location.state || {};
 
   // ─────────────── Local state ───────────────
@@ -37,15 +38,32 @@ const Predictor = () => {
   // Initialize "inputs" either from prefillSample or as empty strings
   useEffect(() => {
     if (!Array.isArray(modelMetadata)) return;
-
     if (isPrefilled) {
       // Build inputs object from prefillSample
       // modelMetadata[i] => prefillSample[i]
-      const initialInputs = modelMetadata.reduce((acc, field, idx) => {
-        acc[field] = Number(prefillSample[idx]);
-        return acc;
-      }, {});
+      let initialInputs;
+      if(model_type !=="BERT"){
+        initialInputs = modelMetadata.reduce((acc, field, idx) => {
+          acc[field] = Number(prefillSample[idx]);
+          return acc;
+        }, {});
+      }
+      else{
+        initialInputs = modelMetadata.reduce((acc, field, idx) => {
+          acc[field] = prefillSample[idx];
+          return acc;
+        }, {});
+      }
+      // console.log(initialInputs)
       setInputs(initialInputs);
+      if (isPrefilled && modelName && modelMetadata) {
+        const t = setTimeout(() => {
+          handlePredict();
+          }, 500);
+
+          return () => clearTimeout(t)
+        // handlePredict();
+      }
     } else {
       // No sample available: initialize as blank strings
       const initialInputs = modelMetadata.reduce((acc, field) => {
@@ -57,12 +75,13 @@ const Predictor = () => {
   }, [modelMetadata, prefillSample, isPrefilled]);
 
   // If there's a prefillSample, trigger predict on mount
-  useEffect(() => {
-    if (isPrefilled && modelName && modelMetadata) {
-      handlePredict();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPrefilled, modelName, modelMetadata]);
+  // useEffect(() => {
+  //   if (isPrefilled && modelName && modelMetadata) {
+  //     handlePredict();
+  //   }
+  //   // console.log(isPrefilled)
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [isPrefilled, modelName, modelMetadata]);
 
   const handleInputChange = (field, value) => {
     setInputs((prev) => ({
@@ -72,6 +91,7 @@ const Predictor = () => {
   };
 
   const handlePredict = async () => {
+    // console.log("calling this once")
     // console.log("isPrefilled:", isPrefilled);
     // console.log("prefillSample:", prefillSample);
     // console.log("inputs (raw):", inputs);
@@ -82,7 +102,7 @@ const Predictor = () => {
       // Use the prefilled numeric array directly
       numericSample = prefillSample.slice();
     }else if(isPrefilled && model_type ==="BERT") {
-      textualSample = prefillSample
+      textualSample = prefillSample.slice();
     }
     else {
       // Manual entry: convert inputs[field] → Number(...)
@@ -114,6 +134,7 @@ const Predictor = () => {
         );
       }
       else{
+        // console.log(textualSample)
         resp = await axios.post(baseUrl + "/api/predictors/text/infer",
           {
             "model name": modelName,
@@ -146,7 +167,7 @@ const Predictor = () => {
   const handleModalClose = () => {
     setPrediction(null);
     if(isPrefilled){
-      navigate("/records-viewer")
+      navigate(returnLocation)
     }
     else{
       navigate("/train-page");
@@ -232,7 +253,7 @@ const Predictor = () => {
       <div className="predict-button-container">
         <button
           className="predict-button"
-          onClick={handlePredict}
+          onClick={()=>handlePredict()}
           disabled={isPredictButtonDisabled || loading}
         >
           {loading ? "Loading..." : "Predict"}
